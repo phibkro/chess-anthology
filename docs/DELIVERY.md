@@ -15,7 +15,7 @@ These are **methods to choose from**, not simultaneous process mandates or evide
 
 ## Delivery loop
 
-\`\`\`mermaid
+```mermaid
 flowchart LR
   Q["Question / goal"] --> H["Hypothesis & design"]
   H --> S["Small vertical slice"]
@@ -23,7 +23,7 @@ flowchart LR
   V --> O["Observe use"]
   O --> R["Revise assumptions and choices"]
   R --> Q
-\`\`\`
+```
 
 Every cycle should produce an artifact that can be opened, played and judged. Put a reason, risk, acceptance criteria and review result on each Ticket. Prefer a **single playable tracer bullet** spanning content, chess state, UI and verification over separate unfinished subsystems.
 
