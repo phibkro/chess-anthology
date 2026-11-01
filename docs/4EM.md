@@ -38,7 +38,7 @@
 - **C2:** User agency, accessibility, and open export are design constraints.
 - **C3:** The project initially has limited people, budget, time and verified content.
 
-\`\`\`mermaid
+```mermaid
 flowchart TD
   G0["G0 Chess history & creativity worth exploring"]
   G1["G1 Excellent reader"]
@@ -59,7 +59,7 @@ flowchart TD
   G7 --> G1
   G7 --> G2
   G7 --> G5
-\`\`\`
+```
 
 ## 2. Business rules model (BR)
 
@@ -103,7 +103,7 @@ Key distinctions: **game ≠ composition**; **record ≠ interpretation**; **sou
 
 ## 4. Business process model (BP)
 
-\`\`\`mermaid
+```mermaid
 flowchart LR
   D["BP1 Discover"] --> S["BP2 Source & verify"]
   S --> A["BP3 Author / annotate"]
@@ -112,7 +112,7 @@ flowchart LR
   P --> F["BP6 Observe & learn"]
   F --> D
   F --> A
-\`\`\`
+```
 
 | Process | Input → outcome | Main responsibility |
 | --- | --- | --- |
