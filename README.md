@@ -68,3 +68,9 @@ The app uses Vite+ (Vite, Vitest, Oxfmt and Oxlint), React, Tailwind CSS, XState
 **Current limits:** standard chess; mainline playback; authored answers rather than engine grading; no automated evaluation or complete Réti solution proof. PGN side variations and comments are validated and preserved on export, but branching playback is not yet exposed. Local imports do not upload content. Importing a position does not invent a solution.
 
 **Software license:** new prototype code is GPL-3.0-or-later, compatible with Chessground and chessops. This does not relicense pre-existing project documents, historical sources, modern annotations or future album contents. See [third-party notices](THIRD-PARTY-NOTICES.md).
+
+### Lesson annotations and feedback
+
+[Version 1 of the lesson document](docs/lesson-format.md) combines PGN with ordered text and prompt events, appended after a ply index or legal move path. Unversioned checkpoint lessons still import. [Lichess source research](docs/research/lichess-lesson-formats.md) explains why we adapt Study/gamebook concepts instead of importing its application controller.
+
+A legal off-line try now stays on the board. Continuation pauses until the reader retries, reveals the idea or navigates away. The default feedback is “Try again.” More specific encouragement is authored for individual moves; the reader does not guess whether an idea is close to the solution.

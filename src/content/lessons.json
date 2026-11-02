@@ -15,26 +15,49 @@
       "title": "A quiet move, a composed surprise",
       "subtitle": "George Edward Carpenter · Dubuque Chess Journal, October 1873",
       "introduction": "Four pieces and a mate in two. Try the key, then follow the king’s reply. This lesson presents the intended solution.",
-      "checkpoints": [
+      "events": [
         {
+          "id": "prompt-1",
+          "type": "prompt",
+          "after": [],
           "prompt": "White to play. Find the quiet key to mate in two.",
           "hints": [
             "Begin without check. Restrict the king instead.",
             "Move the queen along its rank, toward the edge."
           ],
           "explanation": "Qh3 leaves just one legal reply: …Ke4. Then Rc4 is checkmate.",
-          "path": [],
-          "accepted": ["f3h3"]
+          "accepted": ["f3h3"],
+          "feedback": [
+            {
+              "move": "f3g3",
+              "message": "Good try! You have the right idea with a quiet queen move. Try another square on this rank."
+            }
+          ]
         },
         {
+          "id": "note-1",
+          "type": "text",
+          "after": 1,
+          "text": "The quiet key leaves the black king only one legal reply."
+        },
+        {
+          "id": "prompt-2",
+          "type": "prompt",
+          "after": ["f3h3", "d4e4"],
           "prompt": "The king has stepped to e4. Where is the mate?",
           "hints": ["Use the rook.", "The mating square is on the fourth rank."],
           "explanation": "Rc4# completes the arrangement. Queen and king cover the escape squares.",
-          "path": ["f3h3", "d4e4"],
           "accepted": ["c2c4"]
+        },
+        {
+          "id": "note-2",
+          "type": "text",
+          "after": 3,
+          "text": "The rook gives mate while the king and queen cover the escape squares."
         }
       ]
-    }
+    },
+    "formatVersion": 1
   },
   {
     "id": "reti",
@@ -52,19 +75,34 @@
       "title": "The shortest path is not a straight line",
       "subtitle": "Richard Réti · Deutschösterreichische Tages-Zeitung, 11 September 1921",
       "introduction": "The white king must reach the h-pawn or support its own pawn. Explore one published variation; this is not a complete solution tree.",
-      "checkpoints": [
+      "events": [
         {
+          "id": "prompt-1",
+          "type": "prompt",
+          "after": [],
           "prompt": "White to play and draw. Where should the king go first?",
           "hints": [
             "Keep both pawns within your plans.",
             "A diagonal route can approach two goals at once."
           ],
           "explanation": "Kg7 keeps both possibilities alive: catching the h-pawn or supporting the c-pawn.",
-          "path": [],
           "accepted": ["h8g7"]
+        },
+        {
+          "id": "note-1",
+          "type": "text",
+          "after": 1,
+          "text": "The diagonal route keeps two plans alive: catching one pawn or supporting the other."
+        },
+        {
+          "id": "note-2",
+          "type": "text",
+          "after": 5,
+          "text": "From e5, the king can turn toward either pawn. This variation turns toward c6."
         }
       ]
-    }
+    },
+    "formatVersion": 1
   },
   {
     "id": "opera",
@@ -81,15 +119,17 @@
       "title": "A night at the opera",
       "subtitle": "Paul Morphy — Duke Karl / Count Isouard · Paris, 1858",
       "introduction": "A consultation game, not a tournament round. Follow the attack, pause at two decisions, and compare material with piece activity.",
-      "checkpoints": [
+      "events": [
         {
-          "prompt": "How did Morphy open the next phase of the attack?",
-          "hints": [
-            "Look down the d-file.",
-            "Remove the knight on d7, even at the cost of a rook."
-          ],
-          "explanation": "Rxd7 removes the knight. After …Rxd7, the other rook enters the file.",
-          "path": [
+          "id": "note-1",
+          "type": "text",
+          "after": 12,
+          "text": "Morphy’s bishop and queen point toward f7. Compare their activity with the pieces still on their starting squares."
+        },
+        {
+          "id": "prompt-1",
+          "type": "prompt",
+          "after": [
             "e2e4",
             "e7e5",
             "g1f3",
@@ -115,16 +155,24 @@
             "e1a1",
             "a8d8"
           ],
+          "prompt": "How did Morphy open the next phase of the attack?",
+          "hints": [
+            "Look down the d-file.",
+            "Remove the knight on d7, even at the cost of a rook."
+          ],
+          "explanation": "Rxd7 removes the knight. After …Rxd7, the other rook enters the file.",
           "accepted": ["d1d7"]
         },
         {
-          "prompt": "Find Morphy’s forcing move.",
-          "hints": [
-            "Start with a check. Look past material value.",
-            "Offer the queen on the eighth rank to draw the knight away."
-          ],
-          "explanation": "Qb8+ draws the knight away from d7. After …Nxb8, Rd8 is mate.",
-          "path": [
+          "id": "note-2",
+          "type": "text",
+          "after": 26,
+          "text": "After the exchange on d7, follow the other rook along the d-file."
+        },
+        {
+          "id": "prompt-2",
+          "type": "prompt",
+          "after": [
             "e2e4",
             "e7e5",
             "g1f3",
@@ -156,10 +204,23 @@
             "b5d7",
             "f6d7"
           ],
+          "prompt": "Find Morphy’s forcing move.",
+          "hints": [
+            "Start with a check. Look past material value.",
+            "Offer the queen on the eighth rank to draw the knight away."
+          ],
+          "explanation": "Qb8+ draws the knight away from d7. After …Nxb8, Rd8 is mate.",
           "accepted": ["b3b8"]
+        },
+        {
+          "id": "note-3",
+          "type": "text",
+          "after": 33,
+          "text": "The surviving rook and bishop deliver the mate."
         }
       ]
-    }
+    },
+    "formatVersion": 1
   },
   {
     "id": "reti-tartakower",
@@ -176,15 +237,11 @@
       "title": "A queen offered, a game concluded",
       "subtitle": "Richard Réti — Savielly Tartakower · Vienna, 1910",
       "introduction": "A miniature preserved in contemporary newspaper reporting. The recorded score ends with resignation after 10.Bg5+; the king is not yet checkmated.",
-      "checkpoints": [
+      "events": [
         {
-          "prompt": "Réti has castled long. What forcing move did he find?",
-          "hints": [
-            "The king and queen share the d-file.",
-            "Offer the queen with check; then use the bishop to open the rook’s line."
-          ],
-          "explanation": "Qd8+ forces …Kxd8. Then Bg5+ uncovers the rook’s attack. Black resigned.",
-          "path": [
+          "id": "prompt-1",
+          "type": "prompt",
+          "after": [
             "e2e4",
             "c7c6",
             "d2d4",
@@ -202,9 +259,28 @@
             "e1a1",
             "f6e4"
           ],
+          "prompt": "Réti has castled long. What forcing move did he find?",
+          "hints": [
+            "The king and queen share the d-file.",
+            "Offer the queen with check; then use the bishop to open the rook’s line."
+          ],
+          "explanation": "Qd8+ forces …Kxd8. Then Bg5+ uncovers the rook’s attack. Black resigned.",
           "accepted": ["d3d8"]
+        },
+        {
+          "id": "note-1",
+          "type": "text",
+          "after": 17,
+          "text": "The queen offers itself with check. Look for a line the bishop can uncover."
+        },
+        {
+          "id": "note-2",
+          "type": "text",
+          "after": 19,
+          "text": "The recorded game stops at resignation. Mating continuations belong to analysis, not the played score."
         }
       ]
-    }
+    },
+    "formatVersion": 1
   }
 ]

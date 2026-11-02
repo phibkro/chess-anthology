@@ -10,8 +10,7 @@ import {
 } from "chessops/pgn";
 import { parseSan } from "chessops/san";
 import { makeUci, parseUci } from "chessops/util";
-import * as v from "valibot";
-import { LessonSchema, type Lesson } from "./schema";
+import { parseLesson, type Lesson, type LessonEvent } from "./schema";
 
 interface Frame {
   fen: string;
@@ -19,13 +18,18 @@ interface Frame {
   san: string;
   comment: string;
 }
+export interface CompiledEvent {
+  event: LessonEvent;
+  cursor: number;
+}
 export interface CompiledLesson {
   content: Lesson;
+  events: CompiledEvent[];
   frames: Frame[];
   game: Game<PgnNodeData>;
 }
 export const positionFromFen = (fen: string) => Chess.fromSetup(parseFen(fen).unwrap()).unwrap();
-export const pathKey = (path: string[]) => path.join(" ");
+const pathKey = (path: string[]) => path.join(" ");
 
 function checkTree(tree: Node<PgnNodeData>, position: Position): void {
   for (const child of tree.children) {
@@ -65,7 +69,7 @@ function readPgn(pgn: string): Game<PgnNodeData> {
 }
 
 export function compileLesson(input: unknown): CompiledLesson {
-  const content = v.parse(LessonSchema, input);
+  const content = parseLesson(input);
   const game = readPgn(content.artifact.pgn);
   const position = startingPosition(game.headers).unwrap();
   const frames: Frame[] = [
@@ -88,30 +92,58 @@ export function compileLesson(input: unknown): CompiledLesson {
       comment: data.comments?.join(" ") ?? "",
     });
   }
-  const anchors = new Set<string>();
-  for (const checkpoint of content.narrative.checkpoints) {
-    const key = pathKey(checkpoint.path);
-    const frame = frames.find((item) => pathKey(item.path) === key);
-    if (!frame || anchors.has(key))
-      throw new Error("Checkpoint anchor must uniquely identify a mainline position.");
-    anchors.add(key);
-    const pos = positionFromFen(frame.fen);
-    if (!checkpoint.hints.length || !checkpoint.accepted.length)
-      throw new Error("A checkpoint needs hints and accepted moves.");
-    for (const uci of checkpoint.accepted) {
-      const move = parseUci(uci);
-      if (!move || !pos.isLegal(move)) throw new Error(`Illegal checkpoint answer: ${uci}`);
+  const ids = new Set<string>();
+  const promptAnchors = new Set<number>();
+  const events = content.narrative.events.map((event): CompiledEvent => {
+    if (ids.has(event.id)) throw new Error(`Duplicate annotation ID: ${event.id}`);
+    ids.add(event.id);
+    const anchor = event.after;
+    const cursor =
+      typeof anchor === "number"
+        ? anchor
+        : frames.findIndex((frame) => pathKey(frame.path) === pathKey(anchor));
+    const frame = frames[cursor];
+    if (!frame) throw new Error(`Annotation anchor not found: ${event.id}`);
+    if (event.type === "prompt") {
+      if (promptAnchors.has(cursor)) throw new Error("Only one prompt may occupy an anchor.");
+      promptAnchors.add(cursor);
+      const pos = positionFromFen(frame.fen);
+      if (!event.hints.length || !event.accepted.length)
+        throw new Error("A prompt needs hints and accepted moves.");
+      for (const uci of event.accepted) {
+        const move = parseUci(uci);
+        if (!move || !pos.isLegal(move)) throw new Error(`Illegal prompt answer: ${uci}`);
+      }
+      const next = frames[cursor + 1];
+      if (!next || event.accepted.some((uci) => uci !== next.path[next.path.length - 1]))
+        throw new Error("Prototype prompts follow the recorded mainline.");
+      const feedbackMoves = new Set<string>();
+      for (const feedback of event.feedback) {
+        const move = parseUci(feedback.move);
+        if (
+          !move ||
+          !pos.isLegal(move) ||
+          event.accepted.includes(feedback.move) ||
+          feedbackMoves.has(feedback.move)
+        )
+          throw new Error(
+            "Move feedback must name a unique legal alternative at its prompt anchor.",
+          );
+        feedbackMoves.add(feedback.move);
+      }
     }
-    const next = frames[frames.indexOf(frame) + 1];
-    if (!next || checkpoint.accepted.some((uci) => uci !== next.path[next.path.length - 1]))
-      throw new Error("Prototype checkpoints follow the recorded mainline.");
-  }
-  return { content, frames, game };
+    return { event, cursor };
+  });
+  return { content, frames, game, events };
+}
+export function eventsAt(lesson: CompiledLesson, cursor: number): CompiledEvent[] {
+  return lesson.events.filter((item) => item.cursor === cursor);
 }
 
 export function importPgn(pgn: string): CompiledLesson {
   const game = readPgn(pgn);
   return compileLesson({
+    formatVersion: 1,
     id: "imported",
     artifact: {
       kind: "game",
@@ -127,7 +159,7 @@ export function importPgn(pgn: string): CompiledLesson {
       subtitle: `${game.headers.get("White") || "?"} — ${game.headers.get("Black") || "?"}`,
       introduction:
         "Explore the imported mainline. PGN variations and comments remain in the export. Review the normalized moves against your source before authoring a lesson.",
-      checkpoints: [],
+      events: [],
     },
   });
 }

@@ -66,3 +66,9 @@ A reader-facing account of one or more subjects and their context.
 
 **Research trail**:
 An unfinished line of inquiry presented with its evidence status and next research task.
+
+**Lesson annotation**:
+An authored text or interaction attached to a position reached in a work's move history. An annotation belongs to the interpretation rather than changing the source moves.
+
+**Try**:
+A reader's legal move outside the supported lesson line, kept visible for reflection and feedback. It is distinct from the recorded score and does not imply an objectively losing move.

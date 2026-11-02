@@ -1432,3 +1432,54 @@ html:has(dialog[open]) {
   cursor: pointer;
   color: var(--muted);
 }
+/* Tries remain visible. Feedback describes an idea without grading the reader. */
+.move-feedback {
+  color: var(--ink);
+}
+.move-feedback[data-tone="success"],
+.move-feedback[data-tone="encouraging"] {
+  color: #3d5a3c;
+}
+.try-panel {
+  margin-top: 20px;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  background: #eeebe2;
+}
+.try-panel h3 {
+  font-size: 21px;
+  margin: 0 0 15px;
+}
+.try-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.try-actions button {
+  border: 1px solid var(--line);
+  background: var(--paper);
+  padding: 9px 13px;
+  font-size: 11px;
+}
+.try-actions button:first-child {
+  background: var(--green);
+  color: var(--paper);
+  border-color: var(--green);
+}
+.position-note {
+  font:
+    14px/1.8 Georgia,
+    serif;
+  border-left: 2px solid #98a18b;
+  padding-left: 14px;
+  margin: 18px 0;
+}
+.move-list .score-note {
+  flex-basis: 100%;
+  padding: 9px 12px;
+  margin: 5px 0;
+  border-left: 1px solid var(--line);
+  font-size: 11px;
+  line-height: 1.8;
+  color: var(--muted);
+}

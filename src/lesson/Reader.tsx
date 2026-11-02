@@ -1,10 +1,10 @@
-import { useCallback, useState, useSyncExternalStore } from "react";
+import { Fragment, useCallback, useState, useSyncExternalStore } from "react";
 import { parseSan } from "chessops/san";
 import { makeUci } from "chessops/util";
 import { openingFor } from "./openings";
 import { Board } from "./Board";
 import { checkpointAt, createLessonStore } from "./store";
-import { exportPgn, positionFromFen, type CompiledLesson } from "./chess";
+import { eventsAt, exportPgn, positionFromFen, type CompiledLesson } from "./chess";
 
 function saveText(filename: string, text: string, type: string) {
   const url = URL.createObjectURL(new Blob([text], { type }));
@@ -13,6 +13,27 @@ function saveText(filename: string, text: string, type: string) {
   link.download = filename;
   link.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+function PositionNotes({
+  lesson,
+  cursor,
+  compact = false,
+}: {
+  lesson: CompiledLesson;
+  cursor: number;
+  compact?: boolean;
+}) {
+  return (
+    <>
+      {eventsAt(lesson, cursor).map(({ event }) =>
+        event.type === "text" ? (
+          <p key={event.id} className={compact ? "score-note" : "position-note"}>
+            {event.text}
+          </p>
+        ) : null,
+      )}
+    </>
+  );
 }
 export function Reader({ lesson }: { lesson: CompiledLesson }) {
   const [store] = useState(() => createLessonStore(lesson));
@@ -26,10 +47,13 @@ export function Reader({ lesson }: { lesson: CompiledLesson }) {
   const context = useSyncExternalStore(subscribe, () => store.getSnapshot().context);
   const [moveText, setMoveText] = useState("");
   const [promotion, setPromotion] = useState("q");
-  const { cursor, hints, feedback, revealed, practice, orientation } = context;
+  const { cursor, hints, feedback, revealed, practice, orientation, attempt, feedbackTone } =
+    context;
   const frame = lesson.frames[cursor];
   const checkpoint = checkpointAt(context);
-  const interactive = cursor < lesson.frames.length - 1;
+  const displayedFen = attempt?.fen ?? frame.fen;
+  const decisions = lesson.events.filter(({ event }) => event.type === "prompt");
+  const interactive = !attempt && cursor < lesson.frames.length - 1;
   const promptActive = Boolean(checkpoint && practice);
   const submit = useCallback(
     (text: string) => {
@@ -63,10 +87,11 @@ export function Reader({ lesson }: { lesson: CompiledLesson }) {
       <div className="lesson-layout">
         <div className="board-column">
           <Board
-            fen={frame.fen}
+            fen={displayedFen}
             orientation={orientation}
             interactive={interactive}
             attempt={context.attempts}
+            paused={Boolean(attempt)}
             promotion={promotion}
             onMove={submit}
           />
@@ -75,18 +100,24 @@ export function Reader({ lesson }: { lesson: CompiledLesson }) {
               ↺
             </button>
             <button
-              aria-label="Previous move"
-              disabled={cursor === 0}
+              aria-label={attempt ? "Undo try" : "Previous move"}
+              disabled={cursor === 0 && !attempt}
               onClick={() => store.trigger.previous()}
             >
               ←
             </button>
             <span>
-              {cursor === 0
-                ? "Starting position"
-                : `${Math.ceil(cursor / 2)}${cursor % 2 ? "." : "…"} ${frame.san}`}
+              {attempt
+                ? `Your try: ${attempt.san}`
+                : cursor === 0
+                  ? "Starting position"
+                  : `${Math.ceil(cursor / 2)}${cursor % 2 ? "." : "…"} ${frame.san}`}
             </span>
-            <button aria-label="Next move" disabled={finished} onClick={() => store.trigger.next()}>
+            <button
+              aria-label="Next move"
+              disabled={finished || Boolean(attempt)}
+              onClick={() => store.trigger.next()}
+            >
               →
             </button>
             <button aria-label="Flip board" onClick={() => store.trigger.flip()}>
@@ -163,6 +194,7 @@ export function Reader({ lesson }: { lesson: CompiledLesson }) {
           {lesson.content.artifact.stipulation && (
             <p className="stipulation">{lesson.content.artifact.stipulation}</p>
           )}
+          <PositionNotes lesson={lesson} cursor={cursor} />
           {promptActive ? (
             <section className="checkpoint">
               <p className="eyebrow">YOUR TURN</p>
@@ -181,7 +213,9 @@ export function Reader({ lesson }: { lesson: CompiledLesson }) {
                   Hint {hints}/{checkpoint?.hints.length}
                 </button>
                 <button onClick={() => store.trigger.reveal()}>Reveal</button>
-                <button onClick={() => store.trigger.next()}>Skip →</button>
+                <button disabled={Boolean(attempt)} onClick={() => store.trigger.next()}>
+                  Skip →
+                </button>
               </div>
               {revealed && (
                 <p className="revealed">
@@ -209,16 +243,30 @@ export function Reader({ lesson }: { lesson: CompiledLesson }) {
               </p>
             </section>
           )}
-          <p className="move-feedback" aria-live="polite">
+          {attempt && (
+            <section className="try-panel">
+              <h3>Your try: {attempt.san}</h3>
+              <div className="try-actions">
+                <button onClick={() => store.trigger.retry()}>Try again</button>
+                <button onClick={() => store.trigger.reveal()}>Reveal the idea</button>
+              </div>
+            </section>
+          )}
+          {revealed && !promptActive && (
+            <p className="revealed">
+              Recorded move: <strong>{lesson.frames[cursor + 1]?.san}</strong>
+            </p>
+          )}
+          <p className="move-feedback" data-tone={feedbackTone} aria-live="polite">
             {feedback}
           </p>
-          {lesson.content.narrative.checkpoints.length > 0 && (
+          {decisions.length > 0 && (
             <div className="checkpoint-jumps">
               <span>Decisions</span>
-              {lesson.content.narrative.checkpoints.map((point, index) => (
+              {decisions.map((point, index) => (
                 <button
-                  key={point.path.join(" ")}
-                  onClick={() => store.trigger.seek({ cursor: point.path.length })}
+                  key={point.event.id}
+                  onClick={() => store.trigger.seek({ cursor: point.cursor })}
                 >
                   {index + 1} ↗
                 </button>
@@ -234,16 +282,20 @@ export function Reader({ lesson }: { lesson: CompiledLesson }) {
               >
                 Start
               </button>
+              <PositionNotes lesson={lesson} cursor={0} compact />
               {lesson.frames.slice(1).map((item, index) => (
-                <button
-                  key={index}
-                  aria-current={cursor === index + 1 ? "step" : undefined}
-                  className={cursor === index + 1 ? "current" : ""}
-                  onClick={() => store.trigger.seek({ cursor: index + 1 })}
-                >
-                  {index % 2 === 0 && <small>{Math.floor(index / 2) + 1}.</small>}
-                  {item.san}
-                </button>
+                <Fragment key={item.path.join(" ")}>
+                  <button
+                    key={index}
+                    aria-current={cursor === index + 1 ? "step" : undefined}
+                    className={cursor === index + 1 ? "current" : ""}
+                    onClick={() => store.trigger.seek({ cursor: index + 1 })}
+                  >
+                    {index % 2 === 0 && <small>{Math.floor(index / 2) + 1}.</small>}
+                    {item.san}
+                  </button>
+                  <PositionNotes lesson={lesson} cursor={index + 1} compact />
+                </Fragment>
               ))}
             </div>
           </details>
@@ -272,7 +324,9 @@ export function Reader({ lesson }: { lesson: CompiledLesson }) {
               >
                 Lesson JSON ↓
               </button>
-              <button onClick={() => saveText(`${lesson.content.id}.fen`, frame.fen, "text/plain")}>
+              <button
+                onClick={() => saveText(`${lesson.content.id}.fen`, displayedFen, "text/plain")}
+              >
                 Position FEN ↓
               </button>
             </div>

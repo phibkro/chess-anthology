@@ -10,10 +10,19 @@ interface BoardProps {
   orientation: "white" | "black";
   interactive: boolean;
   attempt: number;
+  paused?: boolean;
   promotion: string;
   onMove: (uci: string) => void;
 }
-export function Board({ fen, orientation, interactive, attempt, promotion, onMove }: BoardProps) {
+export function Board({
+  fen,
+  orientation,
+  interactive,
+  attempt,
+  promotion,
+  onMove,
+  paused = false,
+}: BoardProps) {
   const element = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!element.current) return;
@@ -52,7 +61,7 @@ export function Board({ fen, orientation, interactive, attempt, promotion, onMov
         ref={element}
         className="cg-wrap"
         role="img"
-        aria-label={`Chess position. ${fen}. ${interactive ? "Drag a piece, or select it and its destination. Keyboard move entry is available below." : "End of the selected line."}`}
+        aria-label={`Chess position. ${fen}. ${paused ? "Your try is shown. Choose Try again or Reveal." : interactive ? "Drag a piece, or select it and its destination. Keyboard move entry is available below." : "End of the selected line."}`}
       />
     </div>
   );

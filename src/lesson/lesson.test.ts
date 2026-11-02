@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vite-plus/test";
-import { makeUci } from "chessops/util";
+import { makeUci, parseSquare } from "chessops/util";
 import { parseSan } from "chessops/san";
 import lessons from "../content/lessons.json";
-import { compileLesson, exportPgn, importPgn, importFen, positionFromFen } from "./chess";
+import { compileLesson, eventsAt, exportPgn, importPgn, importFen, positionFromFen } from "./chess";
 import { createLessonStore, checkpointAt } from "./store";
 
 const compiled = lessons.map(compileLesson);
@@ -61,7 +61,7 @@ describe("legal source scores and their narrative anchors", () => {
   });
   it("rejects a checkpoint anchored to a different position", () => {
     const invalid = structuredClone(carpenter.content);
-    invalid.narrative.checkpoints[0].path = ["a1a2"];
+    invalid.narrative.events[0].after = ["a1a2"];
     expect(() => compileLesson(invalid)).toThrow("anchor");
   });
   it("rejects text without a game or a position", () => {
@@ -78,13 +78,56 @@ describe("legal source scores and their narrative anchors", () => {
 });
 
 describe("lesson events", () => {
-  it("does not advance on illegal or off-line legal moves", () => {
+  it("keeps an off-line legal try on the board without changing the source score", () => {
+    const store = createLessonStore(carpenter);
+    const pgn = exportPgn(carpenter);
+    store.trigger.submit({ uci: "f3g3" });
+    const context = store.getSnapshot().context;
+    expect(context.cursor).toBe(0);
+    expect(context.attempt?.san).toBe("Qg3");
+    expect(positionFromFen(context.attempt!.fen).board.get(parseSquare("g3")!)?.role).toBe("queen");
+    expect(context.feedback).toContain("right idea");
+    expect(context.feedbackTone).toBe("encouraging");
+    expect(exportPgn(context.lesson)).toBe(pgn);
+  });
+  it("uses a neutral retry when no authored interpretation exists", () => {
     const store = createLessonStore(carpenter);
     store.trigger.submit({ uci: "f3f8" });
-    expect(store.getSnapshot().context.cursor).toBe(0);
+    expect(store.getSnapshot().context.attempt?.san).toBe("Qf8");
+    expect(store.getSnapshot().context.feedback).toBe("Try again.");
+    expect(store.getSnapshot().context.feedbackTone).toBe("neutral");
+  });
+  it("does not invent a continuation for a try and waits for explicit retry", () => {
+    const store = createLessonStore(carpenter);
+    store.trigger.hint();
     store.trigger.submit({ uci: "f3g3" });
+    const attempt = store.getSnapshot().context.attempt;
+    store.trigger.next();
+    store.trigger.submit({ uci: "d4e4" });
+    expect(store.getSnapshot().context.attempt).toEqual(attempt);
     expect(store.getSnapshot().context.cursor).toBe(0);
-    expect(store.getSnapshot().context.feedback).toContain("legal move");
+    store.trigger.retry();
+    expect(store.getSnapshot().context.attempt).toBeNull();
+    expect(store.getSnapshot().context.hints).toBe(1);
+    store.trigger.submit({ uci: "f3h3" });
+    expect(store.getSnapshot().context.cursor).toBe(1);
+  });
+  it("reveal and undo restore the anchor without corrupting the timeline", () => {
+    const store = createLessonStore(carpenter);
+    store.trigger.submit({ uci: "f3g3" });
+    store.trigger.reveal();
+    expect(store.getSnapshot().context.attempt).toBeNull();
+    expect(store.getSnapshot().context.revealed).toBe(true);
+    store.trigger.submit({ uci: "f3g3" });
+    store.trigger.previous();
+    expect(store.getSnapshot().context.cursor).toBe(0);
+    expect(store.getSnapshot().context.attempt).toBeNull();
+  });
+  it("handles illegal keyboard input constructively without applying it", () => {
+    const store = createLessonStore(carpenter);
+    store.trigger.submit({ uci: "f3c2" });
+    expect(store.getSnapshot().context.attempt).toBeNull();
+    expect(store.getSnapshot().context.feedback).toBe("Choose a legal move, then try again.");
   });
   it("supports progressive hints, reveal and the intended move", () => {
     const store = createLessonStore(carpenter);
@@ -144,5 +187,70 @@ describe("lesson events", () => {
     expect(positionFromFen(store.getSnapshot().context.lesson.frames[33].fen).isCheckmate()).toBe(
       true,
     );
+  });
+});
+
+describe("move-anchored lesson annotations", () => {
+  it("attaches ordered text after the indexed move, before the following move", () => {
+    expect(eventsAt(carpenter, 0).map(({ event }) => event.type)).toEqual(["prompt"]);
+    expect(eventsAt(carpenter, 1).map(({ event }) => event.type)).toEqual(["text"]);
+    const content = structuredClone(carpenter.content);
+    content.narrative.events.push(
+      { id: "note-a", type: "text", after: 1, text: "First additional note" },
+      { id: "note-b", type: "text", after: 1, text: "Second additional note" },
+    );
+    expect(
+      eventsAt(compileLesson(content), 1)
+        .slice(-2)
+        .map(({ event }) => event.id),
+    ).toEqual(["note-a", "note-b"]);
+  });
+  it("resolves a legal-move path to the same position as a ply index", () => {
+    const content = structuredClone(carpenter.content);
+    content.narrative.events.push({
+      id: "path-note",
+      type: "text",
+      after: ["f3h3"],
+      text: "After the key",
+    });
+    expect(eventsAt(compileLesson(content), 1).at(-1)?.event.id).toBe("path-note");
+  });
+  it("round-trips annotations and authored feedback through lesson JSON", () => {
+    const imported = compileLesson(JSON.parse(JSON.stringify(carpenter.content)));
+    expect(imported.content).toEqual(carpenter.content);
+    expect(imported.events).toEqual(carpenter.events);
+  });
+  it("migrates unversioned checkpoint lessons on import", () => {
+    const legacy = {
+      id: carpenter.content.id,
+      artifact: carpenter.content.artifact,
+      narrative: {
+        ...carpenter.content.narrative,
+        events: undefined,
+        checkpoints: carpenter.events
+          .filter(({ event }) => event.type === "prompt")
+          .map(({ event, cursor }) => ({ ...event, path: carpenter.frames[cursor].path })),
+      },
+    };
+    const imported = compileLesson(legacy);
+    expect(imported.content.formatVersion).toBe(1);
+    expect(imported.events.filter(({ event }) => event.type === "prompt")).toHaveLength(2);
+    expect("checkpoints" in imported.content.narrative).toBe(false);
+  });
+  it("rejects duplicate IDs, missing anchors, and unsupported format versions", () => {
+    const content = structuredClone(carpenter.content);
+    content.narrative.events.push({ ...content.narrative.events[0] });
+    expect(() => compileLesson(content)).toThrow("Duplicate annotation ID");
+    expect(() => compileLesson({ ...carpenter.content, formatVersion: 99 })).toThrow();
+    const missing = structuredClone(carpenter.content);
+    missing.narrative.events[0].after = 100;
+    expect(() => compileLesson(missing)).toThrow("anchor");
+  });
+  it("only attaches interpretation to explicitly authored legal alternatives", () => {
+    const invalid = structuredClone(carpenter.content);
+    const event = invalid.narrative.events.find((event) => event.type === "prompt");
+    if (!event || event.type !== "prompt") throw new Error("Missing prompt fixture");
+    event.feedback = [{ move: "f3c2", message: "Try a different idea" }];
+    expect(() => compileLesson(invalid)).toThrow("legal alternative");
   });
 });
