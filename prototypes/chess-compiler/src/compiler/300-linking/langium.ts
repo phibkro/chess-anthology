@@ -23,6 +23,7 @@ import type {
   CancellationToken,
 } from "vscode-languageserver";
 
+import type { Sources } from "../../contracts/index.js";
 import {
   ChessNarrativeGeneratedModule,
   ChessNarrativeGeneratedSharedModule,
@@ -46,7 +47,7 @@ import {
   positionData,
 } from "../400-chess-analysis/index.js";
 
-export type Sources = Map<string, string>;
+export type { Sources } from "../../contracts/index.js";
 export function relative(base: string, path: string) {
   // Invalid references remain unavailable values, rather than throwing during validation.
   try {

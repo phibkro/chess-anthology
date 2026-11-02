@@ -1,6 +1,6 @@
 import * as v from "valibot";
 
-import { ok, err, type Result } from "./index.js";
+import { ok, err, type Result } from "./core.js";
 const square = v.pipe(v.string(), v.regex(/^[a-h][1-8]$/));
 const uci = v.pipe(v.string(), v.regex(/^[a-h][1-8][a-h][1-8][qrbn]?$/));
 const frame = v.strictObject({

@@ -4,7 +4,7 @@ import {
   type Result,
   type DocumentData,
   type SceneData,
-} from "../../document/index.js";
+} from "../../contracts/index.js";
 import {
   isGame,
   isStory,

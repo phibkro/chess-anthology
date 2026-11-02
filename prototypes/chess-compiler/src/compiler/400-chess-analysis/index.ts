@@ -8,10 +8,13 @@ import {
   ok,
   err,
   type Result,
+  type GameHistory,
   type SceneData,
   type Issue,
-} from "../../document/index.js";
+} from "../../contracts/index.js";
 import { digest, freeze } from "../identity.js";
+
+export type { GameHistory } from "../../contracts/index.js";
 
 function replayRaw(source: string): Result<{
   frames: Position[];
@@ -129,14 +132,6 @@ export function positionData(position: Position) {
   return { fen: makeFen(position.toSetup()), legalMoves: legalMoves(position) };
 }
 
-export type GameHistory = {
-  readonly sourceDigest: string;
-  readonly frames: readonly {
-    readonly fen: string;
-    readonly san: string | null;
-    readonly uci: string | null;
-  }[];
-};
 export function createChessAnalysis() {
   const entries = new Map<
     string,

@@ -6,7 +6,7 @@
     },
     "prototypes/chess-compiler": {
       "entry": ["src/adapters/*.ts", "src/compiler/100-parsing/generated/*.ts"],
-      "project": ["src/**/*.ts"]
+      "project": ["src/**/*.ts", "evaluation/**/*.mts"]
     }
   }
 }

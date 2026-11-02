@@ -3,27 +3,17 @@ import { URI } from "langium";
 import {
   ok,
   err,
-  type ReadonlyDeep,
   type Result,
-} from "../../document/index.js";
+  type BuildSnapshot,
+  type BuildUpdate,
+} from "../../contracts/index.js";
 import { createWorkspace, type Sources } from "../300-linking/index.js";
-import {
-  createChessAnalysis,
-  type GameHistory,
-} from "../400-chess-analysis/index.js";
+import { createChessAnalysis } from "../400-chess-analysis/index.js";
 import { emitDocument, type EmittedDocument } from "../500-emission/index.js";
 import { freeze } from "../identity.js";
 
-/** An immutable revision of emitted documents and replayed game histories. */
-export type BuildSnapshot = {
-  readonly revision: number;
-  readonly parentRevision: number | null;
-  readonly output: readonly ReadonlyDeep<EmittedDocument>[];
-  readonly games: readonly {
-    readonly uri: string;
-    readonly result: Result<GameHistory>;
-  }[];
-};
+export type { BuildSnapshot } from "../../contracts/index.js";
+
 /**
  * Create an incremental compiler whose updates preserve earlier snapshots.
  * @returns A compiler accepting complete source maps, with expected failures returned as values.
@@ -40,12 +30,9 @@ export function createCompiler() {
   });
   let busy = false;
   let failed = false;
-  async function update(sources: ReadonlyMap<string, string>): Promise<
-    Result<{
-      snapshot: BuildSnapshot;
-      work: { parsed: number; replayed: number; emitted: number };
-    }>
-  > {
+  async function update(
+    sources: ReadonlyMap<string, string>
+  ): Promise<Result<BuildUpdate>> {
     if (failed)
       return err(
         "infrastructure",

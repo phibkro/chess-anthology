@@ -7,7 +7,7 @@ import {
   type ReadonlyDeep,
   type DocumentData,
   type Result,
-} from "../../document/index.js";
+} from "../../contracts/index.js";
 import { parseText } from "../100-parsing/index.js";
 import { lower } from "../200-semantic-analysis/index.js";
 import { digest } from "../identity.js";

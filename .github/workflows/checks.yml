@@ -22,3 +22,42 @@ jobs:
       - run: pnpm check:all
       - run: pnpm check:secrets
       - run: pnpm commitlint --last
+  compiler-benchmark:
+    if: github.event_name == 'pull_request'
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+      - name: Install pinned pnpm
+        run: npm install --global pnpm@12.16.1
+      - name: Prepare base compiler with the same evaluation harness
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          git worktree add --detach "$RUNNER_TEMP/chess-compiler-base" "$BASE_SHA"
+          cp -R prototypes/chess-compiler/evaluation "$RUNNER_TEMP/chess-compiler-base/prototypes/chess-compiler/"
+          pnpm --dir prototypes/chess-compiler install --frozen-lockfile
+          pnpm --dir "$RUNNER_TEMP/chess-compiler-base/prototypes/chess-compiler" install --frozen-lockfile
+      - name: Evaluate and benchmark both revisions
+        env:
+          CHESS_BENCH_ITERATIONS: 7
+          CHESS_BENCH_WARMUPS: 2
+          CHESS_BENCH_SIZES: 1,10,100
+        run: |
+          mkdir -p report/compiler
+          (cd "$RUNNER_TEMP/chess-compiler-base/prototypes/chess-compiler" && node --import tsx evaluation/benchmark.mts) > report/compiler/base.json
+          (cd prototypes/chess-compiler && node --import tsx evaluation/benchmark.mts) > report/compiler/current.json
+          (cd prototypes/chess-compiler && node --import tsx evaluation/evaluate.mts) > report/compiler/evaluation.json
+          python3 prototypes/chess-compiler/evaluation/compare.py report/compiler/base.json report/compiler/current.json >> "$GITHUB_STEP_SUMMARY"
+      - name: Preserve raw compiler evaluation reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: compiler-evaluations
+          path: report/compiler/*.json
+          if-no-files-found: warn

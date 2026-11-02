@@ -1,0 +1,18 @@
+module evaluation;
+export game opening from "./opening.pgn";
+export game study from "./composition.pgn";
+export game historical from "./reti.pgn";
+story contexts {
+  board first game opening after 1 {
+    text "A central pawn move.";
+    arrow "e2" -> "e4" green;
+    prompt "Black answers in the centre." answer "e5";
+  }
+  board composed game study after 0 {
+    text "A composed king and pawn study position.";
+    prompt "Bring the king closer." answer "Kg7";
+  }
+  board played game historical after 16 {
+    prompt "The queen offer." answer "Qd8+";
+  }
+}

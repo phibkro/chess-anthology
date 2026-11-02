@@ -16,7 +16,7 @@ import {
   printStructured,
   selectPosition,
 } from "./compiler/index.js";
-import { parseStructured, type Result } from "./document/index.js";
+import { parseStructured, type Result } from "./contracts/index.js";
 function value<T>(result: Result<T>): T {
   if (!result.ok) assert.fail(JSON.stringify(result.error));
   return result.value;
@@ -281,9 +281,15 @@ void test("module interfaces: production consumers cannot deep-import other phas
         /\b(?:import|export)\s+(?:type\s+)?(?:[^"';]*?\s+from\s*)?["']([^"']+)["']/g
       ),
     ].map((match) => match[1]);
-    if (owner.startsWith("document/"))
+    if (owner.startsWith("contracts/"))
       assert.ok(
-        imports.every((i) => !i.includes("compiler") && !i.includes("langium"))
+        imports.every(
+          (i) =>
+            !i.includes("compiler") &&
+            !i.includes("langium") &&
+            !i.includes("chessops") &&
+            !i.startsWith("node:")
+        )
       );
     for (const specifier of imports.filter((i) => i.startsWith("."))) {
       const target = relative(root, resolve(dirname(file), specifier))

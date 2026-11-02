@@ -2,7 +2,7 @@ import { readdir, readFile } from "node:fs/promises";
 import { resolve, join } from "node:path";
 import { pathToFileURL } from "node:url";
 
-import { ok, err, type Result } from "../document/index.js";
+import { ok, err, type Result } from "../contracts/index.js";
 export async function loadDirectory(
   directory: string
 ): Promise<Result<Map<string, string>>> {

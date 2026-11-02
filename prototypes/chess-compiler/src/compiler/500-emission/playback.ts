@@ -1,10 +1,15 @@
-import { ok, err, type Result } from "../../document/index.js";
+import {
+  ok,
+  err,
+  type Result,
+  type BuildSnapshot,
+} from "../../contracts/index.js";
 import {
   parsePlaybackPlan,
   type PlaybackPlan,
-} from "../../document/playback.js";
-import type { BuildSnapshot } from "../600-build/index.js";
+} from "../../contracts/playback.js";
 import { freeze } from "../identity.js";
+
 // This target supports a recorded mainline, with optional prompts and supplementary arrows.
 export function createPlaybackPlan(
   snapshot: BuildSnapshot,

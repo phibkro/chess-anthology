@@ -20,7 +20,7 @@
     "setup:secrets": "node scripts/install-gitleaks.mjs",
     "commitlint": "commitlint",
     "index:albums": "node scripts/index-albums.mjs",
-    "check:compiler": "pnpm --dir prototypes/chess-compiler check && pnpm --dir prototypes/chess-compiler test",
+    "check:compiler": "pnpm --dir prototypes/chess-compiler check && pnpm --dir prototypes/chess-compiler test && pnpm --dir prototypes/chess-compiler run eval",
     "compile:stories": "node --import tsx scripts/compile-stories.mts",
     "predev": "pnpm compile:stories"
   },

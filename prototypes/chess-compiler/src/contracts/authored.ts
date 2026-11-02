@@ -1,5 +1,8 @@
 // PROTOTYPE: plain authored data, independent of Langium's object graph.
 import * as v from "valibot";
+
+import { ok } from "./core.js";
+import type { Result } from "./core.js";
 const reserved = [
   "module",
   "import",
@@ -66,39 +69,6 @@ const ModuleSchema = v.strictObject({
 });
 export type DocumentData = v.InferOutput<typeof ModuleSchema>;
 export type SceneData = DocumentData["stories"][number]["scenes"][number];
-export type Issue = {
-  code: string;
-  message: string;
-  path: (string | number)[];
-};
-export type ReadonlyDeep<T> = T extends object
-  ? { readonly [K in keyof T]: ReadonlyDeep<T[K]> }
-  : T;
-export type Failure = {
-  kind:
-    | "syntax"
-    | "schema"
-    | "io"
-    | "chess"
-    | "integrity"
-    | "selection"
-    | "infrastructure";
-  code: string;
-  message: string;
-  paths?: readonly string[];
-};
-export type Result<T, E = Failure> =
-  | { readonly ok: true; readonly value: T }
-  | { readonly ok: false; readonly error: E };
-export const ok = <T>(value: T): Result<T> => ({ ok: true, value });
-export const err = (
-  kind: Failure["kind"],
-  code: string,
-  message: string
-): Result<never> => ({
-  ok: false,
-  error: { kind, code, message },
-});
 export function parseStructured(input: unknown): Result<DocumentData> {
   const parsed = v.safeParse(ModuleSchema, input);
   return parsed.success

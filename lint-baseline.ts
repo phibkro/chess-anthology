@@ -206,7 +206,7 @@ export default [
     },
   },
   {
-    files: ["prototypes/chess-compiler/src/document/index.ts"],
+    files: ["prototypes/chess-compiler/src/contracts/authored.ts"],
     rules: {
       "anti-slop/no-unknown-parameters": "off",
       "func-style": "off",
@@ -219,7 +219,7 @@ export default [
     },
   },
   {
-    files: ["prototypes/chess-compiler/src/document/playback.ts"],
+    files: ["prototypes/chess-compiler/src/contracts/playback.ts"],
     rules: {
       "anti-slop/no-unknown-parameters": "off",
       "func-style": "off",

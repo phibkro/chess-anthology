@@ -1,6 +1,6 @@
 # Internal modules and compiler phases
 
-These are internal modules with explicit interfaces, not a collection of new packages or network services. The existing isolated compiler experiment remains on `prototype/langium-chess-compiler` until it is integrated into the reader. Names indicate ownership; implementation files are not public interfaces.
+These are internal modules with explicit interfaces, not a collection of new packages or network services. The compiler remains an isolated prototype package, now consumed by the story reader through its public entrypoints. Names indicate ownership; implementation files are not public interfaces.
 
 | Module | Interface / current location | Owns | Must not own |
 | --- | --- | --- | --- |
@@ -9,7 +9,7 @@ These are internal modules with explicit interfaces, not a collection of new pac
 | Reader document/notation | Internal `schema.ts`, `chess.ts` | Current version-1 lesson validation and recorded notation | UI layout or reader tries |
 | Player | Internal `store.ts` | Session commands, cursor, hints, tries and reveal | Rewriting recorded games or authored content |
 | Board presentation | Internal `Board.tsx` | Chessground adaptation and pointer interaction | Deciding whether an authored answer is supported |
-| Compiler document | Prototype `src/document/index.ts` | Plain authored values, structural schema, result/error types | Langium, React, filesystem or chess-engine objects |
+| Compiler contracts | Prototype `src/contracts/index.ts` | Explicit authored, history, emission and build IRs; structural schemas and result/error types | Langium, React, filesystem or chess-engine objects |
 | Compiler | Prototype `src/compiler/index.ts` | Compiler operations and immutable build snapshots | Reader session state or credentials |
 | Source/CLI adapters | Prototype `src/adapters/` | Explicit file reads and command output | Independent semantic rules |
 | Language-server adapter | Prototype `src/compiler/lsp.ts` | Mapping editor document lifecycle to compiler checks | A competing authored model |
@@ -64,3 +64,7 @@ This still does not establish a complete isomorphic editing codec. Source-preser
 ## First product consumer
 
 The compiler branch now exports a playback-plan target and a separate browser-safe plan schema. Build tooling imports the compiler package by name; `src/story` imports only its playback contract and consumes generated JSON. Reader session state and tries remain outside the compiler. The [integration experiment](docs/experiments/004-compiler-reader.md) records the target's supported capabilities and verification limits.
+
+## Data contracts and executable specifications
+
+Shared IRs live in `src/contracts` inside the compiler package; procedural phases consume and implement those declared contracts. Generated syntax types remain owned by `100-parsing/contract.ts`. [Compiler evaluations](docs/compiler-evaluations.md) maps each contract to its invariants, corpus evaluations, work budgets and performance measurements. A contract defines a seam; a specification describes the broader intended behavior; an IR is a representation crossing that seam.

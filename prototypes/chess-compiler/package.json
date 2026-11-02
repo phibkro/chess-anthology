@@ -5,7 +5,7 @@
   "type": "module",
   "exports": {
     ".": "./src/compiler/index.ts",
-    "./playback": "./src/document/playback.ts"
+    "./playback": "./src/contracts/playback.ts"
   },
   "scripts": {
     "generate": "langium generate",
@@ -13,7 +13,9 @@
     "lsp": "node --import tsx src/adapters/lsp.ts --stdio",
     "check": "tsc --noEmit",
     "compile": "node --import tsx src/adapters/cli.ts",
-    "test": "node --import tsx --test src/seams.test.ts"
+    "test": "node --import tsx --test src/seams.test.ts",
+    "eval": "node --import tsx evaluation/evaluate.mts",
+    "bench": "node --import tsx evaluation/benchmark.mts"
   },
   "dependencies": {
     "chessops": "0.15.1",

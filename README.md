@@ -23,7 +23,7 @@ Both products can eventually share a playable reader, portable narratives, and a
 - **Agents as librarians, not authorities:** Research/import assistance is optional, inspectable, and subject to factual and chess verification.
 - **Build the tool before the business:** Do not introduce monetization or platform-growth obligations ahead of usefulness and quality.
 
-Tooling presets, migration exceptions, and the gdp-ts evaluation are recorded in [Tooling](docs/tooling.md).
+Tooling presets, migration exceptions, and the gdp-ts evaluation are recorded in [Tooling](docs/tooling.md). Compiler seam contracts and benchmark commands are in [Compiler evaluations](docs/compiler-evaluations.md).
 
 ## Start here
 

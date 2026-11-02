@@ -12,7 +12,7 @@ import {
 } from "./generated/module.js";
 import { jsonParserModule } from "./json-string.js";
 export { jsonParserModule } from "./json-string.js";
-import { ok, err, type Result } from "../../document/index.js";
+import { ok, err, type Result } from "../../contracts/index.js";
 export {
   isModule,
   isGame,
@@ -20,9 +20,6 @@ export {
   isScene,
   isText,
   isArrow,
-  type Module,
-  type Scene,
-  type ChessNarrativeAstType,
 } from "./generated/ast.js";
 const shared = inject(
   createDefaultSharedCoreModule(EmptyFileSystem),
@@ -59,3 +56,5 @@ export {
   ChessNarrativeGeneratedModule,
   ChessNarrativeGeneratedSharedModule,
 } from "./generated/module.js";
+
+export type { Module, Scene, ChessNarrativeAstType } from "./contract.js";
