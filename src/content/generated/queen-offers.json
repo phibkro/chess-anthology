@@ -1,13 +1,9 @@
 {
   "format": "chess-playback-plan",
-  "version": 1,
   "id": "queenOffers/matingNets",
   "scenes": [
     {
-      "id": "operaFinish",
-      "game": "opera",
       "after": 30,
-      "sourceDigest": "5d2a309aa43c42d20ada80a02be46a70cb45d29bbb28bdccdb52b06504479716",
       "frames": [
         {
           "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
@@ -180,30 +176,30 @@
           "uci": "d1d8"
         }
       ],
+      "game": "opera",
+      "id": "operaFinish",
       "notes": [
         {
-          "type": "text",
-          "text": "The queen opens a path to the back rank."
+          "text": "The queen opens a path to the back rank.",
+          "type": "text"
         },
         {
-          "type": "arrow",
+          "color": "green",
           "from": "b3",
           "to": "b8",
-          "color": "green"
+          "type": "arrow"
         },
         {
-          "type": "prompt",
-          "text": "Find the forcing move.",
           "answer": "Qb8+",
-          "answerUci": "b3b8"
+          "answerUci": "b3b8",
+          "text": "Find the forcing move.",
+          "type": "prompt"
         }
-      ]
+      ],
+      "sourceDigest": "5d2a309aa43c42d20ada80a02be46a70cb45d29bbb28bdccdb52b06504479716"
     },
     {
-      "id": "retiFinish",
-      "game": "reti",
       "after": 16,
-      "sourceDigest": "3e06d974c7abc3dafb02efe5365248aa02105737b6371a6341b54e92ee1824d8",
       "frames": [
         {
           "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
@@ -306,18 +302,22 @@
           "uci": "d2g5"
         }
       ],
+      "game": "reti",
+      "id": "retiFinish",
       "notes": [
         {
-          "type": "text",
-          "text": "Compare the queen offer with a discovered attack."
+          "text": "Compare the queen offer with a discovered attack.",
+          "type": "text"
         },
         {
-          "type": "prompt",
-          "text": "Offer the queen.",
           "answer": "Qd8+",
-          "answerUci": "d3d8"
+          "answerUci": "d3d8",
+          "text": "Offer the queen.",
+          "type": "prompt"
         }
-      ]
+      ],
+      "sourceDigest": "3e06d974c7abc3dafb02efe5365248aa02105737b6371a6341b54e92ee1824d8"
     }
-  ]
+  ],
+  "version": 1
 }

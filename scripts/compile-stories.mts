@@ -1,17 +1,27 @@
-import { readdir, readFile, writeFile } from "node:fs/promises";
-
 import { compile, createPlaybackPlan } from "chess-compiler-prototype";
+
 const directory = new URL(
   "../prototypes/chess-compiler/examples/",
   import.meta.url
 );
 const sources = new Map(
   await Promise.all(
-    (await readdir(directory))
-      .filter((name) => /\.(pgn|chess-story)$/.test(name))
+    [
+      ...new Bun.Glob("*").scanSync({
+        cwd: Bun.fileURLToPath(directory),
+        dot: true,
+        onlyFiles: true,
+      }),
+    ]
+      .filter((name) => /\.(?<capture1>pgn|chess-story)$/u.test(name))
       .map(async (name) => {
         const uri = new URL(name, directory);
-        return [uri.href, await readFile(uri, "utf8")] as const;
+        return [
+          uri.href,
+          new TextDecoder("utf-8", { ignoreBOM: true }).decode(
+            await Bun.file(uri).arrayBuffer()
+          ),
+        ] as const;
       })
   )
 );
@@ -29,9 +39,9 @@ if (!plan.ok) {
   console.error(plan.error);
   process.exit(1);
 }
-await writeFile(
+await Bun.write(
   new URL("../src/content/generated/queen-offers.json", import.meta.url),
-  JSON.stringify(plan.value, null, 2) + "\n"
+  `${JSON.stringify(plan.value, null, 2)}\n`
 );
 console.log(
   `Compiled ${plan.value.scenes.length} board occurrences from the narrative package.`

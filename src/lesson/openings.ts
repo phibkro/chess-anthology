@@ -1,12 +1,18 @@
 import data from "../content/openings.json";
-import { importPgn, type CompiledLesson } from "./chess";
+import { importPgn } from "./chess";
+import type { CompiledLesson } from "./chess";
 
 const openings = data.map((item) => ({
   ...item,
   path: importPgn(item.pgn).frames.at(-1)?.path ?? [],
 }));
-export function openingFor(lesson: CompiledLesson) {
-  return openings.find(
+/**
+ * Find the longest available opening prefix matching the recorded lesson.
+ * @param lesson - The compiled lesson being viewed.
+ * @returns The matching opening, when available.
+ */
+export const openingFor = (lesson: CompiledLesson) =>
+  openings.find(
     (opening) =>
       opening.path.length > 0 &&
       opening.path.every(
@@ -14,4 +20,3 @@ export function openingFor(lesson: CompiledLesson) {
           lesson.frames[opening.path.length]?.path[index] === move
       )
   );
-}

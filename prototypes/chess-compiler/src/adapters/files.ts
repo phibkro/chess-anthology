@@ -1,29 +1,36 @@
-import { readdir, readFile } from "node:fs/promises";
-import { resolve, join } from "node:path";
-import { pathToFileURL } from "node:url";
-
-import { ok, err, type Result } from "../contracts/index.js";
-export async function loadDirectory(
+import { ok, err } from "../contracts/index.js";
+import type { Result } from "../contracts/index.js";
+import { readSourceText } from "../runtime/source-text.js";
+/**
+ * Acquire narrative and PGN files from one source directory using Bun.
+ * @param directory - The directory to read.
+ * @returns Acquired source text or an IO failure.
+ */
+export const loadDirectory = async (
   directory: string
-): Promise<Result<Map<string, string>>> {
+): Promise<Result<Map<string, string>>> => {
   try {
-    const root = resolve(directory);
+    const root = Bun.pathToFileURL(
+      directory.endsWith("/") ? directory : `${directory}/`
+    );
+    const files = [
+      ...new Bun.Glob("*.{chess-story,pgn}").scanSync({
+        cwd: Bun.fileURLToPath(root),
+        dot: true,
+        onlyFiles: true,
+      }),
+    ];
     return ok(
       new Map(
         await Promise.all(
-          (await readdir(root))
-            .filter((name) => /\.(chess-story|pgn)$/.test(name))
-            .map(
-              async (name) =>
-                [
-                  pathToFileURL(join(root, name)).href,
-                  await readFile(join(root, name), "utf8"),
-                ] as const
-            )
+          files.map(async (name) => {
+            const uri = Bun.pathToFileURL(Bun.fileURLToPath(root) + name);
+            return [uri.href, await readSourceText(uri)] as const;
+          })
         )
       )
     );
   } catch (error) {
     return err("io", "source/read-failed", String(error));
   }
-}
+};

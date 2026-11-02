@@ -1,5 +1,6 @@
 import { compile } from "../compiler/index.js";
 import { loadDirectory } from "./files.js";
+
 const loaded = await loadDirectory(process.argv[2] ?? "examples");
 if (!loaded.ok) {
   console.error(loaded.error);

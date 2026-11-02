@@ -6,7 +6,7 @@
     "strict": true,
     "skipLibCheck": true,
     "noEmit": true,
-    "types": ["node"],
+    "types": ["bun"],
     "resolveJsonModule": true
   },
   "include": ["src", "evaluation/**/*.mts"]

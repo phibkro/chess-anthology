@@ -1,23 +1,42 @@
-// PROTOTYPE Node adapter. Narrative files are managed by Langium's workspace.
-import { readFileSync } from "node:fs";
-
+// The library's stdio transport uses Bun's Node compatibility internally;
+// authored acquisition and filesystem code use Bun APIs.
+import { DocumentState } from "langium";
 import { startLanguageServer } from "langium/lsp";
-import { NodeFileSystem } from "langium/node";
 import { createConnection, ProposedFeatures } from "vscode-languageserver/node";
 
-import { createServices } from "./300-linking/index.js";
-class FileSources extends Map<string, string> {
-  override get(uri: string) {
-    try {
-      return readFileSync(new URL(uri), "utf8");
-    } catch {
-      return undefined;
-    }
-  }
-}
+import { createBunFileSystem } from "../runtime/filesystem.js";
+import { readSourceText } from "../runtime/source-text.js";
+import { isModule, isGame } from "./100-parsing/index.js";
+import { createServices, relative } from "./300-linking/index.js";
+
+const sources = new Map<string, string>();
 const connection = createConnection(ProposedFeatures.all);
-const { shared } = createServices(new FileSources(), {
-  ...NodeFileSystem,
+const { shared } = createServices(sources, {
   connection,
+  fileSystemProvider: () => createBunFileSystem(sources),
 });
+shared.workspace.DocumentBuilder.onDocumentPhase(
+  DocumentState.Parsed,
+  async (document) => {
+    const root = document.parseResult.value;
+    sources.set(document.uri.toString(), document.textDocument.getText());
+    if (!isModule(root)) {
+      return;
+    }
+    const paths = [
+      ...root.imports.map((item) => item.path),
+      ...root.declarations.filter(isGame).map((game) => game.path),
+    ];
+    await Promise.all(
+      paths.map(async (path) => {
+        const uri = relative(document.uri.toString(), path);
+        try {
+          sources.set(uri, await readSourceText(new URL(uri)));
+        } catch {
+          sources.delete(uri);
+        }
+      })
+    );
+  }
+);
 startLanguageServer(shared);

@@ -1,63 +1,75 @@
-import { normalizeMove, type Position } from "chessops/chess";
+import { normalizeMove } from "chessops/chess";
+import type { Position } from "chessops/chess";
 import { makeFen } from "chessops/fen";
 import { parsePgn, startingPosition } from "chessops/pgn";
 import { parseSan, makeSan } from "chessops/san";
 import { makeUci, parseSquare } from "chessops/util";
 
-import {
-  ok,
-  err,
-  type Result,
-  type GameHistory,
-  type SceneData,
-  type Issue,
+import { ok, err } from "../../contracts/index.js";
+import type {
+  Result,
+  GameHistory,
+  SceneData,
+  Issue,
 } from "../../contracts/index.js";
 import { digest, freeze } from "../identity.js";
 
 export type { GameHistory } from "../../contracts/index.js";
 
-function replayRaw(source: string): Result<{
+const replayRaw = (
+  source: string
+): Result<{
   frames: Position[];
   moves: { san: string | null; uci: string | null }[];
-}> {
+}> => {
   const games = parsePgn(source);
-  if (games.length !== 1)
+  if (games.length !== 1) {
     return err("chess", "chess/game-count", "Select exactly one PGN game.");
+  }
   const start = startingPosition(games[0].headers);
-  if (start.isErr)
+  if (start.isErr) {
     return err("chess", "chess/invalid-position", "Invalid initial position.");
+  }
   const position = start.value;
-  if (position.rules !== "chess")
+  if (position.rules !== "chess") {
     return err(
       "chess",
       "chess/unsupported-rules",
       "This prototype supports standard chess and Chess960 only."
     );
+  }
   const frames = [position.clone()];
   const moves: { san: string | null; uci: string | null }[] = [
     { san: null, uci: null },
   ];
   // Validate every parsed branch even though this experiment only exposes mainline anchors.
-  function validateTree(
+  const validateTree = (
     node: (typeof games)[number]["moves"],
     pos: Position
-  ): string | undefined {
+  ): string | undefined => {
     for (const child of node.children) {
       const move = parseSan(pos, child.data.san);
-      if (!move || !pos.isLegal(move))
+      if (!move || !pos.isLegal(move)) {
         return `Illegal recorded move: ${child.data.san}`;
+      }
       const next = pos.clone();
       next.play(move);
       const error = validateTree(child, next);
-      if (error) return error;
+      if (error !== undefined) {
+        return error;
+      }
     }
-  }
+    return undefined;
+  };
   const issue = validateTree(games[0].moves, position);
-  if (issue) return err("chess", "chess/illegal-move", issue);
+  if (issue !== undefined) {
+    return err("chess", "chess/illegal-move", issue);
+  }
   for (const node of games[0].moves.mainline()) {
     const move = parseSan(position, node.san);
-    if (!move)
+    if (!move) {
       return err("chess", "chess/illegal-move", `Illegal move: ${node.san}`);
+    }
     moves.push({
       san: makeSan(position, move),
       uci: makeUci(normalizeMove(position, move)),
@@ -66,9 +78,9 @@ function replayRaw(source: string): Result<{
     frames.push(position.clone());
   }
   return ok({ frames, moves });
-}
-function legalMoves(position: Position) {
-  return [...position.allDests()].flatMap(([from, dests]) =>
+};
+const legalMoves = (position: Position) =>
+  [...position.allDests()].flatMap(([from, dests]) =>
     [...dests].flatMap((to) => {
       const role = position.board.get(from)?.role;
       const promotions =
@@ -76,15 +88,20 @@ function legalMoves(position: Position) {
           ? (["queen", "rook", "bishop", "knight"] as const)
           : [undefined];
       return promotions.map((promotion) => {
-        const move = { from, to, promotion };
+        const move = { from, promotion, to };
         return { san: makeSan(position, move), uci: makeUci(move) };
       });
     })
   );
-}
-export function analyzeScene(scene: SceneData, frames: Position[]): Issue[] {
-  const position = frames[scene.ply];
-  if (!position)
+/**
+ * Check a linked occurrence and its annotations against recorded positions.
+ * @param scene - The authored board occurrence.
+ * @param frames - Recorded positions indexed by half-move.
+ * @returns Check a linked occurrence and its annotations against recorded positions.
+ */
+export const analyzeScene = (scene: SceneData, frames: Position[]): Issue[] => {
+  const position = scene.ply >= 0 ? frames.at(scene.ply) : undefined;
+  if (!position) {
     return [
       {
         code: "chess/missing-position",
@@ -92,10 +109,11 @@ export function analyzeScene(scene: SceneData, frames: Position[]): Issue[] {
         path: ["ply"],
       },
     ];
+  }
   return scene.notes.flatMap((note, i) => {
     if (note.type === "prompt") {
       const move = parseSan(position, note.answer);
-      if (!move || !position.isLegal(move))
+      if (!move || !position.isLegal(move)) {
         return [
           {
             code: "chess/illegal-answer",
@@ -103,12 +121,13 @@ export function analyzeScene(scene: SceneData, frames: Position[]): Issue[] {
             path: ["notes", i, "answer"],
           },
         ];
+      }
     }
     if (note.type === "arrow") {
       if (
         parseSquare(note.from) === undefined ||
         parseSquare(note.to) === undefined
-      )
+      ) {
         return [
           {
             code: "annotation/invalid-square",
@@ -116,7 +135,8 @@ export function analyzeScene(scene: SceneData, frames: Position[]): Issue[] {
             path: ["notes", i, "from"],
           },
         ];
-      if (!["green", "red", "blue", "yellow"].includes(note.color))
+      }
+      if (!["green", "red", "blue", "yellow"].includes(note.color)) {
         return [
           {
             code: "annotation/unsupported-color",
@@ -124,25 +144,38 @@ export function analyzeScene(scene: SceneData, frames: Position[]): Issue[] {
             path: ["notes", i, "color"],
           },
         ];
+      }
     }
     return [];
   });
-}
-export function positionData(position: Position) {
-  return { fen: makeFen(position.toSetup()), legalMoves: legalMoves(position) };
-}
+};
+/**
+ * Project an engine position into FEN and legal move values.
+ * @param position - The position used by this operation.
+ * @returns Project an engine position into FEN and legal move values.
+ */
+export const positionData = (position: Position) => ({
+  fen: makeFen(position.toSetup()),
+  legalMoves: legalMoves(position),
+});
 
-export function createChessAnalysis() {
+/**
+ * Create shared content-addressed replay analysis for one compiler instance.
+ * @returns Create shared content-addressed replay analysis for one compiler instance.
+ */
+export const createChessAnalysis = () => {
   const entries = new Map<
     string,
     Result<{ frames: Position[]; history: GameHistory }>
   >();
   let replayCount = 0;
-  function replay(source: string) {
-    const key = digest("chessops-0.15.1:standard-v1:" + source);
+  const replay = (source: string) => {
+    const key = digest(`chessops-0.15.1:standard-v1:${source}`);
     const hit = entries.get(key);
-    if (hit) return hit;
-    replayCount++;
+    if (hit) {
+      return hit;
+    }
+    replayCount += 1;
     let result: Result<{ frames: Position[]; history: GameHistory }>;
     try {
       const raw = replayRaw(source);
@@ -150,11 +183,11 @@ export function createChessAnalysis() {
         ? ok({
             frames: raw.value.frames,
             history: freeze({
-              sourceDigest: digest(source),
               frames: raw.value.frames.map((p, i) => ({
                 fen: makeFen(p.toSetup()),
                 ...raw.value.moves[i],
               })),
+              sourceDigest: digest(source),
             }),
           })
         : raw;
@@ -163,11 +196,11 @@ export function createChessAnalysis() {
     }
     entries.set(key, result);
     return result;
-  }
+  };
   return {
     replay,
     get replayCount() {
       return replayCount;
     },
   };
-}
+};

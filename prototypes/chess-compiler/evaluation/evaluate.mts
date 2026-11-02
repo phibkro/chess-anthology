@@ -1,8 +1,3 @@
-/* eslint-disable no-await-in-loop -- Workspace updates and timing samples must execute sequentially; concurrency changes their semantics and measurements. */
-import assert from "node:assert/strict";
-import { createHash } from "node:crypto";
-import { readFile } from "node:fs/promises";
-
 import {
   compile,
   createCompiler,
@@ -13,7 +8,10 @@ import {
   restore,
   selectPosition,
 } from "../src/compiler/index.js";
+/* eslint-disable no-await-in-loop -- Workspace updates and timing samples must execute sequentially; concurrency changes their semantics and measurements. */
 import type { Result } from "../src/contracts/index.js";
+import { assert } from "../src/runtime/assert.js";
+import { readSourceText } from "../src/runtime/source-text.js";
 import manifest from "./corpus/manifest.json" with { type: "json" };
 import { collectIdentity } from "./identity.mjs";
 import type { EvaluationReport } from "./report-contract.mjs";
@@ -33,7 +31,7 @@ const base = new Map(
       async (name) =>
         [
           new URL(name, directory).href,
-          await readFile(new URL(name, directory), "utf-8"),
+          await readSourceText(new URL(name, directory)),
         ] as const
     )
   )
@@ -174,7 +172,7 @@ for (const stories of [1, 8]) {
     budgets.push({ scenario, stories, work: update.work });
   }
 }
-const hash = createHash("sha256");
+const hash = new Bun.CryptoHasher("sha256");
 hash.update(JSON.stringify(manifest));
 for (const [uri, source] of base) {
   hash
@@ -192,7 +190,7 @@ console.log(
       corpusDigest: hash.digest("hex"),
       format: "chess-compiler-evaluation",
       passed: true,
-      version: 1,
+      version: 2,
     } satisfies EvaluationReport,
     null,
     2

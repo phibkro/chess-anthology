@@ -8,14 +8,14 @@
     "./playback": "./src/contracts/playback.ts"
   },
   "scripts": {
-    "generate": "langium generate",
-    "demo": "node --import tsx src/adapters/demo.ts",
-    "lsp": "node --import tsx src/adapters/lsp.ts --stdio",
-    "check": "tsc --noEmit",
-    "compile": "node --import tsx src/adapters/cli.ts",
-    "test": "node --import tsx --test src/seams.test.ts",
-    "eval": "node --import tsx evaluation/evaluate.mts",
-    "bench": "node --import tsx evaluation/benchmark.mts"
+    "generate": "bun --bun node_modules/langium-cli/bin/langium.js generate",
+    "demo": "bun src/adapters/demo.ts",
+    "lsp": "bun src/adapters/lsp.ts --stdio",
+    "check": "bun --bun node_modules/typescript/bin/tsc --noEmit",
+    "compile": "bun src/adapters/cli.ts",
+    "test": "bun test src/seams.test.ts",
+    "eval": "bun evaluation/evaluate.mts",
+    "bench": "bun evaluation/benchmark.mts"
   },
   "dependencies": {
     "chessops": "0.15.1",
@@ -24,11 +24,13 @@
     "vscode-languageserver": "10.1.2"
   },
   "devDependencies": {
-    "@types/node": "26.6.6",
+    "@types/bun": "1.4.4",
     "fast-check": "4.10.2",
     "langium-cli": "4.4.0",
-    "tsx": "4.20.6",
     "typescript": "~7.0.2"
+  },
+  "engines": {
+    "bun": ">=1.4.4"
   },
   "packageManager": "pnpm@12.16.1"
 }

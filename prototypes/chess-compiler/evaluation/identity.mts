@@ -1,22 +1,25 @@
-import { execFileSync } from "node:child_process";
-import { createHash } from "node:crypto";
-import { readFile } from "node:fs/promises";
-import { cpus } from "node:os";
-
 import type { RunIdentity } from "./report-contract.mjs";
 
+const git = (args: string[]): string => {
+  const child = Bun.spawnSync(["git", ...args]);
+  if (child.exitCode !== 0) {
+    throw new Error(new TextDecoder().decode(child.stderr));
+  }
+  return new TextDecoder().decode(child.stdout).trim();
+};
+
 /**
- * Identify the compiler checkout, dependencies, runtime and copied evaluation harness.
- * @returns Portable run metadata; compiler and harness identities are deliberately separate.
+ * Identify the compiler checkout, dependencies, Bun runtime and evaluation harness.
+ * @returns Portable metadata with compiler and harness identities kept separate.
  */
 export const collectIdentity = async (): Promise<RunIdentity> => {
-  const compilerCommit = execFileSync("git", ["rev-parse", "HEAD"], {
-    encoding: "utf-8",
-  }).trim();
-  const lockDigest = createHash("sha256")
-    .update(await readFile(new URL("../pnpm-lock.yaml", import.meta.url)))
+  const lockDigest = new Bun.CryptoHasher("sha256")
+    .update(
+      await Bun.file(
+        new URL("../pnpm-lock.yaml", import.meta.url)
+      ).arrayBuffer()
+    )
     .digest("hex");
-  const harness = createHash("sha256");
   const files = [
     "benchmark.mts",
     "evaluate.mts",
@@ -26,8 +29,12 @@ export const collectIdentity = async (): Promise<RunIdentity> => {
     "workload.mts",
   ];
   const texts = await Promise.all(
-    files.map(async (file) => await readFile(new URL(file, import.meta.url)))
+    files.map(
+      async (file) =>
+        await Bun.file(new URL(file, import.meta.url)).arrayBuffer()
+    )
   );
+  const harness = new Bun.CryptoHasher("sha256");
   for (const [i, text] of texts.entries()) {
     harness
       .update(files[i] ?? "")
@@ -35,27 +42,28 @@ export const collectIdentity = async (): Promise<RunIdentity> => {
       .update(text)
       .update("\0");
   }
+  const cpuInfo = await Bun.file("/proc/cpuinfo")
+    .text()
+    .catch(() => "");
   return {
-    compilerCommit,
+    compilerCommit: git(["rev-parse", "HEAD"]),
     compilerDirty:
-      execFileSync(
-        "git",
-        [
-          "status",
-          "--porcelain",
-          "--",
-          "src",
-          "package.json",
-          "pnpm-lock.yaml",
-          "tsconfig.json",
-        ],
-        { encoding: "utf-8" }
-      ).trim() !== "",
+      git([
+        "status",
+        "--porcelain",
+        "--",
+        "src",
+        "package.json",
+        "pnpm-lock.yaml",
+        "tsconfig.json",
+      ]) !== "",
     environment: {
       arch: process.arch,
-      cpu: cpus()[0]?.model ?? "unknown",
-      node: process.version,
+      cpu:
+        /^model name\s*:\s*(?<capture1>.+)$/mu.exec(cpuInfo)?.[1] ??
+        "unavailable",
       platform: process.platform,
+      runtime: { name: "bun", version: Bun.version },
     },
     harnessDigest: harness.digest("hex"),
     lockDigest,

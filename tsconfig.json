@@ -3,7 +3,7 @@
     "target": "es2023",
     "module": "esnext",
     "lib": ["ES2023", "DOM"],
-    "types": ["vite/client", "node"],
+    "types": ["vite/client", "bun"],
     "allowArbitraryExtensions": true,
     "skipLibCheck": true,
     "moduleResolution": "bundler",
@@ -19,5 +19,5 @@
     "resolveJsonModule": true,
     "strict": true
   },
-  "include": ["src", "vite.config.ts", "scripts/*.mts", "lint-baseline.ts"]
+  "include": ["src", "vite.config.ts", "scripts/*.mts"]
 }

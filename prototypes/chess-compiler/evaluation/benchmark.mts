@@ -1,10 +1,7 @@
-/* eslint-disable no-await-in-loop -- Workspace updates and timing samples must execute sequentially; concurrency changes their semantics and measurements. */
-import assert from "node:assert/strict";
-import { createHash } from "node:crypto";
-import { performance } from "node:perf_hooks";
-
 import { createCompiler } from "../src/compiler/index.js";
+/* eslint-disable no-await-in-loop -- Workspace updates and timing samples must execute sequentially; concurrency changes their semantics and measurements. */
 import type { Result, BuildWork } from "../src/contracts/index.js";
+import { assert } from "../src/runtime/assert.js";
 import { collectIdentity } from "./identity.mjs";
 import type { BenchmarkReport } from "./report-contract.mjs";
 import { createWorkload, editWorkload, expectedWork } from "./workload.mjs";
@@ -36,7 +33,7 @@ assert.ok(
   "Sizes must be positive story counts up to 10000."
 );
 const results = [];
-const corpusHash = createHash("sha256");
+const corpusHash = new Bun.CryptoHasher("sha256");
 for (const stories of sizes) {
   const sources = createWorkload(stories);
   corpusHash.update(JSON.stringify([...sources]));
@@ -106,7 +103,7 @@ console.log(
       results,
       timingScope:
         "Warm process; initial measures fresh compiler creation and build. Incremental measurements exclude initial population. Module loading and process startup are excluded.",
-      version: 1,
+      version: 2,
       warmups,
     } satisfies BenchmarkReport,
     null,

@@ -85,3 +85,7 @@ The [authoring and codec contract](docs/authoring-codec-contract.md) records the
 [Internal module and compiler phase interfaces](MODULES.md) describe the current seams, snapshot/read model, incremental builds and error-value contracts.
 
 On the compiler branch, the web reader consumes the compiler package at build time. `pnpm compile:stories` generates a portable two-game playback plan; `pnpm dev` and `pnpm build` regenerate it. Open **A queen offered, a mating net** in the playable collection. The browser consumes the plan and browser-safe schema; Langium stays in the build tooling.
+
+Runtime: **Bun 1.4.4** (`.bun-version`); package management: **pnpm 12.16.1**. Install Bun before `pnpm install`. Node remains only for pnpm bootstrap and the migration comparison baseline.
+
+[Go compiler research](docs/research/go-chess-compiler.md) and the proposed [Chess960 compatibility profile](docs/research/chess960-compatibility-profile.md) record the alternative implementation and its conformance requirements.

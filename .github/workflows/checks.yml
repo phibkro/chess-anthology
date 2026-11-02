@@ -12,17 +12,17 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 24
-      - name: Install pinned pnpm
-        run: npm install --global pnpm@12.16.1
+      - name: Install pinned pnpm and Bun
+        run: npm install --global pnpm@12.16.1 bun@1.4.4
       - run: pnpm install --frozen-lockfile
       - run: pnpm --dir prototypes/chess-compiler install --frozen-lockfile
-      - run: node --import tsx src/adapters/demo.ts
+      - run: bun src/adapters/demo.ts
         working-directory: prototypes/chess-compiler
       - run: pnpm setup:secrets
       - run: pnpm check:all
       - run: pnpm check:secrets
       - run: pnpm commitlint --last
-  compiler-benchmark:
+  compiler-runtime-benchmark:
     if: github.event_name == 'pull_request'
     continue-on-error: true
     runs-on: ubuntu-latest
@@ -33,31 +33,31 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 24
-      - name: Install pinned pnpm
-        run: npm install --global pnpm@12.16.1
-      - name: Prepare base compiler with the same evaluation harness
+      - name: Install pinned pnpm and Bun
+        run: npm install --global pnpm@12.16.1 bun@1.4.4
+      - name: Prepare the base runtime and compatible harness
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
           git worktree add --detach "$RUNNER_TEMP/chess-compiler-base" "$BASE_SHA"
-          cp -R prototypes/chess-compiler/evaluation "$RUNNER_TEMP/chess-compiler-base/prototypes/chess-compiler/"
+          if python3 -c 'import json,sys; sys.exit(0 if "bun" in json.load(open(sys.argv[1])).get("engines", {}) else 1)' "$RUNNER_TEMP/chess-compiler-base/prototypes/chess-compiler/package.json"; then
+            cp -R prototypes/chess-compiler/evaluation/. "$RUNNER_TEMP/chess-compiler-base/prototypes/chess-compiler/evaluation/"
+          fi
           pnpm --dir prototypes/chess-compiler install --frozen-lockfile
           pnpm --dir "$RUNNER_TEMP/chess-compiler-base/prototypes/chess-compiler" install --frozen-lockfile
-      - name: Evaluate and benchmark both revisions
+      - name: Paired Node and Bun experiment
+        shell: bash
         env:
-          CHESS_BENCH_ITERATIONS: 7
+          CHESS_RUNTIME_BLOCKS: 12
+          CHESS_BENCH_ITERATIONS: 5
           CHESS_BENCH_WARMUPS: 2
           CHESS_BENCH_SIZES: 1,10,100
         run: |
-          mkdir -p report/compiler
-          (cd "$RUNNER_TEMP/chess-compiler-base/prototypes/chess-compiler" && node --import tsx evaluation/benchmark.mts) > report/compiler/base.json
-          (cd prototypes/chess-compiler && node --import tsx evaluation/benchmark.mts) > report/compiler/current.json
-          (cd prototypes/chess-compiler && node --import tsx evaluation/evaluate.mts) > report/compiler/evaluation.json
-          python3 prototypes/chess-compiler/evaluation/compare.py report/compiler/base.json report/compiler/current.json >> "$GITHUB_STEP_SUMMARY"
+          python3 prototypes/chess-compiler/evaluation/runtime_compare.py "$RUNNER_TEMP/chess-compiler-base/prototypes/chess-compiler" "$GITHUB_WORKSPACE/prototypes/chess-compiler" report/compiler | tee -a "$GITHUB_STEP_SUMMARY"
       - name: Preserve raw compiler evaluation reports
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: compiler-evaluations
-          path: report/compiler/*.json
+          name: compiler-runtime-comparison
+          path: report/compiler/*
           if-no-files-found: warn

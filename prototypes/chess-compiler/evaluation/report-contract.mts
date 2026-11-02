@@ -10,7 +10,12 @@ export type Scenario = "initial" | "prose" | "shared-game" | "unchanged";
 export interface RunIdentity {
   compilerCommit: string;
   compilerDirty: boolean;
-  environment: { arch: string; cpu: string; node: string; platform: string };
+  environment: {
+    arch: string;
+    cpu: string;
+    platform: string;
+    runtime: { name: "bun"; version: string };
+  };
   harnessDigest: string;
   lockDigest: string;
 }
@@ -26,7 +31,7 @@ export interface EvaluationReport extends RunIdentity {
   corpusDigest: string;
   format: "chess-compiler-evaluation";
   passed: boolean;
-  version: 1;
+  version: 2;
 }
 
 /** Versioned JSON measurements; raw samples remain available alongside summaries. */
@@ -46,6 +51,6 @@ export interface BenchmarkReport extends RunIdentity {
     work: BuildWork | null;
   }[];
   timingScope: string;
-  version: 1;
+  version: 2;
   warmups: number;
 }

@@ -2,33 +2,38 @@ import { useEffect, useRef, useState } from "react";
 
 import collection from "./collection.json";
 import lessonData from "./content/lessons.json";
-import {
-  Reader,
-  compileLesson,
-  importPgn,
-  importFen,
-  type CompiledLesson,
-} from "./lesson";
+import { Reader, compileLesson, importPgn, importFen } from "./lesson";
+import type { CompiledLesson } from "./lesson";
 import { StoryReader } from "./story";
 
 const lessons = lessonData.map(compileLesson);
-function HeroBoard() {
-  const position: Record<string, string> = {
-    h8: "♚",
-    c6: "♟",
-    a6: "♚",
-    h5: "♟",
-  };
+const importContent = (format: string, source: string): CompiledLesson => {
+  if (format === "pgn") {
+    return importPgn(source);
+  }
+  if (format === "json") {
+    return compileLesson(JSON.parse(source));
+  }
+  return importFen(source);
+};
+const HeroBoard = () => {
+  const position = new Map(
+    Object.entries({
+      a6: "♚",
+      c6: "♟",
+      h5: "♟",
+      h8: "♚",
+    })
+  );
   return (
-    <div
+    <figure
       className="board hero-board"
-      role="img"
       aria-label="Réti study: white king h8 and pawn c6; black king a6 and pawn h5"
     >
       {Array.from({ length: 64 }, (_, index) => {
         const file = index % 8;
         const rank = 8 - Math.floor(index / 8);
-        const square = String.fromCharCode(97 + file) + rank;
+        const square = String.fromCodePoint(97 + file) + rank;
         return (
           <div
             key={square}
@@ -39,21 +44,25 @@ function HeroBoard() {
                 ["h8", "c6"].includes(square) ? "piece-white" : "piece-black"
               }
             >
-              {position[square]}
+              {position.get(square)}
             </span>
             {(rank === 1 || file === 0) && (
               <span className="coord">
                 {file === 0 ? rank : ""}
-                {rank === 1 ? String.fromCharCode(97 + file) : ""}
+                {rank === 1 ? String.fromCodePoint(97 + file) : ""}
               </span>
             )}
           </div>
         );
       })}
-    </div>
+    </figure>
   );
-}
-export function App() {
+};
+/**
+ * Render anthology discovery and the selected reader.
+ * @returns Render anthology discovery and the selected reader.
+ */
+export const App = () => {
   const [field, setField] = useState("all");
   const [search, setSearch] = useState("");
   const [era, setEra] = useState("all");
@@ -68,29 +77,32 @@ export function App() {
   const [error, setError] = useState("");
   const reader = useRef<HTMLDialogElement>(null);
   useEffect(() => {
-    if (active || entry || importOpen || storyOpen) reader.current?.showModal();
-    else reader.current?.close();
+    if (active || entry || importOpen || storyOpen) {
+      reader.current?.showModal();
+    } else {
+      reader.current?.close();
+    }
   }, [active, entry, importOpen, storyOpen]);
-  function close() {
+  const close = () => {
     setStoryOpen(false);
     setActive(null);
     setEntry(null);
     setImportOpen(false);
-  }
-  function openLesson(id: string) {
+  };
+  const openLesson = (id: string) => {
     const lesson = lessons.find((item) => item.content.id === id);
     if (lesson) {
       setEntry(null);
       setImportOpen(false);
       setActive(lesson);
     }
-  }
-  function filter(value: string) {
+  };
+  const filter = (value: string) => {
     setField(value);
     document
-      .getElementById("collection")
+      .querySelector("#collection")
       ?.scrollIntoView({ behavior: "smooth" });
-  }
+  };
   const entries = collection.entries.filter(
     (item) =>
       (field === "all" || item.field === field) &&
@@ -104,8 +116,8 @@ export function App() {
       <a className="skip" href="#collection">
         Skip to the collection
       </a>
-      <header>
-        <a className="brand" href="#">
+      <header id="top">
+        <a className="brand" href="#top">
           <span className="brand-symbol">♞</span>
           <span>
             CHESS
@@ -114,10 +126,20 @@ export function App() {
           </span>
         </a>
         <nav aria-label="Main navigation">
-          <button onClick={() => filter("composition")}>
+          <button
+            type="button"
+            onClick={() => {
+              filter("composition");
+            }}
+          >
             The art of composition
           </button>
-          <button onClick={() => filter("history")}>
+          <button
+            type="button"
+            onClick={() => {
+              filter("history");
+            }}
+          >
             Chess through the times
           </button>
           <a href="#lessons">Interactive lessons ↗</a>
@@ -126,7 +148,7 @@ export function App() {
       </header>
       <main>
         <section className="hero">
-          <div className="hero-copy">
+          <div>
             <p className="eyebrow">
               <span className="red-dot" /> SIXTY-FOUR SQUARES. COUNTLESS HUMAN
               STORIES.
@@ -141,7 +163,13 @@ export function App() {
               Meet the people, ideas and communities that make the board come
               alive.
             </p>
-            <button className="primary" onClick={() => openLesson("reti")}>
+            <button
+              type="button"
+              className="primary"
+              onClick={() => {
+                openLesson("reti");
+              }}
+            >
               Enter a lesson <span>↗</span>
             </button>
             <div className="hero-foot">
@@ -157,14 +185,25 @@ export function App() {
             <HeroBoard />
             <figcaption>
               <span>Richard Réti, 1921</span>
-              <button onClick={() => openLesson("reti")}>
+              <button
+                type="button"
+                onClick={() => {
+                  openLesson("reti");
+                }}
+              >
                 Discover the study ↗
               </button>
             </figcaption>
           </figure>
         </section>
         <section className="paths" aria-label="The two fields">
-          <button className="path" onClick={() => filter("composition")}>
+          <button
+            type="button"
+            className="path"
+            onClick={() => {
+              filter("composition");
+            }}
+          >
             <span className="path-number">I.</span>
             <span>
               <span className="eyebrow">CHESS AS AN AUTHORED EXPERIENCE</span>
@@ -181,7 +220,13 @@ export function App() {
             </span>
             <span className="path-arrow">↗</span>
           </button>
-          <button className="path history" onClick={() => filter("history")}>
+          <button
+            type="button"
+            className="path history"
+            onClick={() => {
+              filter("history");
+            }}
+          >
             <span className="path-number">II.</span>
             <span>
               <span className="eyebrow">CHESS AS A HUMAN PRACTICE</span>
@@ -208,6 +253,7 @@ export function App() {
               </h2>
             </div>
             <button
+              type="button"
               className="text-link"
               onClick={() => {
                 setError("");
@@ -217,8 +263,9 @@ export function App() {
               Import PGN / FEN ↗
             </button>
           </div>
-          <div className="lesson-cards grid grid-cols-1 gap-5 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <button
+              type="button"
               className="lesson-card story-card"
               onClick={() => {
                 setActive(null);
@@ -237,9 +284,12 @@ export function App() {
             </button>
             {lessons.map((item, index) => (
               <button
+                type="button"
                 key={item.content.id}
                 className="lesson-card"
-                onClick={() => openLesson(item.content.id)}
+                onClick={() => {
+                  openLesson(item.content.id);
+                }}
               >
                 <span className="lesson-index">0{index + 1}</span>
                 <div>
@@ -271,28 +321,33 @@ export function App() {
             </p>
           </div>
           <div className="controls">
-            <div className="tabs" role="group" aria-label="Filter by field">
+            <fieldset className="tabs" aria-label="Filter by field">
               {[
                 ["all", "All stories"],
                 ["composition", "Composition"],
                 ["history", "Through the times"],
               ].map(([key, label]) => (
                 <button
+                  type="button"
                   key={key}
                   className={key === field ? "active" : ""}
                   aria-pressed={key === field}
-                  onClick={() => setField(key)}
+                  onClick={() => {
+                    setField(key);
+                  }}
                 >
                   {label}
                 </button>
               ))}
-            </div>
+            </fieldset>
             <label className="search">
               <input
                 aria-label="Search the collection"
                 placeholder="Find a person, place, idea…"
                 value={search}
-                onChange={(event) => setSearch(event.target.value)}
+                onChange={(event) => {
+                  setSearch(event.target.value);
+                }}
               />
             </label>
           </div>
@@ -302,7 +357,9 @@ export function App() {
               <select
                 id="era"
                 value={era}
-                onChange={(event) => setEra(event.target.value)}
+                onChange={(event) => {
+                  setEra(event.target.value);
+                }}
               >
                 <option value="all">All eras</option>
                 <option value="early">Early traditions</option>
@@ -317,12 +374,15 @@ export function App() {
           <div className="entries">
             {entries.map((item) => (
               <button
+                type="button"
                 className="entry"
                 key={item.id}
                 onClick={() => {
-                  if (["reti", "carpenter"].includes(item.id))
+                  if (["reti", "carpenter"].includes(item.id)) {
                     openLesson(item.id);
-                  else setEntry(item);
+                  } else {
+                    setEntry(item);
+                  }
                 }}
               >
                 <div className="entry-art">
@@ -383,7 +443,7 @@ export function App() {
         </section>
       </main>
       <footer>
-        <a className="footer-brand" href="#">
+        <a className="footer-brand" href="#top">
           ♞ Chess Anthology
         </a>
         <p>Art on the board. Life around it.</p>
@@ -401,7 +461,7 @@ export function App() {
       >
         <div className="reader-bar">
           <span>CHESS ANTHOLOGY / READING ROOM</span>
-          <button aria-label="Close reading room" onClick={close}>
+          <button type="button" aria-label="Close reading room" onClick={close}>
             Close ×
           </button>
         </div>
@@ -414,10 +474,10 @@ export function App() {
             {entry.body.map((text) => (
               <p key={text}>{text}</p>
             ))}
-            {entry.source && (
+            {entry.source !== undefined && (
               <a
                 className="text-link"
-                href={entry.source}
+                href={entry.source ?? undefined}
                 target="_blank"
                 rel="noreferrer"
               >
@@ -437,19 +497,14 @@ export function App() {
               onSubmit={(event) => {
                 event.preventDefault();
                 try {
-                  const imported =
-                    format === "pgn"
-                      ? importPgn(importText)
-                      : format === "json"
-                        ? compileLesson(JSON.parse(importText))
-                        : importFen(importText);
+                  const imported = importContent(format, importText);
                   setImportOpen(false);
                   setActive(imported);
                   setError("");
-                } catch (caught) {
+                } catch (error_) {
                   setError(
-                    caught instanceof Error
-                      ? caught.message
+                    error_ instanceof Error
+                      ? error_.message
                       : "Could not import this content."
                   );
                 }
@@ -459,7 +514,9 @@ export function App() {
               <select
                 id="import-format"
                 value={format}
-                onChange={(event) => setFormat(event.target.value)}
+                onChange={(event) => {
+                  setFormat(event.target.value);
+                }}
               >
                 <option value="pgn">PGN</option>
                 <option value="fen">FEN</option>
@@ -470,7 +527,9 @@ export function App() {
                 id="import-content"
                 rows={10}
                 value={importText}
-                onChange={(event) => setImportText(event.target.value)}
+                onChange={(event) => {
+                  setImportText(event.target.value);
+                }}
               />
               <p className="import-error" role="alert">
                 {error}
@@ -488,4 +547,4 @@ export function App() {
       </dialog>
     </>
   );
-}
+};

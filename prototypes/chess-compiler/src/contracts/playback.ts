@@ -1,50 +1,61 @@
 import * as v from "valibot";
 
-import { ok, err, type Result } from "./core.js";
-const square = v.pipe(v.string(), v.regex(/^[a-h][1-8]$/));
-const uci = v.pipe(v.string(), v.regex(/^[a-h][1-8][a-h][1-8][qrbn]?$/));
+import { ok, err } from "./core.js";
+import type { Result } from "./core.js";
+
+const square = v.pipe(v.string(), v.regex(/^[a-h][1-8]$/u));
+const uci = v.pipe(v.string(), v.regex(/^[a-h][1-8][a-h][1-8][qrbn]?$/u));
 const frame = v.strictObject({
   fen: v.string(),
   san: v.nullable(v.string()),
   uci: v.nullable(uci),
 });
 const note = v.variant("type", [
-  v.strictObject({ type: v.literal("text"), text: v.string() }),
+  v.strictObject({ text: v.string(), type: v.literal("text") }),
   v.strictObject({
-    type: v.literal("arrow"),
+    color: v.picklist(["green", "red", "blue", "yellow"]),
     from: square,
     to: square,
-    color: v.picklist(["green", "red", "blue", "yellow"]),
+    type: v.literal("arrow"),
   }),
   v.strictObject({
-    type: v.literal("prompt"),
-    text: v.string(),
     answer: v.string(),
     answerUci: uci,
+    text: v.string(),
+    type: v.literal("prompt"),
   }),
 ]);
 const schema = v.strictObject({
   format: v.literal("chess-playback-plan"),
-  version: v.literal(1),
   id: v.string(),
   scenes: v.pipe(
     v.array(
       v.strictObject({
-        id: v.string(),
-        game: v.string(),
         after: v.pipe(v.number(), v.integer(), v.minValue(0)),
-        sourceDigest: v.string(),
         frames: v.array(frame),
+        game: v.string(),
+        id: v.string(),
         notes: v.array(note),
+        sourceDigest: v.string(),
       })
     ),
     v.minLength(1)
   ),
+  version: v.literal(1),
 });
+/**
+ * A versioned browser-safe story plan with recorded frames and annotations.
+ */
 export type PlaybackPlan = v.InferOutput<typeof schema>;
-export function parsePlaybackPlan(input: unknown): Result<PlaybackPlan> {
+/**
+ * Validate an externally supplied browser playback plan.
+ * @param input - Untrusted content to validate at this boundary.
+ * @returns A validated playback plan or a schema failure.
+ */
+// oxlint-disable-next-line anti-slop/no-unknown-parameters -- This is an external-data validation boundary; accepting unknown prevents callers from assuming validation already happened.
+export const parsePlaybackPlan = (input: unknown): Result<PlaybackPlan> => {
   const parsed = v.safeParse(schema, input);
   return parsed.success
     ? ok(parsed.output)
     : err("schema", "plan/invalid-shape", "Invalid playback plan.");
-}
+};

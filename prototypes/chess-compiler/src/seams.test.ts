@@ -1,11 +1,10 @@
-import assert from "node:assert/strict";
-import { readdir, readFile } from "node:fs/promises";
-import { dirname, resolve, relative, sep } from "node:path";
-import test from "node:test";
-import { fileURLToPath } from "node:url";
+import { test } from "bun:test";
 
-import fc from "fast-check";
+import { $ } from "bun";
+import * as fc from "fast-check";
+import { URI } from "langium";
 
+import { loadDirectory } from "./adapters/files.js";
 import type { BuildSnapshot } from "./compiler/index.js";
 import {
   compile,
@@ -16,47 +15,61 @@ import {
   printStructured,
   selectPosition,
 } from "./compiler/index.js";
-import { parseStructured, type Result } from "./contracts/index.js";
-function value<T>(result: Result<T>): T {
-  if (!result.ok) assert.fail(JSON.stringify(result.error));
+import { parseStructured } from "./contracts/index.js";
+import type { Result } from "./contracts/index.js";
+import { assert } from "./runtime/assert.js";
+import { createBunFileSystem } from "./runtime/filesystem.js";
+import { readSourceText } from "./runtime/source-text.js";
+
+const required = <T>(value: T | null | undefined): T => {
+  if (value === null || value === undefined) {
+    throw new Error("Required fixture value is unavailable.");
+  }
+  return value;
+};
+
+const value = <T>(result: Result<T>): T => {
+  if (!result.ok) {
+    assert.fail(JSON.stringify(result.error));
+  }
   return result.value;
-}
-const seed = Number(process.env.FC_SEED ?? 20261102);
-const options = { seed, numRuns: 300 };
+};
+const seed = Number(process.env.FC_SEED ?? 20_261_102);
+const options = { numRuns: 300, seed };
 const identifier = fc.nat().map((n) => `id_${n}`);
 const text = fc.oneof(
   fc.string(),
-  fc.constantFrom('a"b', "\\n", "\n", "\r\n", "\u0000", "\ud800", "♞ é")
+  fc.constantFrom('a"b', "\\n", "\n", "\r\n", "\u0000", "\uD800", "♞ é")
 );
 const note = fc.oneof(
-  fc.record({ type: fc.constant("text"), text }),
-  fc.record({ type: fc.constant("prompt"), text, answer: text }),
+  fc.record({ text, type: fc.constant("text") }),
+  fc.record({ answer: text, text, type: fc.constant("prompt") }),
   fc.record({
-    type: fc.constant("arrow"),
+    color: identifier,
     from: text,
     to: text,
-    color: identifier,
+    type: fc.constant("arrow"),
   })
 );
 const authored = fc.record({
   formatVersion: fc.constant(0),
-  name: identifier,
-  imports: fc.array(text, { maxLength: 3 }),
   games: fc.array(
-    fc.record({ name: identifier, exported: fc.boolean(), source: text }),
+    fc.record({ exported: fc.boolean(), name: identifier, source: text }),
     {
       maxLength: 3,
     }
   ),
+  imports: fc.array(text, { maxLength: 3 }),
+  name: identifier,
   stories: fc.array(
     fc.record({
       name: identifier,
       scenes: fc.array(
         fc.record({
-          name: identifier,
           game: identifier,
-          ply: fc.integer({ min: 0, max: Number.MAX_SAFE_INTEGER }),
+          name: identifier,
           notes: fc.array(note, { maxLength: 4 }),
+          ply: fc.integer({ max: Number.MAX_SAFE_INTEGER, min: 0 }),
         }),
         { maxLength: 3 }
       ),
@@ -64,7 +77,7 @@ const authored = fc.record({
     { maxLength: 2 }
   ),
 });
-void test("200 ↔ 500: structured/flat codec preserves every generated authored value", () => {
+test("200 ↔ 500: structured/flat codec preserves every generated authored value", () => {
   fc.assert(
     fc.property(authored, (document) => {
       const checked = value(parseStructured(document));
@@ -73,43 +86,42 @@ void test("200 ↔ 500: structured/flat codec preserves every generated authored
     options
   );
 });
-void test("100 ↔ 500: source envelopes preserve comments, whitespace, Unicode and line endings", () => {
+test("100 ↔ 500: source envelopes preserve comments, whitespace, Unicode and line endings", () => {
   fc.assert(
     fc.property(
       authored,
       fc.constantFrom("\n", "\r\n"),
       fc.nat(20),
       (document, newline, spaces) => {
-        const source =
-          "// retained source" +
-          newline +
-          " ".repeat(spaces) +
-          value(printStructured(document)).replaceAll("\n", newline);
+        const source = `// retained source${newline}${" ".repeat(
+          spaces
+        )}${value(printStructured(document)).replaceAll("\n", newline)}`;
         const data = value(decode(source));
         assert.equal(
+          // oxlint-disable-next-line unicorn/prefer-structured-clone -- This tests a JSON transport roundtrip, not an in-memory clone.
           value(restore(JSON.parse(JSON.stringify(envelope(data, source))))),
           source
         );
         const stale = envelope(structuredClone(data), source);
-        stale.data = { ...stale.data, name: stale.data.name + "_changed" };
+        stale.data = { ...stale.data, name: `${stale.data.name}_changed` };
         assert.equal(restore(stale).ok, false);
       }
     ),
     options
   );
 });
-void test("100 and document seams: bounded malformed input fuzzing returns values, not exceptions", () => {
+test("100 and document seams: bounded malformed input fuzzing returns values, not exceptions", () => {
   fc.assert(
     fc.property(fc.string({ maxLength: 2048 }), (source) => {
-      assert.equal(typeof decode(source).ok, "boolean");
-      assert.equal(typeof restore(source).ok, "boolean");
+      assert.ok([true, false].includes(decode(source).ok));
+      assert.ok([true, false].includes(restore(source).ok));
     }),
     { ...options, numRuns: 500 }
   );
   fc.assert(
     fc.property(fc.jsonValue(), (data) => {
-      assert.equal(typeof parseStructured(data).ok, "boolean");
-      assert.equal(typeof printStructured(data).ok, "boolean");
+      assert.ok([true, false].includes(parseStructured(data).ok));
+      assert.ok([true, false].includes(printStructured(data).ok));
     }),
     options
   );
@@ -117,17 +129,22 @@ void test("100 and document seams: bounded malformed input fuzzing returns value
 const dir = new URL("../examples/", import.meta.url);
 const story = new URL("story.chess-story", dir).href;
 const opera = new URL("opera.pgn", dir).href;
-async function fixtures() {
-  return new Map(
+const fixtures = async () =>
+  new Map(
     await Promise.all(
-      (await readdir(dir)).map(async (name) => {
+      [
+        ...new Bun.Glob("*").scanSync({
+          cwd: Bun.fileURLToPath(dir),
+          dot: true,
+          onlyFiles: true,
+        }),
+      ].map(async (name) => {
         const uri = new URL(name, dir);
-        return [uri.href, await readFile(uri, "utf8")] as const;
+        return [uri.href, await readSourceText(uri)] as const;
       })
     )
   );
-}
-void test("300/400/500/600: reuse, dependency invalidation, immutable history and pure views", async () => {
+test("300/400/500/600: reuse, dependency invalidation, immutable history and pure views", async () => {
   const sources = await fixtures();
   sources.set(
     new URL("unrelated.chess-story", dir).href,
@@ -135,35 +152,37 @@ void test("300/400/500/600: reuse, dependency invalidation, immutable history an
   );
   const builder = createCompiler();
   const initial = value(await builder.update(sources));
-  assert.deepEqual(initial.work, { parsed: 3, replayed: 2, emitted: 3 });
+  assert.deepEqual(initial.work, { emitted: 3, parsed: 3, replayed: 2 });
   const immutable: BuildSnapshot = initial.snapshot;
   assert.ok(Object.isFrozen(immutable));
   const before = JSON.stringify(immutable);
   const changed = new Map(sources);
   changed.set(
     story,
-    sources.get(story)!.replace("The queen opens", "This queen opens")
+    required(sources.get(story)).replace("The queen opens", "This queen opens")
   );
   const prose = value(await builder.update(changed));
-  assert.deepEqual(prose.work, { parsed: 1, replayed: 0, emitted: 1 });
+  assert.deepEqual(prose.work, { emitted: 1, parsed: 1, replayed: 0 });
   const unrelated = new URL("unrelated.chess-story", dir).href;
   assert.equal(
     prose.snapshot.output.find((d) => d.uri === unrelated),
     initial.snapshot.output.find((d) => d.uri === unrelated)
   );
-  for (let ply = 0; ply < 34; ply++)
+  for (let ply = 0; ply < 34; ply += 1) {
     value(selectPosition(initial.snapshot, opera, ply));
+  }
   assert.equal(selectPosition(initial.snapshot, opera, 999).ok, false);
   assert.equal(Reflect.set(initial.snapshot, "revision", 999), false);
   assert.equal(JSON.stringify(initial.snapshot), before);
   const unchanged = value(await builder.update(changed));
   assert.equal(unchanged.snapshot, prose.snapshot);
-  assert.deepEqual(unchanged.work, { parsed: 0, replayed: 0, emitted: 0 });
+  assert.deepEqual(unchanged.work, { emitted: 0, parsed: 0, replayed: 0 });
   changed.set(
     opera,
-    sources
-      .get(opera)!
-      .replace('[Event "Opera Game"]', '[Event "Changed source"]')
+    required(sources.get(opera)).replace(
+      '[Event "Opera Game"]',
+      '[Event "Changed source"]'
+    )
   );
   const asset = value(await builder.update(changed));
   assert.equal(asset.work.parsed, 0);
@@ -177,15 +196,17 @@ void test("300/400/500/600: reuse, dependency invalidation, immutable history an
       d.diagnostics.some((i) => i.code === "source/missing-game")
     )
   );
-  changed.set(opera, sources.get(opera)!);
+  changed.set(opera, required(sources.get(opera)));
   const restored = value(await builder.update(changed));
-  assert.equal(restored.work.replayed, 0); // content-addressed history survives deletion/re-addition
+  // Content-addressed history survives deletion/re-addition.
+  assert.equal(restored.work.replayed, 0);
   assert.deepEqual(
     restored.snapshot.output,
     value(await compile(changed)).output
   );
 });
-void test("600: incremental results agree with clean builds over generated edit histories", async () => {
+/* oxlint-disable no-await-in-loop -- Generated edit order is part of the property; concurrent writes are explicitly rejected. */
+test("600: incremental results agree with clean builds over generated edit histories", async () => {
   const base = await fixtures();
   await fc.assert(
     fc.asyncProperty(
@@ -206,29 +227,45 @@ void test("600: incremental results agree with clean builds over generated edit 
         const builder = createCompiler();
         value(await builder.update(sources));
         for (const edit of edits) {
-          if (edit === "prose")
+          if (edit === "prose") {
             sources.set(
               story,
-              base.get(story)!.replace("The queen opens", "A queen opens")
+              required(base.get(story)).replace(
+                "The queen opens",
+                "A queen opens"
+              )
             );
-          if (edit === "pgn")
+          }
+          if (edit === "pgn") {
             sources.set(
               opera,
-              base.get(opera)!.replace("Opera Game", "Opera source revision")
+              required(base.get(opera)).replace(
+                "Opera Game",
+                "Opera source revision"
+              )
             );
-          if (edit === "missing") sources.delete(opera);
-          if (edit === "missing-module")
+          }
+          if (edit === "missing") {
+            sources.delete(opera);
+          }
+          if (edit === "missing-module") {
             sources.delete(new URL("library.chess-story", dir).href);
+          }
           if (edit === "export") {
             const uri = new URL("library.chess-story", dir).href;
             sources.set(
               uri,
-              base.get(uri)!.replace("export game opera", "game opera")
+              required(base.get(uri)).replace("export game opera", "game opera")
             );
           }
-          if (edit === "restore")
-            for (const [uri, text] of base) sources.set(uri, text);
-          if (edit === "invalid") sources.set(story, base.get(story)! + "\n @");
+          if (edit === "restore") {
+            for (const [uri, sourceText] of base) {
+              sources.set(uri, sourceText);
+            }
+          }
+          if (edit === "invalid") {
+            sources.set(story, `${required(base.get(story))}\n @`);
+          }
           const incremental = value(await builder.update(sources)).snapshot;
           const clean = value(await compile(sources));
           assert.deepEqual(incremental.output, clean.output);
@@ -236,52 +273,47 @@ void test("600: incremental results agree with clean builds over generated edit 
         }
       }
     ),
-    { seed, numRuns: 20 }
+    { numRuns: 20, seed }
   );
 });
-void test("400: malformed PGN fuzzing is represented by history results", async () => {
+/* oxlint-enable no-await-in-loop */
+test("400: malformed PGN fuzzing is represented by history results", async () => {
   const builder = createCompiler();
   await fc.assert(
     fc.asyncProperty(fc.string({ maxLength: 512 }), async (source) => {
-      const snapshot = value(
+      const { snapshot } = value(
         await builder.update(new Map([[opera, source]]))
-      ).snapshot;
-      assert.equal(typeof snapshot.games[0].result.ok, "boolean");
+      );
+      assert.ok([true, false].includes(snapshot.games[0].result.ok));
     }),
-    { seed, numRuns: 100 }
+    { numRuns: 100, seed }
   );
 });
 
-void test("module interfaces: production consumers cannot deep-import other phases", async () => {
-  const root = fileURLToPath(new URL("./", import.meta.url));
-  async function files(directory: string): Promise<string[]> {
-    return (
-      await Promise.all(
-        (await readdir(directory, { withFileTypes: true }))
-          .filter((e) => e.name !== "generated")
-          .map((e) => {
-            const path = resolve(directory, e.name);
-            return e.isDirectory()
-              ? files(path)
-              : Promise.resolve(path.endsWith(".ts") ? [path] : []);
-          })
-      )
-    ).flat();
-  }
-  for (const file of await files(root)) {
-    const owner = relative(root, file).split(sep).join("/");
-    const source = await readFile(file, "utf8");
+test("module interfaces: production consumers cannot deep-import other phases", async () => {
+  const root = new URL("./", import.meta.url);
+  const files = [
+    ...new Bun.Glob("**/*.ts").scanSync({
+      cwd: Bun.fileURLToPath(root),
+      dot: true,
+      onlyFiles: true,
+    }),
+  ].filter((file) => !file.includes("/generated/"));
+  for (const file of files) {
+    const owner = file;
+    // oxlint-disable-next-line no-await-in-loop -- Keep a boundary failure attributable to the source currently being inspected.
+    const source = await readSourceText(new URL(file, root));
     // Guard this experiment's static imports/re-exports. Dynamic imports need a stronger scanner.
     assert.ok(
-      !/\bimport\s*\(/.test(source),
+      !/\bimport\s*\(/u.test(source),
       `Dynamic import requires extending the architecture guard: ${owner}`
     );
     const imports = [
       ...source.matchAll(
-        /\b(?:import|export)\s+(?:type\s+)?(?:[^"';]*?\s+from\s*)?["']([^"']+)["']/g
+        /\b(?:import|export)\s+(?:type\s+)?(?:[^"';]*?\s+from\s*)?["'](?<capture1>[^"']+)["']/gu
       ),
     ].map((match) => match[1]);
-    if (owner.startsWith("contracts/"))
+    if (owner.startsWith("contracts/")) {
       assert.ok(
         imports.every(
           (i) =>
@@ -291,43 +323,45 @@ void test("module interfaces: production consumers cannot deep-import other phas
             !i.startsWith("node:")
         )
       );
+    }
     for (const specifier of imports.filter((i) => i.startsWith("."))) {
-      const target = relative(root, resolve(dirname(file), specifier))
-        .split(sep)
-        .join("/");
-      const phase = /^compiler\/(\d{3}-[^/]+)\//.exec(target)?.[1];
-      const samePhase = phase && owner.startsWith(`compiler/${phase}/`);
-      if (phase && !samePhase)
+      const target = new URL(specifier, new URL(file, root)).pathname.slice(
+        root.pathname.length
+      );
+      const phase = /^compiler\/(?<capture1>\d{3}-[^/]+)\//u.exec(target)?.[1];
+      const samePhase =
+        phase !== undefined && owner.startsWith(`compiler/${phase}/`);
+      if (phase !== undefined && !samePhase) {
         assert.ok(
           target.endsWith(`/${phase}/index.js`),
           `${owner} bypasses ${phase}'s interface: ${specifier}`
         );
-      if (owner.startsWith("adapters/") && target.startsWith("compiler/"))
+      }
+      if (owner.startsWith("adapters/") && target.startsWith("compiler/")) {
         assert.ok(
           ["compiler/index.js", "compiler/lsp.js"].includes(target),
           `${owner} bypasses compiler interface`
         );
+      }
     }
   }
 });
 
-void test("phase diagnostics: local, linking and chess failures are distinct values", async () => {
+test("phase diagnostics: local, linking and chess failures are distinct values", async () => {
   const sources = await fixtures();
   const library = new URL("library.chess-story", dir).href;
   const changed = new Map(sources);
   changed.set(
     library,
-    sources.get(library)! + '\nimport "./story.chess-story";'
+    `${required(sources.get(library))}\nimport "./story.chess-story";`
   );
   // Imports precede declarations in this experimental grammar: put it in the valid position.
   changed.set(
     library,
-    sources
-      .get(library)!
-      .replace(
-        "module library;",
-        'module library; import "./story.chess-story";'
-      )
+    required(sources.get(library)).replace(
+      "module library;",
+      'module library; import "./story.chess-story";'
+    )
   );
   const cyclic = value(await compile(changed));
   assert.ok(
@@ -335,10 +369,10 @@ void test("phase diagnostics: local, linking and chess failures are distinct val
       d.diagnostics.some((i) => i.code === "link/import-cycle")
     )
   );
-  changed.set(library, sources.get(library)!);
+  changed.set(library, required(sources.get(library)));
   changed.set(
     story,
-    sources.get(story)!.replace("game opera", "game privateGame")
+    required(sources.get(story)).replace("game opera", "game privateGame")
   );
   assert.ok(
     value(await compile(changed)).output.some((d) =>
@@ -347,7 +381,7 @@ void test("phase diagnostics: local, linking and chess failures are distinct val
   );
   changed.set(
     story,
-    sources.get(story)!.replace("after 30", "after 9007199254740992")
+    required(sources.get(story)).replace("after 30", "after 9007199254740992")
   );
   assert.ok(
     value(await compile(changed)).output.some((d) =>
@@ -358,7 +392,7 @@ void test("phase diagnostics: local, linking and chess failures are distinct val
       )
     )
   );
-  changed.set(story, sources.get(story)!.replace("Qb8+", "Qh9"));
+  changed.set(story, required(sources.get(story)).replace("Qb8+", "Qh9"));
   assert.ok(
     value(await compile(changed)).output.some((d) =>
       d.diagnostics.some(
@@ -369,7 +403,10 @@ void test("phase diagnostics: local, linking and chess failures are distinct val
   );
   changed.set(
     story,
-    sources.get(story)!.replace("board retiFinish", "board operaFinish")
+    required(sources.get(story)).replace(
+      "board retiFinish",
+      "board operaFinish"
+    )
   );
   assert.ok(
     value(await compile(changed)).output.some((d) =>
@@ -381,24 +418,62 @@ void test("phase diagnostics: local, linking and chess failures are distinct val
     )
   );
 });
-void test("600: busy writes return errors; a failed host leaves prior snapshots readable", async () => {
+test("600: busy writes return errors; a failed host leaves prior snapshots readable", async () => {
   const sources = await fixtures();
   const builder = createCompiler();
   const first = builder.update(sources);
   const concurrent = await builder.update(sources);
   assert.equal(concurrent.ok, false);
-  if (!concurrent.ok) assert.equal(concurrent.error.code, "build/busy");
+  if (!concurrent.ok) {
+    assert.equal(concurrent.error.code, "build/busy");
+  }
   const before = value(await first).snapshot;
   class BrokenSourceMap extends Map<string, string> {
     override [Symbol.iterator](): MapIterator<[string, string]> {
-      throw new Error("injected source-host failure");
+      throw new Error(`injected source-host failure (${this.size} entries)`);
     }
   }
   const failed = await builder.update(new BrokenSourceMap());
   assert.equal(failed.ok, false);
-  if (!failed.ok) assert.equal(failed.error.code, "build/failure");
+  if (!failed.ok) {
+    assert.equal(failed.error.code, "build/failure");
+  }
   const retry = await builder.update(sources);
   assert.equal(retry.ok, false);
-  if (!retry.ok) assert.equal(retry.error.code, "build/recreate-required");
+  if (!retry.ok) {
+    assert.equal(retry.error.code, "build/recreate-required");
+  }
   value(selectPosition(before, opera, 30));
+});
+
+test("Bun acquisition preserves BOMs and dot-prefixed sources through exact restoration", async () => {
+  const directory = `${Bun.env.TMPDIR ?? "/tmp"}/chess-source-${crypto.randomUUID()}`;
+  const source = "\uFEFFmodule hidden; story empty {}\n";
+  try {
+    await Bun.write(`${directory}/.hidden.chess-story`, source);
+    const acquired = value(await loadDirectory(directory));
+    const uri = Bun.pathToFileURL(`${directory}/.hidden.chess-story`).href;
+    assert.equal(acquired.get(uri), source);
+    const data = value(decode(source));
+    assert.equal(value(restore(envelope(data, source))), source);
+    // Langium retains its own hidden-document discovery policy; acquire a visible
+    // module as well to exercise compilation and exact emitted source preservation.
+    const visible = Bun.pathToFileURL(`${directory}/visible.chess-story`).href;
+    acquired.set(visible, source);
+    const compiled = value(await compile(acquired));
+    assert.equal(
+      compiled.output.find((document) => document.uri === visible)?.sourceText,
+      source
+    );
+    const filesystem = createBunFileSystem(new Map());
+    const location = URI.parse(uri);
+    assert.equal(await filesystem.readFile(location), source);
+    assert.equal(filesystem.readFileSync(location), source);
+    const root = URI.parse(Bun.pathToFileURL(`${directory}/`).href);
+    assert.equal(await filesystem.exists(root), true);
+    const entries = await filesystem.readDirectory(root);
+    assert.ok(entries.some((node) => node.uri.toString() === uri));
+  } finally {
+    await $`rm -rf ${directory}`.quiet();
+  }
 });

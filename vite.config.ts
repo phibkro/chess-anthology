@@ -3,13 +3,11 @@ import react from "@vitejs/plugin-react";
 import formatting from "ultracite/oxfmt";
 import antiSlop from "ultracite/oxlint/anti-slop";
 import core from "ultracite/oxlint/core";
+import jest from "ultracite/oxlint/jest";
 import { selectJsPlugins } from "ultracite/oxlint/js-plugins";
 import reactLint from "ultracite/oxlint/react";
 import shadcn from "ultracite/oxlint/shadcn";
-import vitest from "ultracite/oxlint/vitest";
 import { defineConfig } from "vite-plus";
-
-import baseline from "./lint-baseline.ts";
 
 const documentation = selectJsPlugins(["tsdoc", "jsdoc-js"]);
 
@@ -58,18 +56,17 @@ export default defineConfig({
         files: ["src/**/*.{ts,tsx}"],
         rules: { ...reactLint.rules, ...shadcn.rules },
       },
-      ...(vitest.overrides ?? []).map((override) => ({
+      ...(jest.overrides ?? []).map((override) => ({
         ...override,
         files: ["src/**/*.test.ts"],
       })),
-      ...baseline,
     ],
     plugins: [
       ...(core.plugins ?? []),
       ...(reactLint.plugins ?? []),
-      ...(vitest.overrides?.[0]?.plugins ?? []),
+      ...(jest.overrides?.[0]?.plugins ?? []),
     ],
-    rules: { "no-unused-vars": "error" },
+    rules: { "import/no-nodejs-modules": "error", "no-unused-vars": "error" },
     settings: {
       shadcn: {
         note: "Use src/styles.css for shared theme and component appearance.",

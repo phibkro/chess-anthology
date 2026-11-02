@@ -1,5 +1,5 @@
 // Reader module interface. Its state, board adapter and notation handling are internal.
-export { Reader } from "./Reader";
+export { Reader } from "./reader";
 export {
   compileLesson,
   importPgn,
@@ -7,5 +7,5 @@ export {
   type CompiledLesson,
 } from "./chess";
 
-export { Board } from "./Board";
+export { Board } from "./board";
 export { positionFromFen } from "./chess";

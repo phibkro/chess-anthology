@@ -5,14 +5,16 @@ import {
   inject,
 } from "langium";
 
-import { isModule, type Module } from "./generated/ast.js";
+import { ok, err } from "../../contracts/index.js";
+import type { Result } from "../../contracts/index.js";
+import { isModule } from "./generated/ast.js";
+import type { Module } from "./generated/ast.js";
 import {
   ChessNarrativeGeneratedModule,
   ChessNarrativeGeneratedSharedModule,
 } from "./generated/module.js";
 import { jsonParserModule } from "./json-string.js";
-export { jsonParserModule } from "./json-string.js";
-import { ok, err, type Result } from "../../contracts/index.js";
+
 export {
   isModule,
   isGame,
@@ -31,14 +33,19 @@ const language = inject(
   jsonParserModule
 );
 shared.ServiceRegistry.register(language);
-export function parseText(source: string): Result<Module> {
+/**
+ * Parse flat narrative text and return syntax failures as values.
+ * @param source - Narrative or game source text.
+ * @returns A syntax root or an explicit parsing failure.
+ */
+export const parseText = (source: string): Result<Module> => {
   try {
     const parsed = language.parser.LangiumParser.parse(source);
     if (
       parsed.lexerErrors.length ||
       parsed.parserErrors.length ||
       !isModule(parsed.value)
-    )
+    ) {
       return err(
         "syntax",
         "source/invalid-syntax",
@@ -46,11 +53,12 @@ export function parseText(source: string): Result<Module> {
           .map((e) => e.message)
           .join("\n")
       );
+    }
     return ok(parsed.value);
   } catch (error) {
     return err("infrastructure", "parser/failure", String(error));
   }
-}
+};
 
 export {
   ChessNarrativeGeneratedModule,
@@ -58,3 +66,5 @@ export {
 } from "./generated/module.js";
 
 export type { Module, Scene, ChessNarrativeAstType } from "./contract.js";
+
+export { jsonParserModule } from "./json-string.js";

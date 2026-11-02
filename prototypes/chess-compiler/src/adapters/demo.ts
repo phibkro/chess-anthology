@@ -1,6 +1,4 @@
-import { readdir, readFile } from "node:fs/promises";
-import { isDeepStrictEqual } from "node:util";
-
+/* oxlint-disable no-await-in-loop -- Revisions must be applied in order to demonstrate incremental reuse. */
 import {
   compile,
   createCompiler,
@@ -10,17 +8,32 @@ import {
   decode,
   selectPosition,
 } from "../compiler/index.js";
+import { readSourceText } from "../runtime/source-text.js";
+
+const required = <T>(value: T | null | undefined): T => {
+  if (value === null || value === undefined) {
+    throw new Error("Required fixture value is unavailable.");
+  }
+  return value;
+};
+
 const dir = new URL("../../examples/", import.meta.url);
 const sources = new Map(
   await Promise.all(
-    (await readdir(dir)).map(async (name) => {
+    [
+      ...new Bun.Glob("*").scanSync({
+        cwd: Bun.fileURLToPath(dir),
+        dot: true,
+        onlyFiles: true,
+      }),
+    ].map(async (name) => {
       const uri = new URL(name, dir);
-      return [uri.href, await readFile(uri, "utf8")] as const;
+      return [uri.href, await readSourceText(uri)] as const;
     })
   )
 );
 const storyUri = new URL("story.chess-story", dir).href;
-const original = sources.get(storyUri)!;
+const original = required(sources.get(storyUri));
 const compiler = createCompiler();
 const first = await compiler.update(sources);
 if (!first.ok) {
@@ -30,8 +43,11 @@ if (!first.ok) {
 const { snapshot, work } = first.value;
 console.log("PROTOTYPE — explicit phases and immutable build snapshots", work);
 console.log(JSON.stringify(snapshot, null, 2));
-const authored = snapshot.output.find((d) => d.uri === storyUri)!.data!;
+const authored = required(
+  required(snapshot.output.find((d) => d.uri === storyUri)).data
+);
 const restored = restore(
+  // oxlint-disable-next-line unicorn/prefer-structured-clone -- This tests a JSON transport roundtrip, not an in-memory clone.
   JSON.parse(JSON.stringify(envelope(authored, original)))
 );
 console.log(
@@ -43,16 +59,16 @@ if (printed.ok) {
   const parsed = decode(printed.value);
   console.log(
     "Structured → flat → structured:",
-    parsed.ok && isDeepStrictEqual(parsed.value, authored)
+    parsed.ok && Bun.deepEquals(parsed.value, authored, true)
   );
 }
 for (const ending of ["\n", "\r\n"]) {
   const text = original.replaceAll("\n", ending);
-  const restored = restore(envelope(authored, text));
+  const restoredText = restore(envelope(authored, text));
   console.log(
     "Source trivia preserved",
     JSON.stringify(ending),
-    restored.ok && restored.value === text
+    restoredText.ok && restoredText.value === text
   );
 }
 const noChange = await compiler.update(sources);
@@ -74,7 +90,7 @@ for (const [label, source] of [
   ["missing position", original.replace("after 30", "after 300")],
   ["illegal answer", original.replace("Qb8+", "Qh9")],
   ["parse error", original.replace('answer "Qb8+"', "answer")],
-  ["lexical error", original + "\n @"],
+  ["lexical error", `${original}\n @`],
 ]) {
   const changed = new Map(sources);
   changed.set(storyUri, source);

@@ -4,17 +4,17 @@ These are internal modules with explicit interfaces, not a collection of new pac
 
 | Module | Interface / current location | Owns | Must not own |
 | --- | --- | --- | --- |
-| Anthology/discovery | `src/App.tsx`, `src/collection.json` | Browsing, contextual entries, editorial navigation | Chess rules or session transitions |
+| Anthology/discovery | `src/app.tsx`, `src/collection.json` | Browsing, contextual entries, editorial navigation | Chess rules or session transitions |
 | Reader | `src/lesson/index.ts` | Opening compiled lessons and rendering the current experience | External source acquisition or compiler workspace state |
 | Reader document/notation | Internal `schema.ts`, `chess.ts` | Current version-1 lesson validation and recorded notation | UI layout or reader tries |
 | Player | Internal `store.ts` | Session commands, cursor, hints, tries and reveal | Rewriting recorded games or authored content |
-| Board presentation | Internal `Board.tsx` | Chessground adaptation and pointer interaction | Deciding whether an authored answer is supported |
+| Board presentation | Internal `board.tsx` | Chessground adaptation and pointer interaction | Deciding whether an authored answer is supported |
 | Compiler contracts | Prototype `src/contracts/index.ts` | Explicit authored, history, emission and build IRs; structural schemas and result/error types | Langium, React, filesystem or chess-engine objects |
 | Compiler | Prototype `src/compiler/index.ts` | Compiler operations and immutable build snapshots | Reader session state or credentials |
 | Source/CLI adapters | Prototype `src/adapters/` | Explicit file reads and command output | Independent semantic rules |
 | Language-server adapter | Prototype `src/compiler/lsp.ts` | Mapping editor document lifecycle to compiler checks | A competing authored model |
 
-The smaller reader modules still live inside `src/lesson`. Extract separate entrypoints/packages only when actual consumers need them. The reader's version-1 model and compiler's version-0 model are not yet unified.
+The smaller reader modules still live inside `src/lesson`. Extract separate entrypoints/packages only when actual consumers need them. The reader's version-1 model and compiler's version-0 model are not yet unified. Authored compiler runtime adapters use Bun; the third-party LSP stdio transport uses its compatibility layer.
 
 ## Compiler phase interfaces
 
