@@ -29,7 +29,8 @@ export function Reader({ lesson }: { lesson: CompiledLesson }) {
   const { cursor, hints, feedback, revealed, practice, orientation } = context;
   const frame = lesson.frames[cursor];
   const checkpoint = checkpointAt(context);
-  const interactive = Boolean(checkpoint && practice);
+  const interactive = cursor < lesson.frames.length - 1;
+  const promptActive = Boolean(checkpoint && practice);
   const submit = useCallback(
     (text: string) => {
       const pos = positionFromFen(
@@ -113,42 +114,48 @@ export function Reader({ lesson }: { lesson: CompiledLesson }) {
             </span>
           </div>
           {interactive && (
-            <form
-              className="move-form"
-              onSubmit={(event) => {
-                event.preventDefault();
-                submit(moveText);
-              }}
-            >
-              <label htmlFor="move-input">
-                Your move <small>SAN or coordinates</small>
-              </label>
-              <div>
-                <input
-                  id="move-input"
-                  autoComplete="off"
-                  value={moveText}
-                  onChange={(event) => setMoveText(event.target.value)}
-                  placeholder="Qh3 or f3h3"
-                />
-                <button type="submit" disabled={!moveText.trim()}>
-                  Play
-                </button>
-              </div>
-              <label className="promotion">
-                Promote to
-                <select
-                  aria-label="Promotion piece"
-                  value={promotion}
-                  onChange={(event) => setPromotion(event.target.value)}
+            <>
+              <p className="board-help">Drag a piece, or click it and then its destination.</p>
+              <details className="keyboard-entry">
+                <summary>Keyboard move entry</summary>
+                <form
+                  className="move-form"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    submit(moveText);
+                  }}
                 >
-                  <option value="q">Queen</option>
-                  <option value="r">Rook</option>
-                  <option value="b">Bishop</option>
-                  <option value="n">Knight</option>
-                </select>
-              </label>
-            </form>
+                  <label htmlFor="move-input">
+                    Your move <small>SAN or coordinates</small>
+                  </label>
+                  <div>
+                    <input
+                      id="move-input"
+                      autoComplete="off"
+                      value={moveText}
+                      onChange={(event) => setMoveText(event.target.value)}
+                      placeholder="Qh3 or f3h3"
+                    />
+                    <button type="submit" disabled={!moveText.trim()}>
+                      Play
+                    </button>
+                  </div>
+                  <label className="promotion">
+                    Promote to
+                    <select
+                      aria-label="Promotion piece"
+                      value={promotion}
+                      onChange={(event) => setPromotion(event.target.value)}
+                    >
+                      <option value="q">Queen</option>
+                      <option value="r">Rook</option>
+                      <option value="b">Bishop</option>
+                      <option value="n">Knight</option>
+                    </select>
+                  </label>
+                </form>
+              </details>
+            </>
           )}
         </div>
         <div className="narrative-column">
@@ -156,7 +163,7 @@ export function Reader({ lesson }: { lesson: CompiledLesson }) {
           {lesson.content.artifact.stipulation && (
             <p className="stipulation">{lesson.content.artifact.stipulation}</p>
           )}
-          {interactive ? (
+          {promptActive ? (
             <section className="checkpoint">
               <p className="eyebrow">YOUR TURN</p>
               <h3>{checkpoint?.prompt}</h3>

@@ -65,7 +65,8 @@ export function createLessonStore(lesson: CompiledLesson) {
         }) as LessonContext,
       submit: (context, event: { uci: string }) => {
         const checkpoint = checkpointAt(context);
-        if (!context.practice || !checkpoint) return context;
+        const nextFrame = context.lesson.frames[context.cursor + 1];
+        if (!nextFrame) return context;
         const pos = positionFromFen(context.lesson.frames[context.cursor].fen);
         const move = parseUci(event.uci.trim().toLowerCase());
         if (!move || !pos.isLegal(move))
@@ -75,17 +76,20 @@ export function createLessonStore(lesson: CompiledLesson) {
             feedback: "That move is not legal in this position.",
           };
         const uci = makeUci(normalizeMove(pos, move));
-        if (!checkpoint.accepted.includes(uci))
+        const accepted = checkpoint?.accepted ?? [nextFrame.path[nextFrame.path.length - 1]];
+        if (!accepted.includes(uci))
           return {
             ...context,
             attempts: context.attempts + 1,
             feedback:
-              "A legal move, but a different idea from the selected line. Try again, ask for a hint, or reveal.",
+              checkpoint && context.practice
+                ? "A legal move, but a different idea from the selected line. Try again, ask for a hint, or reveal."
+                : "A legal move, but outside the recorded line. Follow the score or use the next-move arrow.",
           };
         return {
           ...moveCursor(context, context.cursor + 1),
           attempts: context.attempts + 1,
-          feedback: `Found it. ${checkpoint.explanation}`,
+          feedback: checkpoint && context.practice ? `Found it. ${checkpoint.explanation}` : "",
         };
       },
     },

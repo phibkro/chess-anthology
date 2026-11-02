@@ -25,6 +25,8 @@ export function Board({ fen, orientation, interactive, attempt, promotion, onMov
       check: pos.isCheck(),
       animation: { enabled: !window.matchMedia("(prefers-reduced-motion: reduce)").matches },
       coordinates: true,
+      blockTouchScroll: interactive,
+      viewOnly: !interactive,
       movable: {
         free: false,
         color: interactive ? pos.turn : undefined,
@@ -50,7 +52,7 @@ export function Board({ fen, orientation, interactive, attempt, promotion, onMov
         ref={element}
         className="cg-wrap"
         role="img"
-        aria-label={`Chess position. ${fen}. ${interactive ? "Use the move form below for keyboard play." : "Replay position."}`}
+        aria-label={`Chess position. ${fen}. ${interactive ? "Drag a piece, or select it and its destination. Keyboard move entry is available below." : "End of the selected line."}`}
       />
     </div>
   );

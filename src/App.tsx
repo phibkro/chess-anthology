@@ -327,8 +327,6 @@ export function App() {
         </a>
         <p>Art on the board. Life around it.</p>
         <div className="footer-links">
-          <a href="/original/">Original snapshot ↗</a>
-          <a href="/revised/">Reduced-copy snapshot ↗</a>
           <a href="https://github.com/phibkro/chess-anthology">Source & credits ↗</a>
         </div>
       </footer>

@@ -15,13 +15,13 @@ The lesson reader uses the same session events for all four. Artifacts retain th
 
 ## Boundaries
 
-No backend, accounts, ratings, streaks, AI tutor or engine service. Use authored accepted moves; do not label every alternative legal move objectively losing. Readers can skip prompts, reveal, rewind, flip the board or use SAN/coordinate keyboard entry. Coordinate promotion suffixes support underpromotion.
+No backend, accounts, ratings, streaks, AI tutor or engine service. Use authored accepted moves; do not label every alternative legal move objectively losing. Readers can drag pieces or click a piece and destination throughout the recorded line, including between checkpoints. They can also skip prompts, reveal, rewind, flip the board or open optional SAN/coordinate keyboard entry. Coordinate promotion suffixes support underpromotion.
 
 PGN import/export preserves tags, comments, NAGs, FEN setup and variations. All parsed branches are checked for legal moves; playback currently selects the mainline. chessops tolerates malformed tokens, so imported notation still needs source comparison before editorial use. FEN imports are position-only. Lesson JSON is schema-validated and preserves the prompts. EPD and composition-specific formats are researched but not claimed as implemented.
 
 ## Evidence
 
-Automated tests cover score legality, checkpoints, hints, reveal/reset/skip, wrong-move handling, PGN branch/comment round-trips and resignation semantics. Browser QA verified lesson opening, hints and successful keyboard move submission. A browser tool policy block prevented the remaining pointer/import UI checks; automated import/export tests pass. The experience still needs independent chess/editorial review and mobile/touch evaluation.
+Automated tests cover score legality, checkpoints, hints, reveal/reset/skip, wrong-move handling, PGN branch/comment round-trips and resignation semantics. Browser QA verified lesson opening, hints, keyboard move submission, dragging, click-to-move between checkpoints, and file-coordinate alignment in both orientations. Automated import/export tests pass; import UI and mobile touch checks remain open. The experience still needs independent chess/editorial review and mobile/touch evaluation.
 
 ## Next tracer bullets
 

@@ -1390,3 +1390,45 @@ dialog {
 html:has(dialog[open]) {
   overflow: hidden;
 }
+/* Coordinate labels use the same eight equal cells as Chessground's board. */
+.lesson-board .cg-wrap {
+  touch-action: none;
+}
+.lesson-board .cg-wrap coords {
+  opacity: 1;
+  color: #303a2b;
+  font-size: clamp(9px, 1vw, 11px);
+}
+.lesson-board .cg-wrap coords.files {
+  left: 0;
+  bottom: 0;
+  height: 15px;
+  line-height: 15px;
+}
+.lesson-board .cg-wrap coords.files coord {
+  flex: 0 0 12.5%;
+}
+.lesson-board .cg-wrap coords.ranks {
+  left: 3px;
+  top: 0;
+}
+.lesson-board .cg-wrap coords.ranks coord {
+  flex: 0 0 12.5%;
+  transform: none;
+  padding-top: 3px;
+}
+.board-help {
+  margin: 16px 0 12px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.keyboard-entry {
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+.keyboard-entry summary {
+  font-size: 11px;
+  cursor: pointer;
+  color: var(--muted);
+}

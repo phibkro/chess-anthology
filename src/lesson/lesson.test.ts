@@ -117,8 +117,20 @@ describe("lesson events", () => {
     const store = createLessonStore(carpenter);
     store.trigger.togglePractice();
     store.trigger.submit({ uci: "f3h3" });
-    expect(store.getSnapshot().context.cursor).toBe(0);
+    expect(store.getSnapshot().context.cursor).toBe(1);
+    expect(store.getSnapshot().context.feedback).toBe("");
     store.trigger.next();
+    expect(store.getSnapshot().context.cursor).toBe(2);
+  });
+  it("accepts piece moves between checkpoints", () => {
+    const store = createLessonStore(carpenter);
+    store.trigger.next();
+    store.trigger.submit({ uci: "d4e4" });
+    expect(store.getSnapshot().context.cursor).toBe(2);
+  });
+  it("allows moving the pieces from a historical game opening", () => {
+    const store = createLessonStore(opera);
+    store.trigger.submit({ uci: "e2e4" });
     expect(store.getSnapshot().context.cursor).toBe(1);
   });
   it("uses the same event model for a real game", () => {
