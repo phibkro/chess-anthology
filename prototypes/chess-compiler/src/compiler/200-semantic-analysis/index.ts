@@ -1,4 +1,3 @@
-import { isGame, isStory, isText, isArrow, type Module, type Scene } from "../100-parsing/index.js";
 import {
   parseStructured,
   type Issue,
@@ -6,6 +5,14 @@ import {
   type DocumentData,
   type SceneData,
 } from "../../document/index.js";
+import {
+  isGame,
+  isStory,
+  isText,
+  isArrow,
+  type Module,
+  type Scene,
+} from "../100-parsing/index.js";
 export function lowerScene(scene: Scene): SceneData {
   return {
     name: scene.name,
@@ -16,7 +23,7 @@ export function lowerScene(scene: Scene): SceneData {
         ? { type: "text", text: note.text }
         : isArrow(note)
           ? { type: "arrow", from: note.from, to: note.to, color: note.color }
-          : { type: "prompt", text: note.text, answer: note.answer },
+          : { type: "prompt", text: note.text, answer: note.answer }
     ),
   };
 }

@@ -1,12 +1,16 @@
-import { useCallback, useMemo, useState, useSyncExternalStore } from "react";
+import { parsePlaybackPlan } from "chess-compiler-prototype/playback";
 import { parseSan } from "chessops/san";
 import { makeUci } from "chessops/util";
-import { parsePlaybackPlan } from "chess-compiler-prototype/playback";
+import { useCallback, useMemo, useState, useSyncExternalStore } from "react";
+
 import planData from "../content/generated/queen-offers.json";
 import { Board, positionFromFen } from "../lesson";
 import { createStoryStore } from "./store";
 const parsed = parsePlaybackPlan(planData);
-const credits: Record<string, { title: string; detail: string; url: string; source: string }> = {
+const credits: Record<
+  string,
+  { title: string; detail: string; url: string; source: string }
+> = {
   opera: {
     title: "The Opera Game",
     detail: "Paul Morphy · Duke Karl & Count Isouard · Paris, 1858",
@@ -35,9 +39,12 @@ function PlayableStory({
       const sub = store.subscribe(listener);
       return () => sub.unsubscribe();
     },
-    [store],
+    [store]
   );
-  const context = useSyncExternalStore(subscribe, () => store.getSnapshot().context);
+  const context = useSyncExternalStore(
+    subscribe,
+    () => store.getSnapshot().context
+  );
   const [move, setMove] = useState("");
   const scene = plan.scenes[context.scene];
   const frame = scene.frames[context.ply];
@@ -48,9 +55,12 @@ function PlayableStory({
       !context.attempt && (context.revealed || context.ply === scene.after + 1)
         ? scene.notes.filter((n) => n.type === "arrow")
         : [],
-    [scene, context.revealed, context.ply, context.attempt],
+    [scene, context.revealed, context.ply, context.attempt]
   );
-  const submit = useCallback((uci: string) => store.trigger.submit({ uci }), [store]);
+  const submit = useCallback(
+    (uci: string) => store.trigger.submit({ uci }),
+    [store]
+  );
   const select = (index: number) => {
     setMove("");
     store.trigger.selectScene({ index });
@@ -78,7 +88,9 @@ function PlayableStory({
           <Board
             fen={context.attempt?.fen ?? frame.fen}
             orientation={context.orientation}
-            interactive={!context.attempt && context.ply < scene.frames.length - 1}
+            interactive={
+              !context.attempt && context.ply < scene.frames.length - 1
+            }
             attempt={context.attempts}
             paused={Boolean(context.attempt)}
             promotion="q"
@@ -106,12 +118,18 @@ function PlayableStory({
             </span>
             <button
               aria-label="Next move"
-              disabled={Boolean(context.attempt) || context.ply === scene.frames.length - 1}
+              disabled={
+                Boolean(context.attempt) ||
+                context.ply === scene.frames.length - 1
+              }
               onClick={() => store.trigger.next()}
             >
               →
             </button>
-            <button aria-label="Flip board" onClick={() => store.trigger.flip()}>
+            <button
+              aria-label="Flip board"
+              onClick={() => store.trigger.flip()}
+            >
               ⇅
             </button>
           </div>
@@ -135,7 +153,10 @@ function PlayableStory({
                   onChange={(event) => setMove(event.target.value)}
                   placeholder="SAN or coordinates"
                 />
-                <button disabled={!move.trim() || Boolean(context.attempt)} type="submit">
+                <button
+                  disabled={!move.trim() || Boolean(context.attempt)}
+                  type="submit"
+                >
                   Play
                 </button>
               </div>
@@ -156,7 +177,9 @@ function PlayableStory({
               </p>
             ))}
           <section className="checkpoint">
-            <p className="eyebrow">{atPrompt ? "YOUR TURN" : "FOLLOW THE GAME"}</p>
+            <p className="eyebrow">
+              {atPrompt ? "YOUR TURN" : "FOLLOW THE GAME"}
+            </p>
             <h3>
               {atPrompt && prompt?.type === "prompt"
                 ? prompt.text
@@ -166,8 +189,13 @@ function PlayableStory({
             </h3>
             {atPrompt && prompt?.type === "prompt" && (
               <div className="hint-actions">
-                <button onClick={() => store.trigger.reveal()}>Reveal the idea</button>
-                <button disabled={Boolean(context.attempt)} onClick={() => store.trigger.next()}>
+                <button onClick={() => store.trigger.reveal()}>
+                  Reveal the idea
+                </button>
+                <button
+                  disabled={Boolean(context.attempt)}
+                  onClick={() => store.trigger.next()}
+                >
                   Skip →
                 </button>
               </div>
@@ -194,7 +222,10 @@ function PlayableStory({
             </p>
           )}
           <div className="story-next">
-            <button disabled={context.scene === 0} onClick={() => select(context.scene - 1)}>
+            <button
+              disabled={context.scene === 0}
+              onClick={() => select(context.scene - 1)}
+            >
               ← Previous example
             </button>
             <button
@@ -204,7 +235,12 @@ function PlayableStory({
               Next example →
             </button>
           </div>
-          <a className="text-link" href={credits[scene.game]?.url} target="_blank" rel="noreferrer">
+          <a
+            className="text-link"
+            href={credits[scene.game]?.url}
+            target="_blank"
+            rel="noreferrer"
+          >
             {credits[scene.game]?.source} ↗
           </a>
         </div>

@@ -1,10 +1,16 @@
-import { Fragment, useCallback, useState, useSyncExternalStore } from "react";
 import { parseSan } from "chessops/san";
 import { makeUci } from "chessops/util";
-import { openingFor } from "./openings";
+import { Fragment, useCallback, useState, useSyncExternalStore } from "react";
+
 import { Board } from "./Board";
+import {
+  eventsAt,
+  exportPgn,
+  positionFromFen,
+  type CompiledLesson,
+} from "./chess";
+import { openingFor } from "./openings";
 import { checkpointAt, createLessonStore } from "./store";
-import { eventsAt, exportPgn, positionFromFen, type CompiledLesson } from "./chess";
 
 function saveText(filename: string, text: string, type: string) {
   const url = URL.createObjectURL(new Blob([text], { type }));
@@ -27,10 +33,13 @@ function PositionNotes({
     <>
       {eventsAt(lesson, cursor).map(({ event }) =>
         event.type === "text" ? (
-          <p key={event.id} className={compact ? "score-note" : "position-note"}>
+          <p
+            key={event.id}
+            className={compact ? "score-note" : "position-note"}
+          >
             {event.text}
           </p>
-        ) : null,
+        ) : null
       )}
     </>
   );
@@ -42,29 +51,44 @@ export function Reader({ lesson }: { lesson: CompiledLesson }) {
       const sub = store.subscribe(listener);
       return () => sub.unsubscribe();
     },
-    [store],
+    [store]
   );
-  const context = useSyncExternalStore(subscribe, () => store.getSnapshot().context);
+  const context = useSyncExternalStore(
+    subscribe,
+    () => store.getSnapshot().context
+  );
   const [moveText, setMoveText] = useState("");
   const [promotion, setPromotion] = useState("q");
-  const { cursor, hints, feedback, revealed, practice, orientation, attempt, feedbackTone } =
-    context;
+  const {
+    cursor,
+    hints,
+    feedback,
+    revealed,
+    practice,
+    orientation,
+    attempt,
+    feedbackTone,
+  } = context;
   const frame = lesson.frames[cursor];
   const checkpoint = checkpointAt(context);
   const displayedFen = attempt?.fen ?? frame.fen;
-  const decisions = lesson.events.filter(({ event }) => event.type === "prompt");
+  const decisions = lesson.events.filter(
+    ({ event }) => event.type === "prompt"
+  );
   const interactive = !attempt && cursor < lesson.frames.length - 1;
   const promptActive = Boolean(checkpoint && practice);
   const submit = useCallback(
     (text: string) => {
       const pos = positionFromFen(
-        store.getSnapshot().context.lesson.frames[store.getSnapshot().context.cursor].fen,
+        store.getSnapshot().context.lesson.frames[
+          store.getSnapshot().context.cursor
+        ].fen
       );
       const san = parseSan(pos, text.trim());
       store.trigger.submit({ uci: san ? makeUci(san) : text.trim() });
       setMoveText("");
     },
-    [store],
+    [store]
   );
   const opening = openingFor(lesson);
   const finished = cursor === lesson.frames.length - 1;
@@ -96,7 +120,10 @@ export function Reader({ lesson }: { lesson: CompiledLesson }) {
             onMove={submit}
           />
           <div className="playback">
-            <button aria-label="Reset lesson" onClick={() => store.trigger.reset()}>
+            <button
+              aria-label="Reset lesson"
+              onClick={() => store.trigger.reset()}
+            >
               ↺
             </button>
             <button
@@ -120,7 +147,10 @@ export function Reader({ lesson }: { lesson: CompiledLesson }) {
             >
               →
             </button>
-            <button aria-label="Flip board" onClick={() => store.trigger.flip()}>
+            <button
+              aria-label="Flip board"
+              onClick={() => store.trigger.flip()}
+            >
               ⇅
             </button>
           </div>
@@ -146,7 +176,9 @@ export function Reader({ lesson }: { lesson: CompiledLesson }) {
           </div>
           {interactive && (
             <>
-              <p className="board-help">Drag a piece, or click it and then its destination.</p>
+              <p className="board-help">
+                Drag a piece, or click it and then its destination.
+              </p>
               <details className="keyboard-entry">
                 <summary>Keyboard move entry</summary>
                 <form
@@ -190,7 +222,9 @@ export function Reader({ lesson }: { lesson: CompiledLesson }) {
           )}
         </div>
         <div className="narrative-column">
-          <p className="lesson-intro">{lesson.content.narrative.introduction}</p>
+          <p className="lesson-intro">
+            {lesson.content.narrative.introduction}
+          </p>
           {lesson.content.artifact.stipulation && (
             <p className="stipulation">{lesson.content.artifact.stipulation}</p>
           )}
@@ -213,13 +247,17 @@ export function Reader({ lesson }: { lesson: CompiledLesson }) {
                   Hint {hints}/{checkpoint?.hints.length}
                 </button>
                 <button onClick={() => store.trigger.reveal()}>Reveal</button>
-                <button disabled={Boolean(attempt)} onClick={() => store.trigger.next()}>
+                <button
+                  disabled={Boolean(attempt)}
+                  onClick={() => store.trigger.next()}
+                >
                   Skip →
                 </button>
               </div>
               {revealed && (
                 <p className="revealed">
-                  Selected move: <strong>{lesson.frames[cursor + 1]?.san}</strong>
+                  Selected move:{" "}
+                  <strong>{lesson.frames[cursor + 1]?.san}</strong>
                 </p>
               )}
             </section>
@@ -248,7 +286,9 @@ export function Reader({ lesson }: { lesson: CompiledLesson }) {
               <h3>Your try: {attempt.san}</h3>
               <div className="try-actions">
                 <button onClick={() => store.trigger.retry()}>Try again</button>
-                <button onClick={() => store.trigger.reveal()}>Reveal the idea</button>
+                <button onClick={() => store.trigger.reveal()}>
+                  Reveal the idea
+                </button>
               </div>
             </section>
           )}
@@ -257,7 +297,11 @@ export function Reader({ lesson }: { lesson: CompiledLesson }) {
               Recorded move: <strong>{lesson.frames[cursor + 1]?.san}</strong>
             </p>
           )}
-          <p className="move-feedback" data-tone={feedbackTone} aria-live="polite">
+          <p
+            className="move-feedback"
+            data-tone={feedbackTone}
+            aria-live="polite"
+          >
             {feedback}
           </p>
           {decisions.length > 0 && (
@@ -291,7 +335,9 @@ export function Reader({ lesson }: { lesson: CompiledLesson }) {
                     className={cursor === index + 1 ? "current" : ""}
                     onClick={() => store.trigger.seek({ cursor: index + 1 })}
                   >
-                    {index % 2 === 0 && <small>{Math.floor(index / 2) + 1}.</small>}
+                    {index % 2 === 0 && (
+                      <small>{Math.floor(index / 2) + 1}.</small>
+                    )}
                     {item.san}
                   </button>
                   <PositionNotes lesson={lesson} cursor={index + 1} compact />
@@ -301,14 +347,22 @@ export function Reader({ lesson }: { lesson: CompiledLesson }) {
           </details>
           <details className="lesson-source">
             <summary>Sources & notation</summary>
-            <a target="_blank" rel="noreferrer" href={lesson.content.artifact.source.url}>
+            <a
+              target="_blank"
+              rel="noreferrer"
+              href={lesson.content.artifact.source.url}
+            >
               {lesson.content.artifact.source.title} ↗
             </a>
             <p>{lesson.content.artifact.source.note}</p>
             <div className="exports">
               <button
                 onClick={() =>
-                  saveText(`${lesson.content.id}.pgn`, exportPgn(lesson), "application/x-chess-pgn")
+                  saveText(
+                    `${lesson.content.id}.pgn`,
+                    exportPgn(lesson),
+                    "application/x-chess-pgn"
+                  )
                 }
               >
                 Export PGN ↓
@@ -318,14 +372,20 @@ export function Reader({ lesson }: { lesson: CompiledLesson }) {
                   saveText(
                     `${lesson.content.id}.json`,
                     JSON.stringify(lesson.content, null, 2),
-                    "application/json",
+                    "application/json"
                   )
                 }
               >
                 Lesson JSON ↓
               </button>
               <button
-                onClick={() => saveText(`${lesson.content.id}.fen`, displayedFen, "text/plain")}
+                onClick={() =>
+                  saveText(
+                    `${lesson.content.id}.fen`,
+                    displayedFen,
+                    "text/plain"
+                  )
+                }
               >
                 Position FEN ↓
               </button>

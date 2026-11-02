@@ -1,12 +1,24 @@
-import { StoryReader } from "./story";
 import { useEffect, useRef, useState } from "react";
+
 import collection from "./collection.json";
 import lessonData from "./content/lessons.json";
-import { Reader, compileLesson, importPgn, importFen, type CompiledLesson } from "./lesson";
+import {
+  Reader,
+  compileLesson,
+  importPgn,
+  importFen,
+  type CompiledLesson,
+} from "./lesson";
+import { StoryReader } from "./story";
 
 const lessons = lessonData.map(compileLesson);
 function HeroBoard() {
-  const position: Record<string, string> = { h8: "♚", c6: "♟", a6: "♚", h5: "♟" };
+  const position: Record<string, string> = {
+    h8: "♚",
+    c6: "♟",
+    a6: "♚",
+    h5: "♟",
+  };
   return (
     <div
       className="board hero-board"
@@ -18,8 +30,15 @@ function HeroBoard() {
         const rank = 8 - Math.floor(index / 8);
         const square = String.fromCharCode(97 + file) + rank;
         return (
-          <div key={square} className={`square ${(file + rank) % 2 === 1 ? "dark" : ""}`}>
-            <span className={["h8", "c6"].includes(square) ? "piece-white" : "piece-black"}>
+          <div
+            key={square}
+            className={`square ${(file + rank) % 2 === 1 ? "dark" : ""}`}
+          >
+            <span
+              className={
+                ["h8", "c6"].includes(square) ? "piece-white" : "piece-black"
+              }
+            >
               {position[square]}
             </span>
             {(rank === 1 || file === 0) && (
@@ -40,7 +59,9 @@ export function App() {
   const [era, setEra] = useState("all");
   const [storyOpen, setStoryOpen] = useState(false);
   const [active, setActive] = useState<CompiledLesson | null>(null);
-  const [entry, setEntry] = useState<(typeof collection.entries)[number] | null>(null);
+  const [entry, setEntry] = useState<
+    (typeof collection.entries)[number] | null
+  >(null);
   const [importOpen, setImportOpen] = useState(false);
   const [importText, setImportText] = useState("");
   const [format, setFormat] = useState("pgn");
@@ -66,7 +87,9 @@ export function App() {
   }
   function filter(value: string) {
     setField(value);
-    document.getElementById("collection")?.scrollIntoView({ behavior: "smooth" });
+    document
+      .getElementById("collection")
+      ?.scrollIntoView({ behavior: "smooth" });
   }
   const entries = collection.entries.filter(
     (item) =>
@@ -74,7 +97,7 @@ export function App() {
       (era === "all" || item.era === era) &&
       JSON.stringify([item.title, item.person, item.place, item.cluster])
         .toLowerCase()
-        .includes(search.toLowerCase()),
+        .includes(search.toLowerCase())
   );
   return (
     <>
@@ -91,8 +114,12 @@ export function App() {
           </span>
         </a>
         <nav aria-label="Main navigation">
-          <button onClick={() => filter("composition")}>The art of composition</button>
-          <button onClick={() => filter("history")}>Chess through the times</button>
+          <button onClick={() => filter("composition")}>
+            The art of composition
+          </button>
+          <button onClick={() => filter("history")}>
+            Chess through the times
+          </button>
           <a href="#lessons">Interactive lessons ↗</a>
         </nav>
         <span className="edition">AN OPENING COLLECTION · VOL. 01</span>
@@ -101,7 +128,8 @@ export function App() {
         <section className="hero">
           <div className="hero-copy">
             <p className="eyebrow">
-              <span className="red-dot" /> SIXTY-FOUR SQUARES. COUNTLESS HUMAN STORIES.
+              <span className="red-dot" /> SIXTY-FOUR SQUARES. COUNTLESS HUMAN
+              STORIES.
             </p>
             <h1>
               The game is only
@@ -109,8 +137,9 @@ export function App() {
               half the <em>story.</em>
             </h1>
             <p className="intro">
-              A living anthology of chess as art, culture and human experience. Meet the people,
-              ideas and communities that make the board come alive.
+              A living anthology of chess as art, culture and human experience.
+              Meet the people, ideas and communities that make the board come
+              alive.
             </p>
             <button className="primary" onClick={() => openLesson("reti")}>
               Enter a lesson <span>↗</span>
@@ -128,7 +157,9 @@ export function App() {
             <HeroBoard />
             <figcaption>
               <span>Richard Réti, 1921</span>
-              <button onClick={() => openLesson("reti")}>Discover the study ↗</button>
+              <button onClick={() => openLesson("reti")}>
+                Discover the study ↗
+              </button>
             </figcaption>
           </figure>
         </section>
@@ -268,7 +299,11 @@ export function App() {
           <div className="filter-row">
             <div className="era-select">
               <label htmlFor="era">ERA</label>
-              <select id="era" value={era} onChange={(event) => setEra(event.target.value)}>
+              <select
+                id="era"
+                value={era}
+                onChange={(event) => setEra(event.target.value)}
+              >
                 <option value="all">All eras</option>
                 <option value="early">Early traditions</option>
                 <option value="medieval">Medieval worlds</option>
@@ -285,7 +320,8 @@ export function App() {
                 className="entry"
                 key={item.id}
                 onClick={() => {
-                  if (["reti", "carpenter"].includes(item.id)) openLesson(item.id);
+                  if (["reti", "carpenter"].includes(item.id))
+                    openLesson(item.id);
                   else setEntry(item);
                 }}
               >
@@ -297,7 +333,11 @@ export function App() {
                   <span className="art-type">{item.kind}</span>
                 </div>
                 <div className="entry-meta">
-                  <span className={item.status === "seed" ? "seed-dot" : "research-dot"} />
+                  <span
+                    className={
+                      item.status === "seed" ? "seed-dot" : "research-dot"
+                    }
+                  />
                   {item.field === "composition"
                     ? "The art of composition"
                     : "Chess through the times"}
@@ -315,7 +355,9 @@ export function App() {
                 </div>
               </button>
             ))}
-            {!entries.length && <p className="empty">No entries match these filters.</p>}
+            {!entries.length && (
+              <p className="empty">No entries match these filters.</p>
+            )}
           </div>
         </section>
         <section className="approach">
@@ -328,13 +370,13 @@ export function App() {
             </h2>
             <div>
               <p>
-                We begin with people and the worlds they inhabit. A study belongs to a composer, a
-                magazine and a community of solvers. A game belongs to a place, a moment and two
-                lives.
+                We begin with people and the worlds they inhabit. A study
+                belongs to a composer, a magazine and a community of solvers. A
+                game belongs to a place, a moment and two lives.
               </p>
               <p>
-                Players and composers sit alongside makers, teachers, clubs and everyday
-                participants. Eras overlap. Communities cross borders.
+                Players and composers sit alongside makers, teachers, clubs and
+                everyday participants. Eras overlap. Communities cross borders.
               </p>
             </div>
           </div>
@@ -346,7 +388,9 @@ export function App() {
         </a>
         <p>Art on the board. Life around it.</p>
         <div className="footer-links">
-          <a href="https://github.com/phibkro/chess-anthology">Source & credits ↗</a>
+          <a href="https://github.com/phibkro/chess-anthology">
+            Source & credits ↗
+          </a>
         </div>
       </footer>
       <dialog
@@ -371,7 +415,12 @@ export function App() {
               <p key={text}>{text}</p>
             ))}
             {entry.source && (
-              <a className="text-link" href={entry.source} target="_blank" rel="noreferrer">
+              <a
+                className="text-link"
+                href={entry.source}
+                target="_blank"
+                rel="noreferrer"
+              >
                 {entry.sourceLabel} ↗
               </a>
             )}
@@ -381,8 +430,8 @@ export function App() {
           <section className="import-panel">
             <h2>Bring a position or a game.</h2>
             <p>
-              Import stays in your browser. PGN keeps the score, comments and variations; lesson
-              prompts are authored separately.
+              Import stays in your browser. PGN keeps the score, comments and
+              variations; lesson prompts are authored separately.
             </p>
             <form
               onSubmit={(event) => {
@@ -399,7 +448,9 @@ export function App() {
                   setError("");
                 } catch (caught) {
                   setError(
-                    caught instanceof Error ? caught.message : "Could not import this content.",
+                    caught instanceof Error
+                      ? caught.message
+                      : "Could not import this content."
                   );
                 }
               }}
@@ -424,7 +475,11 @@ export function App() {
               <p className="import-error" role="alert">
                 {error}
               </p>
-              <button className="primary" type="submit" disabled={!importText.trim()}>
+              <button
+                className="primary"
+                type="submit"
+                disabled={!importText.trim()}
+              >
                 Open locally ↗
               </button>
             </form>

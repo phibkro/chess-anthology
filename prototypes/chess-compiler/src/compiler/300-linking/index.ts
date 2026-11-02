@@ -1,7 +1,13 @@
-import { URI, EmptyFileSystemProvider, DocumentState, type LangiumDocument } from "langium";
-import { createServices, relative, type Sources } from "./langium.js";
+import {
+  URI,
+  EmptyFileSystemProvider,
+  DocumentState,
+  type LangiumDocument,
+} from "langium";
+
 import { isModule, isGame } from "../100-parsing/index.js";
 import { createChessAnalysis } from "../400-chess-analysis/index.js";
+import { createServices, relative, type Sources } from "./langium.js";
 
 export { relative, createServices } from "./langium.js";
 export type { Sources } from "./langium.js";
@@ -22,7 +28,11 @@ export function createWorkspace(analysis = createChessAnalysis()) {
       return this.existsSync(uri);
     }
     override statSync(uri: URI) {
-      return { uri, isFile: sources.has(uri?.toString() ?? ""), isDirectory: false };
+      return {
+        uri,
+        isFile: sources.has(uri?.toString() ?? ""),
+        isDirectory: false,
+      };
     }
     override async stat(uri: URI) {
       return this.statSync(uri);
@@ -31,7 +41,7 @@ export function createWorkspace(analysis = createChessAnalysis()) {
   const services = createServices(
     sources,
     { fileSystemProvider: () => new MemoryFiles() },
-    analysis,
+    analysis
   );
   const documents = services.shared.workspace.LangiumDocuments;
   const builder = services.shared.workspace.DocumentBuilder;
@@ -63,7 +73,10 @@ export function createWorkspace(analysis = createChessAnalysis()) {
     const reverse = new Map<string, string[]>();
     for (const document of documents.all)
       for (const dep of dependencies(document))
-        reverse.set(dep, [...(reverse.get(dep) ?? []), document.uri.toString()]);
+        reverse.set(dep, [
+          ...(reverse.get(dep) ?? []),
+          document.uri.toString(),
+        ]);
     const queue = [...affected];
     for (let i = 0; i < queue.length; i++)
       for (const dependent of reverse.get(queue[i]) ?? [])
@@ -81,8 +94,12 @@ export function createWorkspace(analysis = createChessAnalysis()) {
     }
     if (changed.length || deleted.length)
       await builder.update(
-        changed.filter((uri) => uri.endsWith(".chess-story")).map((uri) => URI.parse(uri)),
-        deleted.filter((uri) => uri.endsWith(".chess-story")).map((uri) => URI.parse(uri)),
+        changed
+          .filter((uri) => uri.endsWith(".chess-story"))
+          .map((uri) => URI.parse(uri)),
+        deleted
+          .filter((uri) => uri.endsWith(".chess-story"))
+          .map((uri) => URI.parse(uri))
       );
     return { changed, deleted, parsed, validated: [...validated] };
   }

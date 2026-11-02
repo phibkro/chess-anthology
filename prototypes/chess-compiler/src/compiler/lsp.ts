@@ -1,8 +1,10 @@
 // PROTOTYPE Node adapter. Narrative files are managed by Langium's workspace.
 import { readFileSync } from "node:fs";
-import { NodeFileSystem } from "langium/node";
+
 import { startLanguageServer } from "langium/lsp";
+import { NodeFileSystem } from "langium/node";
 import { createConnection, ProposedFeatures } from "vscode-languageserver/node";
+
 import { createServices } from "./300-linking/index.js";
 class FileSources extends Map<string, string> {
   override get(uri: string) {
@@ -14,5 +16,8 @@ class FileSources extends Map<string, string> {
   }
 }
 const connection = createConnection(ProposedFeatures.all);
-const { shared } = createServices(new FileSources(), { ...NodeFileSystem, connection });
+const { shared } = createServices(new FileSources(), {
+  ...NodeFileSystem,
+  connection,
+});
 startLanguageServer(shared);

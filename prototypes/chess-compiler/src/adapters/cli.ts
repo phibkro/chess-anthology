@@ -12,4 +12,8 @@ if (!compiled.ok) {
 }
 const { output } = compiled.value;
 console.log(JSON.stringify(output, null, 2));
-process.exitCode = output.some((d) => d.diagnostics.some((issue) => issue.severity === 1)) ? 1 : 0;
+process.exitCode = output.some((d) =>
+  d.diagnostics.some((issue) => issue.severity === 1)
+)
+  ? 1
+  : 0;

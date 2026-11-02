@@ -1,4 +1,5 @@
 import * as v from "valibot";
+
 import { ok, err, type Result } from "./index.js";
 const square = v.pipe(v.string(), v.regex(/^[a-h][1-8]$/));
 const uci = v.pipe(v.string(), v.regex(/^[a-h][1-8][a-h][1-8][qrbn]?$/));
@@ -35,9 +36,9 @@ const schema = v.strictObject({
         sourceDigest: v.string(),
         frames: v.array(frame),
         notes: v.array(note),
-      }),
+      })
     ),
-    v.minLength(1),
+    v.minLength(1)
   ),
 });
 export type PlaybackPlan = v.InferOutput<typeof schema>;

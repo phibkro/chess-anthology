@@ -1,8 +1,10 @@
-import { useEffect, useRef } from "react";
-import { makeSquare, parseSquare } from "chessops/util";
 import { Chessground } from "@lichess-org/chessground";
 import { chessgroundDests } from "chessops/compat";
+import { makeSquare, parseSquare } from "chessops/util";
+import { useEffect, useRef } from "react";
+
 import { positionFromFen } from "./chess";
+
 import "@lichess-org/chessground/assets/chessground.base.css";
 import "@lichess-org/chessground/assets/chessground.cburnett.css";
 
@@ -36,7 +38,9 @@ export function Board({
       orientation,
       turnColor: pos.turn,
       check: pos.isCheck(),
-      animation: { enabled: !window.matchMedia("(prefers-reduced-motion: reduce)").matches },
+      animation: {
+        enabled: !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+      },
       coordinates: true,
       blockTouchScroll: interactive,
       viewOnly: !interactive,
@@ -47,7 +51,8 @@ export function Board({
         events: {
           after: (from, to) => {
             const piece = board.state.pieces.get(to);
-            const promote = piece?.role === "pawn" && (to[1] === "1" || to[1] === "8");
+            const promote =
+              piece?.role === "pawn" && (to[1] === "1" || to[1] === "8");
             onMove(from + to + (promote ? promotion : ""));
           },
         },
@@ -63,7 +68,13 @@ export function Board({
           const to = parseSquare(arrow.to);
           return from === undefined || to === undefined
             ? []
-            : [{ orig: makeSquare(from), dest: makeSquare(to), brush: arrow.color }];
+            : [
+                {
+                  orig: makeSquare(from),
+                  dest: makeSquare(to),
+                  brush: arrow.color,
+                },
+              ];
         }),
       },
     });

@@ -9,6 +9,9 @@ export function openingFor(lesson: CompiledLesson) {
   return openings.find(
     (opening) =>
       opening.path.length > 0 &&
-      opening.path.every((move, index) => lesson.frames[opening.path.length]?.path[index] === move),
+      opening.path.every(
+        (move, index) =>
+          lesson.frames[opening.path.length]?.path[index] === move
+      )
   );
 }

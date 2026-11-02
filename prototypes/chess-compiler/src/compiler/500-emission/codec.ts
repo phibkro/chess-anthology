@@ -1,6 +1,5 @@
 import { isDeepStrictEqual } from "node:util";
-import { parseText } from "../100-parsing/index.js";
-import { lower } from "../200-semantic-analysis/index.js";
+
 import {
   parseStructured,
   ok,
@@ -9,6 +8,8 @@ import {
   type DocumentData,
   type Result,
 } from "../../document/index.js";
+import { parseText } from "../100-parsing/index.js";
+import { lower } from "../200-semantic-analysis/index.js";
 import { digest } from "../identity.js";
 
 export function decode(source: string): Result<DocumentData> {
@@ -29,7 +30,8 @@ export function restore(input: unknown): Result<string> {
     !input ||
     typeof input !== "object" ||
     Object.keys(input).some(
-      (key) => !["format", "version", "data", "sourceText", "digest"].includes(key),
+      (key) =>
+        !["format", "version", "data", "sourceText", "digest"].includes(key)
     ) ||
     !("format" in input) ||
     input.format !== "chess-source-envelope-prototype" ||
@@ -41,14 +43,22 @@ export function restore(input: unknown): Result<string> {
     digest(input.sourceText) !== input.digest ||
     !("data" in input)
   )
-    return err("integrity", "codec/invalid-envelope", "Unsupported or modified source envelope.");
+    return err(
+      "integrity",
+      "codec/invalid-envelope",
+      "Unsupported or modified source envelope."
+    );
   const data = parseStructured(input.data);
   if (!data.ok) return data;
   const parsed = decode(input.sourceText);
   if (!parsed.ok) return parsed;
   return isDeepStrictEqual(parsed.value, data.value)
     ? ok(input.sourceText)
-    : err("integrity", "codec/stale-source", "Source and structured data disagree.");
+    : err(
+        "integrity",
+        "codec/stale-source",
+        "Source and structured data disagree."
+      );
 }
 export function printStructured(input: unknown): Result<string> {
   const checked = parseStructured(input);
@@ -59,7 +69,10 @@ export function printStructured(input: unknown): Result<string> {
     [
       `module ${data.name};`,
       ...data.imports.map((path) => `import ${q(path)};`),
-      ...data.games.map((g) => `${g.exported ? "export " : ""}game ${g.name} from ${q(g.source)};`),
+      ...data.games.map(
+        (g) =>
+          `${g.exported ? "export " : ""}game ${g.name} from ${q(g.source)};`
+      ),
       ...data.stories.map(
         (s) =>
           `story ${s.name} {\n${s.scenes
@@ -68,13 +81,13 @@ export function printStructured(input: unknown): Result<string> {
                 `  board ${scene.name} game ${scene.game} after ${scene.ply} {\n${scene.notes
                   .map(
                     (n) =>
-                      `    ${n.type === "text" ? `text ${q(n.text)}` : n.type === "arrow" ? `arrow ${q(n.from)} -> ${q(n.to)} ${n.color}` : `prompt ${q(n.text)} answer ${q(n.answer)}`};`,
+                      `    ${n.type === "text" ? `text ${q(n.text)}` : n.type === "arrow" ? `arrow ${q(n.from)} -> ${q(n.to)} ${n.color}` : `prompt ${q(n.text)} answer ${q(n.answer)}`};`
                   )
-                  .join("\n")}\n  }`,
+                  .join("\n")}\n  }`
             )
-            .join("\n")}\n}`,
+            .join("\n")}\n}`
       ),
       "",
-    ].join("\n"),
+    ].join("\n")
   );
 }

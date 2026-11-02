@@ -10,6 +10,7 @@ import {
 } from "chessops/pgn";
 import { parseSan } from "chessops/san";
 import { makeUci, parseUci } from "chessops/util";
+
 import { parseLesson, type Lesson, type LessonEvent } from "./schema";
 
 interface Frame {
@@ -28,14 +29,16 @@ export interface CompiledLesson {
   frames: Frame[];
   game: Game<PgnNodeData>;
 }
-export const positionFromFen = (fen: string) => Chess.fromSetup(parseFen(fen).unwrap()).unwrap();
+export const positionFromFen = (fen: string) =>
+  Chess.fromSetup(parseFen(fen).unwrap()).unwrap();
 const pathKey = (path: string[]) => path.join(" ");
 
 function checkTree(tree: Node<PgnNodeData>, position: Position): void {
   for (const child of tree.children) {
     const next = position.clone();
     const move = parseSan(next, child.data.san);
-    if (!move || !next.isLegal(move)) throw new Error(`Illegal move: ${child.data.san}`);
+    if (!move || !next.isLegal(move))
+      throw new Error(`Illegal move: ${child.data.san}`);
     next.play(move);
     checkTree(child, next);
   }
@@ -51,11 +54,12 @@ function readPgn(pgn: string): Game<PgnNodeData> {
       parserError ??= error;
     },
     undefined,
-    100000,
+    100000
   );
   parser.parse(pgn);
   if (parserError) throw parserError;
-  if (games.length !== 1) throw new Error("Import one game or composition at a time.");
+  if (games.length !== 1)
+    throw new Error("Import one game or composition at a time.");
   const game = games[0];
   if (!game.moves.children.length && !game.headers.has("FEN"))
     throw new Error("No moves or starting position found.");
@@ -95,7 +99,8 @@ export function compileLesson(input: unknown): CompiledLesson {
   const ids = new Set<string>();
   const promptAnchors = new Set<number>();
   const events = content.narrative.events.map((event): CompiledEvent => {
-    if (ids.has(event.id)) throw new Error(`Duplicate annotation ID: ${event.id}`);
+    if (ids.has(event.id))
+      throw new Error(`Duplicate annotation ID: ${event.id}`);
     ids.add(event.id);
     const anchor = event.after;
     const cursor =
@@ -105,17 +110,22 @@ export function compileLesson(input: unknown): CompiledLesson {
     const frame = frames[cursor];
     if (!frame) throw new Error(`Annotation anchor not found: ${event.id}`);
     if (event.type === "prompt") {
-      if (promptAnchors.has(cursor)) throw new Error("Only one prompt may occupy an anchor.");
+      if (promptAnchors.has(cursor))
+        throw new Error("Only one prompt may occupy an anchor.");
       promptAnchors.add(cursor);
       const pos = positionFromFen(frame.fen);
       if (!event.hints.length || !event.accepted.length)
         throw new Error("A prompt needs hints and accepted moves.");
       for (const uci of event.accepted) {
         const move = parseUci(uci);
-        if (!move || !pos.isLegal(move)) throw new Error(`Illegal prompt answer: ${uci}`);
+        if (!move || !pos.isLegal(move))
+          throw new Error(`Illegal prompt answer: ${uci}`);
       }
       const next = frames[cursor + 1];
-      if (!next || event.accepted.some((uci) => uci !== next.path[next.path.length - 1]))
+      if (
+        !next ||
+        event.accepted.some((uci) => uci !== next.path[next.path.length - 1])
+      )
         throw new Error("Prototype prompts follow the recorded mainline.");
       const feedbackMoves = new Set<string>();
       for (const feedback of event.feedback) {
@@ -127,7 +137,7 @@ export function compileLesson(input: unknown): CompiledLesson {
           feedbackMoves.has(feedback.move)
         )
           throw new Error(
-            "Move feedback must name a unique legal alternative at its prompt anchor.",
+            "Move feedback must name a unique legal alternative at its prompt anchor."
           );
         feedbackMoves.add(feedback.move);
       }
@@ -136,7 +146,10 @@ export function compileLesson(input: unknown): CompiledLesson {
   });
   return { content, frames, game, events };
 }
-export function eventsAt(lesson: CompiledLesson, cursor: number): CompiledEvent[] {
+export function eventsAt(
+  lesson: CompiledLesson,
+  cursor: number
+): CompiledEvent[] {
   return lesson.events.filter((item) => item.cursor === cursor);
 }
 
@@ -166,7 +179,7 @@ export function importPgn(pgn: string): CompiledLesson {
 export function importFen(fen: string): CompiledLesson {
   const pos = positionFromFen(fen.trim());
   return importPgn(
-    `[Event "Imported position"]\n[SetUp "1"]\n[FEN "${makeFen(pos.toSetup())}"]\n[Result "*"]\n\n*`,
+    `[Event "Imported position"]\n[SetUp "1"]\n[FEN "${makeFen(pos.toSetup())}"]\n[Result "*"]\n\n*`
   );
 }
 export const exportPgn = (lesson: CompiledLesson) => makePgn(lesson.game);

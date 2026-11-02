@@ -411,7 +411,8 @@ select {
   content: "";
   position: absolute;
   inset: 24px;
-  background: repeating-conic-gradient(#8a927d40 0% 25%, transparent 0% 50%) 0 0/42px 42px;
+  background: repeating-conic-gradient(#8a927d40 0% 25%, transparent 0% 50%) 0
+    0/42px 42px;
   transform: rotate(-12deg) scale(1.3);
 }
 .entry:nth-child(2n) .entry-art {
@@ -1051,7 +1052,13 @@ dialog.lesson-dialog {
   height: 100%;
 }
 .lesson-board cg-board {
-  background: conic-gradient(#879078 25%, #e3dcc8 0 50%, #879078 0 75%, #e3dcc8 0) 0 0/25% 25%;
+  background: conic-gradient(
+      #879078 25%,
+      #e3dcc8 0 50%,
+      #879078 0 75%,
+      #e3dcc8 0
+    )
+    0 0/25% 25%;
 }
 .lesson-board cg-board square.last-move {
   background-color: #c0aa5780;

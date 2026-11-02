@@ -4,11 +4,12 @@ import {
   EmptyFileSystem,
   inject,
 } from "langium";
+
+import { isModule, type Module } from "./generated/ast.js";
 import {
   ChessNarrativeGeneratedModule,
   ChessNarrativeGeneratedSharedModule,
 } from "./generated/module.js";
-import { isModule, type Module } from "./generated/ast.js";
 import { jsonParserModule } from "./json-string.js";
 export { jsonParserModule } from "./json-string.js";
 import { ok, err, type Result } from "../../document/index.js";
@@ -25,22 +26,28 @@ export {
 } from "./generated/ast.js";
 const shared = inject(
   createDefaultSharedCoreModule(EmptyFileSystem),
-  ChessNarrativeGeneratedSharedModule,
+  ChessNarrativeGeneratedSharedModule
 );
 const language = inject(
   createDefaultCoreModule({ shared }),
   ChessNarrativeGeneratedModule,
-  jsonParserModule,
+  jsonParserModule
 );
 shared.ServiceRegistry.register(language);
 export function parseText(source: string): Result<Module> {
   try {
     const parsed = language.parser.LangiumParser.parse(source);
-    if (parsed.lexerErrors.length || parsed.parserErrors.length || !isModule(parsed.value))
+    if (
+      parsed.lexerErrors.length ||
+      parsed.parserErrors.length ||
+      !isModule(parsed.value)
+    )
       return err(
         "syntax",
         "source/invalid-syntax",
-        [...parsed.lexerErrors, ...parsed.parserErrors].map((e) => e.message).join("\n"),
+        [...parsed.lexerErrors, ...parsed.parserErrors]
+          .map((e) => e.message)
+          .join("\n")
       );
     return ok(parsed.value);
   } catch (error) {

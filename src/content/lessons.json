@@ -45,7 +45,10 @@
           "type": "prompt",
           "after": ["f3h3", "d4e4"],
           "prompt": "The king has stepped to e4. Where is the mate?",
-          "hints": ["Use the rook.", "The mating square is on the fourth rank."],
+          "hints": [
+            "Use the rook.",
+            "The mating square is on the fourth rank."
+          ],
           "explanation": "Rc4# completes the arrangement. Queen and king cover the escape squares.",
           "accepted": ["c2c4"]
         },

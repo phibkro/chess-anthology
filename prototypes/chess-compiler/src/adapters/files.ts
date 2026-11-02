@@ -1,8 +1,11 @@
 import { readdir, readFile } from "node:fs/promises";
 import { resolve, join } from "node:path";
 import { pathToFileURL } from "node:url";
+
 import { ok, err, type Result } from "../document/index.js";
-export async function loadDirectory(directory: string): Promise<Result<Map<string, string>>> {
+export async function loadDirectory(
+  directory: string
+): Promise<Result<Map<string, string>>> {
   try {
     const root = resolve(directory);
     return ok(
@@ -15,10 +18,10 @@ export async function loadDirectory(directory: string): Promise<Result<Map<strin
                 [
                   pathToFileURL(join(root, name)).href,
                   await readFile(join(root, name), "utf8"),
-                ] as const,
-            ),
-        ),
-      ),
+                ] as const
+            )
+        )
+      )
     );
   } catch (error) {
     return err("io", "source/read-failed", String(error));

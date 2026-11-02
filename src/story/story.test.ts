@@ -1,9 +1,11 @@
-import { describe, it, expect } from "vite-plus/test";
 import { readFile, readdir } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
+
 import { compile, createPlaybackPlan } from "chess-compiler-prototype";
 import { parsePlaybackPlan } from "chess-compiler-prototype/playback";
+import { describe, it, expect } from "vite-plus/test";
+
 import saved from "../content/generated/queen-offers.json";
 import { createStoryStore } from "./store";
 async function sources() {
@@ -15,9 +17,9 @@ async function sources() {
           [
             pathToFileURL(resolve(dir, name)).href,
             await readFile(resolve(dir, name), "utf8"),
-          ] as const,
-      ),
-    ),
+          ] as const
+      )
+    )
   );
 }
 function plan() {
@@ -33,15 +35,22 @@ describe("compiler package → playback plan → reader session", () => {
     if (!result.ok) return;
     const built = createPlaybackPlan(
       result.value,
-      pathToFileURL(resolve("prototypes/chess-compiler/examples/story.chess-story")).href,
-      "matingNets",
+      pathToFileURL(
+        resolve("prototypes/chess-compiler/examples/story.chess-story")
+      ).href,
+      "matingNets"
     );
     expect(built.ok).toBe(true);
     if (!built.ok) return;
     expect(built.value).toEqual(saved);
     expect(JSON.stringify(built.value)).not.toContain("file:///");
-    expect(built.value.scenes.map((s) => s.frames[s.after].san)).toEqual(["Nxd7", "Nxe4"]);
-    expect(built.value.scenes[0].notes.some((n) => n.type === "arrow")).toBe(true);
+    expect(built.value.scenes.map((s) => s.frames[s.after].san)).toEqual([
+      "Nxd7",
+      "Nxe4",
+    ]);
+    expect(built.value.scenes[0].notes.some((n) => n.type === "arrow")).toBe(
+      true
+    );
   });
   it("keeps legal tries visible without advancing, then accepts the authored move", () => {
     const document = plan();
@@ -82,7 +91,9 @@ describe("compiler package → playback plan → reader session", () => {
   });
   it("reports a playback capability error for a legal answer outside the recorded continuation", async () => {
     const input = await sources();
-    const uri = pathToFileURL(resolve("prototypes/chess-compiler/examples/story.chess-story")).href;
+    const uri = pathToFileURL(
+      resolve("prototypes/chess-compiler/examples/story.chess-story")
+    ).href;
     input.set(uri, input.get(uri)!.replace("Qb8+", "Qa3"));
     const result = await compile(input);
     if (!result.ok) throw new Error(result.error.message);

@@ -4,12 +4,12 @@ The current prototype uses the original visual design, React/Vite+, Tailwind CSS
 
 ## Implemented examples
 
-| Artifact                                       | Interaction                          | Verification                                                                  |
-| ---------------------------------------------- | ------------------------------------ | ----------------------------------------------------------------------------- |
+| Artifact | Interaction | Verification |
+| --- | --- | --- |
 | Carpenter, Dubuque Chess Journal, October 1873 | Quiet key and final mate checkpoints | Legal score; every defense after the intended key is covered and ends in mate |
-| Réti, 11 September 1921                        | First-move prompt and published line | Legal selected variation; full solution-tree soundness remains unverified     |
-| Morphy consultation / Opera Game, 1858         | Two move-guessing checkpoints        | Legal complete score; terminal checkmate                                      |
-| Réti–Tartakower, Vienna 1910                   | Queen-offer checkpoint               | Legal recorded score; ends at resignation, not an invented played checkmate   |
+| Réti, 11 September 1921 | First-move prompt and published line | Legal selected variation; full solution-tree soundness remains unverified |
+| Morphy consultation / Opera Game, 1858 | Two move-guessing checkpoints | Legal complete score; terminal checkmate |
+| Réti–Tartakower, Vienna 1910 | Queen-offer checkpoint | Legal recorded score; ends at resignation, not an invented played checkmate |
 
 The lesson reader uses the same session events for all four. Artifacts retain their type, source, score and stipulation; narratives supply separate prompts, hints and interpretation. Canonical prompt anchors are paths of legal UCI moves rather than display move numbers.
 

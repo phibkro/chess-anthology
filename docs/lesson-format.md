@@ -49,11 +49,11 @@ The canonical document is JSON. `src/lesson/schema.ts` is its Valibot contract; 
 
 ## Anchors and order
 
-| Anchor                      | Meaning                                                          |
-| --------------------------- | ---------------------------------------------------------------- |
-| `"after": 0`                | After setup, before the first move                               |
-| `"after": 1`                | After the first half-move                                        |
-| `"after": 2`                | After the second half-move                                       |
+| Anchor | Meaning |
+| --- | --- |
+| `"after": 0` | After setup, before the first move |
+| `"after": 1` | After the first half-move |
+| `"after": 2` | After the second half-move |
 | `"after": ["f3h3", "d4e4"]` | After this legal move path from the artifact's starting position |
 
 Numeric anchors are **plies**, not full move numbers. The field is named `after`; there is no implicit before/after ambiguity. A prompt after ply 2 asks about the next move from that position. Path anchors use the compiler's chessops-normalized coordinate moves; castling follows that representation. Both forms resolve to the same validated mainline frames.

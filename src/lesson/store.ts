@@ -1,8 +1,9 @@
 import { createStore } from "@xstate/store";
-import { makeUci, parseUci } from "chessops/util";
 import { normalizeMove } from "chessops/chess";
 import { makeFen } from "chessops/fen";
 import { makeSan } from "chessops/san";
+import { makeUci, parseUci } from "chessops/util";
+
 import { eventsAt, positionFromFen, type CompiledLesson } from "./chess";
 import type { PromptEvent } from "./schema";
 
@@ -20,7 +21,7 @@ interface LessonContext {
 }
 export function checkpointAt(context: LessonContext): PromptEvent | undefined {
   const prompt = eventsAt(context.lesson, context.cursor).find(
-    ({ event }) => event.type === "prompt",
+    ({ event }) => event.type === "prompt"
   );
   return prompt?.event.type === "prompt" ? prompt.event : undefined;
 }
@@ -54,12 +55,14 @@ export function createLessonStore(lesson: CompiledLesson) {
         lesson: event.lesson,
         attempts: 0,
       }),
-      next: (context) => (context.attempt ? context : moveCursor(context, context.cursor + 1)),
+      next: (context) =>
+        context.attempt ? context : moveCursor(context, context.cursor + 1),
       previous: (context) =>
         context.attempt
           ? { ...context, attempt: null, feedback: "", revealed: false }
           : moveCursor(context, context.cursor - 1),
-      seek: (context, event: { cursor: number }) => moveCursor(context, event.cursor),
+      seek: (context, event: { cursor: number }) =>
+        moveCursor(context, event.cursor),
       reset: (context) => ({ ...moveCursor(context, 0), attempts: 0 }),
       retry: (context) =>
         ({
@@ -71,7 +74,10 @@ export function createLessonStore(lesson: CompiledLesson) {
         }) as LessonContext,
       hint: (context) => ({
         ...context,
-        hints: Math.min(context.hints + 1, checkpointAt(context)?.hints.length ?? 0),
+        hints: Math.min(
+          context.hints + 1,
+          checkpointAt(context)?.hints.length ?? 0
+        ),
       }),
       reveal: (context) =>
         ({
@@ -81,7 +87,10 @@ export function createLessonStore(lesson: CompiledLesson) {
           feedback: checkpointAt(context)?.explanation ?? "",
           feedbackTone: "neutral",
         }) as LessonContext,
-      togglePractice: (context) => ({ ...context, practice: !context.practice }),
+      togglePractice: (context) => ({
+        ...context,
+        practice: !context.practice,
+      }),
       flip: (context) =>
         ({
           ...context,
@@ -103,7 +112,9 @@ export function createLessonStore(lesson: CompiledLesson) {
           };
         const normalized = normalizeMove(pos, move);
         const uci = makeUci(normalized);
-        const accepted = checkpoint?.accepted ?? [nextFrame.path[nextFrame.path.length - 1]];
+        const accepted = checkpoint?.accepted ?? [
+          nextFrame.path[nextFrame.path.length - 1],
+        ];
         if (!accepted.includes(uci)) {
           const san = makeSan(pos, normalized);
           pos.play(normalized);
@@ -122,7 +133,10 @@ export function createLessonStore(lesson: CompiledLesson) {
         return {
           ...moveCursor(context, context.cursor + 1),
           attempts: context.attempts + 1,
-          feedback: checkpoint && context.practice ? `Nice find. ${checkpoint.explanation}` : "",
+          feedback:
+            checkpoint && context.practice
+              ? `Nice find. ${checkpoint.explanation}`
+              : "",
           feedbackTone: checkpoint && context.practice ? "success" : "neutral",
         };
       },

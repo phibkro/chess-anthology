@@ -9,4 +9,6 @@ class JsonValueConverter extends DefaultValueConverter {
     return super.convert(input, node);
   }
 }
-export const jsonParserModule = { parser: { ValueConverter: () => new JsonValueConverter() } };
+export const jsonParserModule = {
+  parser: { ValueConverter: () => new JsonValueConverter() },
+};
