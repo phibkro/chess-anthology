@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vp dev --host 0.0.0.0",
-    "build": "vp build",
+    "build": "pnpm compile:stories && vp build",
     "preview": "vp preview",
     "prepare": "vp config --no-agent",
     "check": "vp check",
@@ -20,7 +20,9 @@
     "setup:secrets": "node scripts/install-gitleaks.mjs",
     "commitlint": "commitlint",
     "index:albums": "node scripts/index-albums.mjs",
-    "check:compiler": "pnpm --dir prototypes/chess-compiler check && pnpm --dir prototypes/chess-compiler test"
+    "check:compiler": "pnpm --dir prototypes/chess-compiler check && pnpm --dir prototypes/chess-compiler test",
+    "compile:stories": "node --import tsx scripts/compile-stories.mts",
+    "predev": "pnpm compile:stories"
   },
   "dependencies": {
     "@lichess-org/chessground": "10.5.0",
@@ -38,9 +40,11 @@
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "6.1.2",
+    "chess-compiler-prototype": "link:prototypes/chess-compiler",
     "jscpd": "5.4.2",
     "knip": "6.44.1",
     "tailwindcss": "4.3.3",
+    "tsx": "4.20.6",
     "typescript": "~7.0.2",
     "vite": "catalog:",
     "vite-plus": "catalog:"

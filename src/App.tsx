@@ -1,3 +1,4 @@
+import { StoryReader } from "./story";
 import { useEffect, useRef, useState } from "react";
 import collection from "./collection.json";
 import lessonData from "./content/lessons.json";
@@ -37,6 +38,7 @@ export function App() {
   const [field, setField] = useState("all");
   const [search, setSearch] = useState("");
   const [era, setEra] = useState("all");
+  const [storyOpen, setStoryOpen] = useState(false);
   const [active, setActive] = useState<CompiledLesson | null>(null);
   const [entry, setEntry] = useState<(typeof collection.entries)[number] | null>(null);
   const [importOpen, setImportOpen] = useState(false);
@@ -45,10 +47,11 @@ export function App() {
   const [error, setError] = useState("");
   const reader = useRef<HTMLDialogElement>(null);
   useEffect(() => {
-    if (active || entry || importOpen) reader.current?.showModal();
+    if (active || entry || importOpen || storyOpen) reader.current?.showModal();
     else reader.current?.close();
-  }, [active, entry, importOpen]);
+  }, [active, entry, importOpen, storyOpen]);
   function close() {
+    setStoryOpen(false);
     setActive(null);
     setEntry(null);
     setImportOpen(false);
@@ -184,6 +187,23 @@ export function App() {
             </button>
           </div>
           <div className="lesson-cards grid grid-cols-1 gap-5 md:grid-cols-2">
+            <button
+              className="lesson-card story-card"
+              onClick={() => {
+                setActive(null);
+                setEntry(null);
+                setImportOpen(false);
+                setStoryOpen(true);
+              }}
+            >
+              <span className="lesson-index">↔</span>
+              <div>
+                <p className="eyebrow">A STORY IN TWO GAMES</p>
+                <h3>A queen offered, a mating net.</h3>
+                <p>Morphy, 1858 · Réti, 1910</p>
+              </div>
+              <span>↗</span>
+            </button>
             {lessons.map((item, index) => (
               <button
                 key={item.content.id}
@@ -331,7 +351,7 @@ export function App() {
       </footer>
       <dialog
         ref={reader}
-        className={active ? "lesson-dialog" : ""}
+        className={active || storyOpen ? "lesson-dialog" : ""}
         onCancel={close}
         onClose={close}
       >
@@ -341,6 +361,7 @@ export function App() {
             Close ×
           </button>
         </div>
+        {storyOpen && <StoryReader />}
         {active && <Reader key={active.content.id} lesson={active} />}
         {entry && (
           <article className="entry-reader">

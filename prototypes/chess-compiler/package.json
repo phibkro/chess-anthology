@@ -1,7 +1,12 @@
 {
   "name": "chess-compiler-prototype",
+  "version": "0.0.0",
   "private": true,
   "type": "module",
+  "exports": {
+    ".": "./src/compiler/index.ts",
+    "./playback": "./src/document/playback.ts"
+  },
   "scripts": {
     "generate": "langium generate",
     "demo": "node --import tsx src/adapters/demo.ts",

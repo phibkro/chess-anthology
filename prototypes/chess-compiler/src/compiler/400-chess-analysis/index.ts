@@ -3,10 +3,12 @@ import { parsePgn, startingPosition } from "chessops/pgn";
 import { parseSan, makeSan } from "chessops/san";
 import { makeFen } from "chessops/fen";
 import { makeUci, parseSquare } from "chessops/util";
-import type { Position } from "chessops/chess";
+import { normalizeMove, type Position } from "chessops/chess";
 import { ok, err, type Result, type SceneData, type Issue } from "../../document/index.js";
 
-function replayRaw(source: string): Result<{ frames: Position[] }> {
+function replayRaw(
+  source: string,
+): Result<{ frames: Position[]; moves: { san: string | null; uci: string | null }[] }> {
   const games = parsePgn(source);
   if (games.length !== 1) return err("chess", "chess/game-count", "Select exactly one PGN game.");
   const start = startingPosition(games[0].headers);
@@ -19,6 +21,7 @@ function replayRaw(source: string): Result<{ frames: Position[] }> {
       "This prototype supports standard chess and Chess960 only.",
     );
   const frames = [position.clone()];
+  const moves: { san: string | null; uci: string | null }[] = [{ san: null, uci: null }];
   // Validate every parsed branch even though this experiment only exposes mainline anchors.
   function validateTree(node: (typeof games)[number]["moves"], pos: Position): string | undefined {
     for (const child of node.children) {
@@ -35,10 +38,11 @@ function replayRaw(source: string): Result<{ frames: Position[] }> {
   for (const node of games[0].moves.mainline()) {
     const move = parseSan(position, node.san);
     if (!move) return err("chess", "chess/illegal-move", `Illegal move: ${node.san}`);
+    moves.push({ san: makeSan(position, move), uci: makeUci(normalizeMove(position, move)) });
     position.play(move);
     frames.push(position.clone());
   }
-  return ok({ frames });
+  return ok({ frames, moves });
 }
 function legalMoves(position: Position) {
   return [...position.allDests()].flatMap(([from, dests]) =>
@@ -104,7 +108,11 @@ export function positionData(position: Position) {
 
 export type GameHistory = {
   readonly sourceDigest: string;
-  readonly frames: readonly { readonly fen: string }[];
+  readonly frames: readonly {
+    readonly fen: string;
+    readonly san: string | null;
+    readonly uci: string | null;
+  }[];
 };
 export function createChessAnalysis() {
   const entries = new Map<string, Result<{ frames: Position[]; history: GameHistory }>>();
@@ -122,7 +130,10 @@ export function createChessAnalysis() {
             frames: raw.value.frames,
             history: freeze({
               sourceDigest: digest(source),
-              frames: raw.value.frames.map((p) => ({ fen: makeFen(p.toSetup()) })),
+              frames: raw.value.frames.map((p, i) => ({
+                fen: makeFen(p.toSetup()),
+                ...raw.value.moves[i],
+              })),
             }),
           })
         : raw;
