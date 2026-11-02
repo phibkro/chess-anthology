@@ -13,6 +13,6 @@ Prompt: 'prompt' text=STRING 'answer' answer=STRING ';';
 hidden terminal WS: /\s+/;
 terminal ID: /[_a-zA-Z][_a-zA-Z0-9]*/;
 terminal INT returns number: /[0-9]+/;
-terminal STRING: /"([^"\\]|\\.)*"|'([^'\\]|\\.)*'/;
+terminal STRING: /"([^"\\\x00-\x1F]|\\(["\\\/bfnrt]|u[0-9a-fA-F]{4}))*"/;
 hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
 hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;

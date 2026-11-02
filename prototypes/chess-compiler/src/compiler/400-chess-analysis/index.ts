@@ -1,18 +1,23 @@
+import { digest, freeze } from "../identity.js";
 import { parsePgn, startingPosition } from "chessops/pgn";
 import { parseSan, makeSan } from "chessops/san";
 import { makeFen } from "chessops/fen";
 import { makeUci, parseSquare } from "chessops/util";
 import type { Position } from "chessops/chess";
-import type { SceneData, Issue } from "./model.js";
+import { ok, err, type Result, type SceneData, type Issue } from "../../document/index.js";
 
-export function replay(source: string): { frames: Position[]; issue?: string } {
+function replayRaw(source: string): Result<{ frames: Position[] }> {
   const games = parsePgn(source);
-  if (games.length !== 1) return { frames: [], issue: "Select exactly one PGN game." };
+  if (games.length !== 1) return err("chess", "chess/game-count", "Select exactly one PGN game.");
   const start = startingPosition(games[0].headers);
-  if (start.isErr) return { frames: [], issue: "Invalid initial position." };
+  if (start.isErr) return err("chess", "chess/invalid-position", "Invalid initial position.");
   const position = start.value;
   if (position.rules !== "chess")
-    return { frames: [], issue: "This prototype supports standard chess and Chess960 only." };
+    return err(
+      "chess",
+      "chess/unsupported-rules",
+      "This prototype supports standard chess and Chess960 only.",
+    );
   const frames = [position.clone()];
   // Validate every parsed branch even though this experiment only exposes mainline anchors.
   function validateTree(node: (typeof games)[number]["moves"], pos: Position): string | undefined {
@@ -26,16 +31,16 @@ export function replay(source: string): { frames: Position[]; issue?: string } {
     }
   }
   const issue = validateTree(games[0].moves, position);
-  if (issue) return { frames: [], issue };
+  if (issue) return err("chess", "chess/illegal-move", issue);
   for (const node of games[0].moves.mainline()) {
     const move = parseSan(position, node.san);
-    if (!move) return { frames: [], issue: `Illegal move: ${node.san}` };
+    if (!move) return err("chess", "chess/illegal-move", `Illegal move: ${node.san}`);
     position.play(move);
     frames.push(position.clone());
   }
-  return { frames };
+  return ok({ frames });
 }
-export function legalMoves(position: Position) {
+function legalMoves(position: Position) {
   return [...position.allDests()].flatMap(([from, dests]) =>
     [...dests].flatMap((to) => {
       const role = position.board.get(from)?.role;
@@ -95,4 +100,42 @@ export function analyzeScene(scene: SceneData, frames: Position[]): Issue[] {
 }
 export function positionData(position: Position) {
   return { fen: makeFen(position.toSetup()), legalMoves: legalMoves(position) };
+}
+
+export type GameHistory = {
+  readonly sourceDigest: string;
+  readonly frames: readonly { readonly fen: string }[];
+};
+export function createChessAnalysis() {
+  const entries = new Map<string, Result<{ frames: Position[]; history: GameHistory }>>();
+  let replayCount = 0;
+  function replay(source: string) {
+    const key = digest("chessops-0.15.1:standard-v1:" + source);
+    const hit = entries.get(key);
+    if (hit) return hit;
+    replayCount++;
+    let result: Result<{ frames: Position[]; history: GameHistory }>;
+    try {
+      const raw = replayRaw(source);
+      result = raw.ok
+        ? ok({
+            frames: raw.value.frames,
+            history: freeze({
+              sourceDigest: digest(source),
+              frames: raw.value.frames.map((p) => ({ fen: makeFen(p.toSetup()) })),
+            }),
+          })
+        : raw;
+    } catch (error) {
+      result = err("infrastructure", "chess/failure", String(error));
+    }
+    entries.set(key, result);
+    return result;
+  }
+  return {
+    replay,
+    get replayCount() {
+      return replayCount;
+    },
+  };
 }

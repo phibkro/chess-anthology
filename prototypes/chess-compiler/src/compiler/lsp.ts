@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { NodeFileSystem } from "langium/node";
 import { startLanguageServer } from "langium/lsp";
 import { createConnection, ProposedFeatures } from "vscode-languageserver/node";
-import { createServices } from "./services.js";
+import { createServices } from "./300-linking/index.js";
 class FileSources extends Map<string, string> {
   override get(uri: string) {
     try {

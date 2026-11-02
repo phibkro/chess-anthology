@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import collection from "./collection.json";
 import lessonData from "./content/lessons.json";
-import { compileLesson, importPgn, importFen, type CompiledLesson } from "./lesson/chess";
-import { Reader } from "./lesson/Reader";
+import { Reader, compileLesson, importPgn, importFen, type CompiledLesson } from "./lesson";
 
 const lessons = lessonData.map(compileLesson);
 function HeroBoard() {

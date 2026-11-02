@@ -15,11 +15,12 @@
     "check:duplicates": "jscpd src",
     "check:unused": "knip",
     "check:secrets": "node scripts/secret-scan.mjs",
-    "check:all": "pnpm check && pnpm test && pnpm check:duplicates && pnpm check:unused && pnpm build",
-    "precommit": "pnpm check && pnpm test && pnpm check:duplicates && pnpm check:unused && node scripts/secret-scan.mjs staged",
+    "check:all": "pnpm check && pnpm test && pnpm check:duplicates && pnpm check:unused && pnpm check:compiler && pnpm build",
+    "precommit": "pnpm check && pnpm test && pnpm check:duplicates && pnpm check:unused && node scripts/secret-scan.mjs staged && pnpm check:compiler",
     "setup:secrets": "node scripts/install-gitleaks.mjs",
     "commitlint": "commitlint",
-    "index:albums": "node scripts/index-albums.mjs"
+    "index:albums": "node scripts/index-albums.mjs",
+    "check:compiler": "pnpm --dir prototypes/chess-compiler check && pnpm --dir prototypes/chess-compiler test"
   },
   "dependencies": {
     "@lichess-org/chessground": "10.5.0",

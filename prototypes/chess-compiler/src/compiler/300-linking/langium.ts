@@ -22,51 +22,26 @@ import type { CompletionParams, CancellationToken } from "vscode-languageserver"
 import {
   ChessNarrativeGeneratedModule,
   ChessNarrativeGeneratedSharedModule,
-} from "./generated/module.js";
+} from "../100-parsing/index.js";
 import {
+  jsonParserModule,
   isModule,
   isGame,
-  isStory,
   isScene,
-  isText,
-  isArrow,
   type Module,
-  type Scene,
   type ChessNarrativeAstType,
-} from "./generated/ast.js";
-import { analyzeScene, replay, positionData } from "./chess.js";
-import { parseStructured, type DocumentData, type SceneData } from "./model.js";
+} from "../100-parsing/index.js";
+import { analyzeScene, createChessAnalysis, positionData } from "../400-chess-analysis/index.js";
+import { lowerScene, lower, analyzeLocal } from "../200-semantic-analysis/index.js";
 
 export type Sources = Map<string, string>;
 export function relative(base: string, path: string) {
-  return new URL(path, base).href;
-}
-export function lowerScene(scene: Scene): SceneData {
-  return {
-    name: scene.name,
-    game: scene.game.$refText,
-    ply: scene.ply,
-    notes: scene.notes.map((note) =>
-      isText(note)
-        ? { type: "text", text: note.text }
-        : isArrow(note)
-          ? { type: "arrow", from: note.from, to: note.to, color: note.color }
-          : { type: "prompt", text: note.text, answer: note.answer },
-    ),
-  };
-}
-export function lower(module: Module): DocumentData {
-  return parseStructured({
-    formatVersion: 0,
-    name: module.name,
-    imports: module.imports.map((i) => i.path),
-    games: module.declarations
-      .filter(isGame)
-      .map((g) => ({ name: g.name, exported: g.exported, source: g.path })),
-    stories: module.declarations
-      .filter(isStory)
-      .map((s) => ({ name: s.name, scenes: s.scenes.map(lowerScene) })),
-  });
+  // Invalid references remain unavailable values, rather than throwing during validation.
+  try {
+    return new URL(path, base).href;
+  } catch {
+    return `unresolved:${encodeURIComponent(path)}`;
+  }
 }
 
 class ImportScope extends DefaultScopeProvider {
@@ -87,13 +62,21 @@ class ImportScope extends DefaultScopeProvider {
 export function createServices(
   sources: Sources,
   context: DefaultSharedModuleContext = EmptyFileSystem,
+  analysis = createChessAnalysis(),
 ) {
   const shared = inject(createDefaultSharedModule(context), ChessNarrativeGeneratedSharedModule);
-  const language = inject(createDefaultModule({ shared }), ChessNarrativeGeneratedModule, {
-    validation: { DocumentValidator: (s: LangiumServices) => new ChessValidator(s) },
-    references: { ScopeProvider: (s: LangiumServices) => new ImportScope(s) },
-    lsp: { CompletionProvider: (s: LangiumServices) => new ChessCompletion(s, sources) },
-  });
+  const language = inject(
+    createDefaultModule({ shared }),
+    ChessNarrativeGeneratedModule,
+    jsonParserModule,
+    {
+      validation: { DocumentValidator: (s: LangiumServices) => new ChessValidator(s) },
+      references: { ScopeProvider: (s: LangiumServices) => new ImportScope(s) },
+      lsp: {
+        CompletionProvider: (s: LangiumServices) => new ChessCompletion(s, sources, analysis),
+      },
+    },
+  );
   shared.ServiceRegistry.register(language);
   // Export only explicitly exported games into Langium's global index.
   const descriptions = language.workspace.AstNodeDescriptionProvider;
@@ -108,16 +91,21 @@ export function createServices(
   const checks: ValidationChecks<ChessNarrativeAstType> = {
     Module(module: Module, accept) {
       const uri = AstUtils.getDocument(module).uri.toString();
-      const seen = new Set<string>();
-      for (const declaration of module.declarations) {
-        if (seen.has(declaration.name))
-          accept("error", `Duplicate declaration ${declaration.name}.`, {
-            node: declaration,
-            property: "name",
-            code: "link/duplicate-symbol",
-          });
-        seen.add(declaration.name);
-      }
+      const lowered = lower(module);
+      if (!lowered.ok)
+        accept("error", lowered.error.message, {
+          node: module,
+          property: "name",
+          code: lowered.error.code,
+        });
+      if (lowered.ok)
+        for (const issue of analyzeLocal(lowered.value)) {
+          const declaration =
+            issue.path[0] === "games"
+              ? module.declarations.filter(isGame)[Number(issue.path[1])]
+              : module;
+          accept("error", issue.message, { node: declaration, property: "name", code: issue.code });
+        }
       const visibleNames = new Set<string>();
       for (const imp of module.imports) {
         const imported = shared.workspace.LangiumDocuments.getDocument(
@@ -173,9 +161,9 @@ export function createServices(
           code: "source/missing-game",
         });
       else {
-        const result = replay(source);
-        if (result.issue)
-          accept("error", result.issue, {
+        const result = analysis.replay(source);
+        if (!result.ok)
+          accept("error", result.error.message, {
             node: game,
             property: "path",
             code: "chess/invalid-game",
@@ -187,9 +175,9 @@ export function createServices(
       if (!game) return; // Langium reports the unresolved cross-reference.
       const source = sources.get(relative(AstUtils.getDocument(game).uri.toString(), game.path));
       if (source === undefined) return;
-      const result = replay(source);
-      if (result.issue) return;
-      for (const issue of analyzeScene(lowerScene(scene), result.frames)) {
+      const result = analysis.replay(source);
+      if (!result.ok) return;
+      for (const issue of analyzeScene(lowerScene(scene), result.value.frames)) {
         const noteIndex = issue.path[1];
         const node: AstNode = typeof noteIndex === "number" ? scene.notes[noteIndex] : scene;
         accept("error", issue.message, {
@@ -201,13 +189,14 @@ export function createServices(
     },
   };
   language.validation.ValidationRegistry.register(checks);
-  return { shared, language };
+  return { shared, language, analysis };
 }
 
 class ChessCompletion extends DefaultCompletionProvider {
   constructor(
     services: LangiumServices,
     private readonly sources: Sources,
+    private readonly analysis: ReturnType<typeof createChessAnalysis>,
   ) {
     super(services);
   }
@@ -224,7 +213,8 @@ class ChessCompletion extends DefaultCompletionProvider {
         const source = this.sources.get(
           relative(AstUtils.getDocument(game).uri.toString(), game.path),
         );
-        const position = source === undefined ? undefined : replay(source).frames[scene.ply];
+        const history = source === undefined ? undefined : this.analysis.replay(source);
+        const position = history?.ok ? history.value.frames[scene.ply] : undefined;
         if (position) {
           const start = document.textDocument.positionAt(offset - match[1].length);
           const endQuote = document.textDocument.getText().indexOf('"', offset);

@@ -539,7 +539,7 @@ export const ChessNarrativeGrammar = (): Grammar => loadedChessNarrativeGrammar 
       "name": "STRING",
       "definition": {
         "$type": "RegexToken",
-        "regex": "/\\"([^\\"\\\\\\\\]|\\\\\\\\.)*\\"|'([^'\\\\\\\\]|\\\\\\\\.)*'/",
+        "regex": "/\\"([^\\"\\\\\\\\\\\\x00-\\\\x1F]|\\\\\\\\([\\"\\\\\\\\\\\\/bfnrt]|u[0-9a-fA-F]{4}))*\\"/",
         "parenthesized": false
       },
       "fragment": false,

@@ -31,3 +31,18 @@ A separate client drove the stdio server using framed JSON-RPC, rather than call
 `pnpm demo` exposes the in-process scenarios; `pnpm compile examples` emits the authored data, diagnostic list and resolved occurrences; `pnpm check` type-checks the prototype. Generated code is committed and can be regenerated with `pnpm generate`.
 
 The LSP smoke client was an external verification harness, not a shipped editor extension. Browser execution, large-database throughput, source-preserving semantic edits, unavailable-record fetching and EPD behavior were not measured. See [README.md](README.md) for remaining scope limits.
+
+## Phase/snapshot follow-up
+
+The implementation now exposes numbered internal modules, immutable build snapshots and Result values. A persistent builder was checked against clean builds over generated edit sequences. Observed work reports:
+
+| Change                  | Narrative parses | Game replays | Emitted documents |
+| ----------------------- | ---------------- | ------------ | ----------------- |
+| Initial example         | 2                | 2            | 2                 |
+| No change               | 0                | 0            | 0                 |
+| Story prose only        | 1                | 0            | 1                 |
+| One PGN source revision | 0                | 1            | 2                 |
+
+The property suite found a genuine escaped-Unicode round-trip failure in the default string converter. The grammar now specifies JSON strings and shares their converter with the LSP. Generated round-trip checks include escapes, control characters, Unicode and LF/CRLF source. Exact source restoration still preserves untouched source only; it is not an editing codec.
+
+The phase follow-up passes nine seam/property/fuzz suites with seeds `20261102` and `8128`. A later LSP smoke exchange still resolves references, completes legal moves, reports edits and shuts down cleanly. The root reader continues to pass its 29 tests.

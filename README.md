@@ -78,3 +78,5 @@ A legal off-line try now stays on the board. Continuation pauses until the reade
 The [authoring and codec contract](docs/authoring-codec-contract.md) records the proposed lossless flat/structured format and shared diagnostics pipeline; the flat codec is not implemented yet.
 
 [Chess compiler decisions](docs/adr/0001-chess-compiler.md) and the [Langium experiment](docs/experiments/003-langium-compiler.md) describe the next authoring slice. Its disposable implementation is on branch `prototype/langium-chess-compiler`.
+
+[Internal module and compiler phase interfaces](MODULES.md) describe the current seams, snapshot/read model, incremental builds and error-value contracts.
