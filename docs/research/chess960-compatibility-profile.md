@@ -1,6 +1,6 @@
 # Ratifying a Chess960 compatibility profile
 
-Status: proposed project contract, 2 November 2026. This records decisions to test and implement; it does not claim the current compiler already enforces the whole profile or imports external FEN declarations in narrative syntax.
+Status: partially implemented project contract, 2 November 2026. The executable subset below is adopted for this prototype. The remaining decisions are proposals; the compiler does not yet enforce the whole profile or import external FEN declarations in narrative syntax.
 
 ## Separate the authorities
 
@@ -37,3 +37,20 @@ The project already uses chessops, whose README advertises Chess960 and whose im
 Minimum additions to the shared corpus: all 960 initial arrays; invalid bishop colours, king placement and mirror arrangements; the orthodox array within Chess960; reduced-material setups; both castling sides; king/rook already on destination squares; transposition castling; attack/path obstructions; moved/lost rights; additional/promoted rooks; X-FEN/Shredder equivalence; missing/misspelled headers; conflicting external/embedded setup; exact PGN preservation; and explicit rejection by adapters lacking the required variant capability.
 
 Use hand-reviewed edge cases and an independent implementation where possible. Agreement between two wrappers around the same chess engine is not an independent oracle. The [Go research](go-chess-compiler.md) audits candidate libraries against these requirements.
+
+## Executable subset: conformance corpus v1
+
+`prototypes/chess-compiler/src/chess960.test.ts` exercises the public `compile`, `selectPosition` and `createPlaybackPlan` seams. Its versioned, engine-independent edge-case data lives in `evaluation/corpus/chess960.json` relative to the compiler prototype, so a future Go adapter can consume the same inputs and literal expected results.
+
+| Obligation | Evidence and current policy |
+| --- | --- |
+| Complete starting arrays | Independently enumerate distinct permutations of `BBKNNQRR`, then filter for opposite-colour bishops and king between rooks. Assert 960 unique arrays, including `RNBQKBNR`; compile and select every mirrored full-army position. This demonstrates acceptance, not rejection of invalid initial-array declarations. |
+| Reduced-material setup | Twelve accepted castling fixtures intentionally omit most pieces. They remain valid setup inputs. |
+| Castling geometry | Literal resulting FENs cover both sides, both colours, ordinary movement, stationary king, stationary rook and king/rook exchange. SAN and normalized king-to-rook UCI are checked in history and emitted lesson prompts. |
+| Castling legality | Eight rejected fixtures cover attacks on the king, transit and destination, occupied paths, an uncovered attack on a stationary king, absent rights, and king/rook rights lost after moving away and returning. An attacked rook alone does not prevent castling. |
+| Rook entitlement | X-FEN `K` and explicit rook-file rights are exercised; an additional rook fixture grants the inner rook entitlement explicitly. This does not establish a general ambiguity-rejection policy. |
+| Missing setup | A PGN explicitly marked `Chess960` requires a nonempty FEN header, as do the case-insensitive aliases `Chess 960`, `Fischerandom`, `FischerRandom`, and `Fischer Random`. A canonical `SetUp "1"` also requires FEN regardless of variant. Missing setup returns `chess/missing-setup`, rather than silently selecting the orthodox array. Ordinary PGN without setup headers retains its usual starting position. |
+
+The PGN specification section 9.7.1 requires FEN when `SetUp` is `1`. Requiring FEN for an explicit Chess960 variant is our import policy, including the orthodox array played as Chess960. This avoids guessing the intended starting array. The dependency's other permissive variant aliases are not promoted to a project guarantee by this change.
+
+Still pending: explicit ruleset identity in contracts and playback targets; negative validation for declarations claiming a complete initial array; external FEN imports and conflict diagnostics; general ambiguous-rights handling; setup-header alias/conflict policy; canonical PGN export and transformation reports. Passing this corpus does not ratify those proposals or independently prove all castling legality. The Go research probes provide corroboration for several geometries, not exhaustive differential validation.

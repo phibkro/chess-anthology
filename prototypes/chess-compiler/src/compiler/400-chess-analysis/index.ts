@@ -26,7 +26,24 @@ const replayRaw = (
   if (games.length !== 1) {
     return err("chess", "chess/game-count", "Select exactly one PGN game.");
   }
-  const start = startingPosition(games[0].headers);
+  const [{ headers }] = games;
+  const requiresSetup =
+    headers.get("SetUp") === "1" ||
+    [
+      "chess960",
+      "chess 960",
+      "fischerandom",
+      "fischerrandom",
+      "fischer random",
+    ].includes(headers.get("Variant")?.toLowerCase() ?? "");
+  if (requiresSetup && (headers.get("FEN") ?? "") === "") {
+    return err(
+      "chess",
+      "chess/missing-setup",
+      "Provide a FEN header for Chess960 or a game marked SetUp 1."
+    );
+  }
+  const start = startingPosition(headers);
   if (start.isErr) {
     return err("chess", "chess/invalid-position", "Invalid initial position.");
   }
