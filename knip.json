@@ -1,0 +1,1 @@
+{ "entry": ["scripts/*.mjs"], "project": ["src/**/*.{ts,tsx,css}", "scripts/*.mjs"] }

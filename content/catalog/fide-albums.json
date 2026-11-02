@@ -1,0 +1,137 @@
+{
+  "source": "https://www.wfcc.ch/fide-albums/",
+  "retrieved": "2026-11-02",
+  "scope": "Bibliographic catalogue only. Not the album contents or an open redistribution license.",
+  "albums": [
+    {
+      "period": "1914-1944 / I",
+      "published": 1972,
+      "diagrams": 725
+    },
+    {
+      "period": "1914-1944 / II",
+      "published": 1972,
+      "diagrams": 1278
+    },
+    {
+      "period": "1914-1944 / III",
+      "published": 1975,
+      "diagrams": 806
+    },
+    {
+      "period": "1945-1955",
+      "published": 1964,
+      "diagrams": 1891
+    },
+    {
+      "period": "1956-1958",
+      "published": 1961,
+      "diagrams": 661
+    },
+    {
+      "period": "1959-1961",
+      "published": 1966,
+      "diagrams": 738
+    },
+    {
+      "period": "1962-1964",
+      "published": 1968,
+      "diagrams": 908
+    },
+    {
+      "period": "1965-1967",
+      "published": 1976,
+      "diagrams": 800
+    },
+    {
+      "period": "1968-1970",
+      "published": 1977,
+      "diagrams": 805
+    },
+    {
+      "period": "1971-1973",
+      "published": 1978,
+      "diagrams": 800
+    },
+    {
+      "period": "1974-1976",
+      "published": 1980,
+      "diagrams": 800
+    },
+    {
+      "period": "1977-1979",
+      "published": 1984,
+      "diagrams": 800
+    },
+    {
+      "period": "1980-1982",
+      "published": 1988,
+      "diagrams": 1083
+    },
+    {
+      "period": "1983-1985",
+      "published": 1992,
+      "diagrams": 1103
+    },
+    {
+      "period": "1986-1988",
+      "published": 1995,
+      "diagrams": 1114
+    },
+    {
+      "period": "1989-1991",
+      "published": 1997,
+      "diagrams": 1056
+    },
+    {
+      "period": "1992-1994",
+      "published": 2001,
+      "diagrams": 963
+    },
+    {
+      "period": "1995-1997",
+      "published": 2004,
+      "diagrams": 1153
+    },
+    {
+      "period": "1998-2000",
+      "published": 2007,
+      "diagrams": 1267
+    },
+    {
+      "period": "2001-2003",
+      "published": 2011,
+      "diagrams": 1349
+    },
+    {
+      "period": "2004-2006",
+      "published": 2013,
+      "diagrams": 1367
+    },
+    {
+      "period": "2007-2009",
+      "published": 2015,
+      "diagrams": 1426
+    },
+    {
+      "period": "2010-2012",
+      "published": 2017,
+      "diagrams": 1402
+    },
+    {
+      "period": "2013-2015",
+      "published": 2019,
+      "diagrams": 1499
+    },
+    {
+      "period": "2016-2018",
+      "published": 2022,
+      "diagrams": 1984
+    },
+    {
+      "period": "2019-2021",
+      "published": 2025,
+      "diagrams": 1840
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+import { useEffect, useRef } from "react";
+import { Chessground } from "@lichess-org/chessground";
+import { chessgroundDests } from "chessops/compat";
+import { positionFromFen } from "./chess";
+import "@lichess-org/chessground/assets/chessground.base.css";
+import "@lichess-org/chessground/assets/chessground.cburnett.css";
+
+interface BoardProps {
+  fen: string;
+  orientation: "white" | "black";
+  interactive: boolean;
+  attempt: number;
+  promotion: string;
+  onMove: (uci: string) => void;
+}
+export function Board({ fen, orientation, interactive, attempt, promotion, onMove }: BoardProps) {
+  const element = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!element.current) return;
+    const pos = positionFromFen(fen);
+    const board = Chessground(element.current, {
+      fen,
+      orientation,
+      turnColor: pos.turn,
+      check: pos.isCheck(),
+      animation: { enabled: !window.matchMedia("(prefers-reduced-motion: reduce)").matches },
+      coordinates: true,
+      movable: {
+        free: false,
+        color: interactive ? pos.turn : undefined,
+        dests: interactive ? chessgroundDests(pos) : new Map(),
+        events: {
+          after: (from, to) => {
+            const piece = board.state.pieces.get(to);
+            const promote = piece?.role === "pawn" && (to[1] === "1" || to[1] === "8");
+            onMove(from + to + (promote ? promotion : ""));
+          },
+        },
+      },
+      draggable: { enabled: interactive },
+      selectable: { enabled: interactive },
+      premovable: { enabled: false },
+      drawable: { enabled: true, visible: true },
+    });
+    return () => board.destroy();
+  }, [fen, orientation, interactive, attempt, promotion, onMove]);
+  return (
+    <div className="lesson-board">
+      <div
+        ref={element}
+        className="cg-wrap"
+        role="img"
+        aria-label={`Chess position. ${fen}. ${interactive ? "Use the move form below for keyboard play." : "Replay position."}`}
+      />
+    </div>
+  );
+}

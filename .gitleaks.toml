@@ -1,0 +1,6 @@
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Dependency, generated and local tool directories"
+paths = ['''(^|/)node_modules/''', '''(^|/)dist/''', '''(^|/)\.tools/''', '''(^|/)\.git/''']

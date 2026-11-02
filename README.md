@@ -6,9 +6,9 @@ Chess Anthology is a craft-first, open project for discovering and appreciating 
 
 ## Two distinct products
 
-| Product | Promise |
-| --- | --- |
-| **Chess Through History** | Explore real games through people, rivalries, matches, tournaments, eras, and their historical context. Replay the games; make meaningful decisions along the way. |
+| Product                          | Promise                                                                                                                                                                  |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Chess Through History**        | Explore real games through people, rivalries, matches, tournaments, eras, and their historical context. Replay the games; make meaningful decisions along the way.       |
 | **The Art of Chess Composition** | Encounter deliberate works of chess art by named human composers. Solve their stipulations, discover the idea behind each construction, and understand their provenance. |
 
 Both products can eventually share a playable reader, portable narratives, and an optional research/import assistant. **Shared infrastructure is an implementation possibility, not a reason to collapse the editorial distinction between the products.**
@@ -38,6 +38,33 @@ Both products can eventually share a playable reader, portable narratives, and a
 
 A proposed first experiment is specified in [the vertical-slice brief](docs/experiments/001-morphy-slice.md). [Decisions and assumptions](docs/DECISIONS.md) explain what is settled versus provisional.
 
-**Project status:** discovery/ideation transitioned into an initial design-and-development handoff. These documents describe intentions and proposals, not an implemented app or settled architecture.
+**Project status:** a working shared-reader prototype is implemented. The earlier discovery documents remain proposals where they have not been explicitly implemented or superseded below.
 
-**Licensing note:** Source and content licenses have not yet been selected. Public visibility alone does not confer an open-source license; see [COMMUNITY](docs/COMMUNITY.md).
+**Licensing note:** New prototype code is GPL-3.0-or-later. Pre-existing documents and separately sourced content are not automatically relicensed; see [third-party notices](THIRD-PARTY-NOTICES.md) and [COMMUNITY](docs/COMMUNITY.md).
+
+## Working prototype
+
+The original editorial design is the current default. The earlier `/original/` and `/revised/` comparison snapshots remain available.
+
+```sh
+pnpm install
+pnpm setup:secrets
+pnpm dev
+```
+
+The app uses Vite+ (Vite, Vitest, Oxfmt and Oxlint), React, Tailwind CSS, XState Store, Valibot, Chessground and chessops. The reader currently includes two compositions and two historical games, with legal move entry, optional checkpoints, graded hints, reveal, skip, rewind and notation export.
+
+- `src/content/lessons.json`: artifact scores and separately authored narratives.
+- `src/lesson/schema.ts`: Valibot content contract.
+- `src/lesson/chess.ts`: parsing, legality checks, compilation and interchange.
+- `src/lesson/store.ts`: event-driven lesson session.
+- `GLOSSARY.md`: developer/editor domain language; not reader-facing ontology.
+- `content/catalog/fide-albums.json`: 26 bibliographic records, refreshed with `pnpm index:albums`.
+- [Research and reuse notes](docs/research/lesson-foundations.md).
+- [Shared-reader experiment](docs/experiments/002-shared-lesson-reader.md).
+
+`pnpm check:all` runs formatting, lint/type checks, tests, duplication checks, Knip and production build. `pnpm check:secrets` scans the working tree; pre-commit scans staged changes. Commit messages follow Conventional Commits.
+
+**Current limits:** standard chess; mainline playback; authored answers rather than engine grading; no automated evaluation or complete Réti solution proof. PGN side variations and comments are validated and preserved on export, but branching playback is not yet exposed. Local imports do not upload content. Importing a position does not invent a solution.
+
+**Software license:** new prototype code is GPL-3.0-or-later, compatible with Chessground and chessops. This does not relicense pre-existing project documents, historical sources, modern annotations or future album contents. See [third-party notices](THIRD-PARTY-NOTICES.md).

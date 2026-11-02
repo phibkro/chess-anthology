@@ -1,0 +1,190 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "id": "reti",
+      "title": "The shortest path is not a straight line",
+      "subtitle": "Richard Réti · An endgame study, 1921",
+      "field": "composition",
+      "kind": "Work",
+      "era": "modern",
+      "place": "Central Europe",
+      "cluster": "Study composers",
+      "person": "Richard Réti",
+      "year": "1921",
+      "mark": "♔",
+      "status": "seed",
+      "summary": "Four pieces. Two distant goals. A king that seems too late to reach either.",
+      "body": [
+        "Richard Réti’s 1921 study asks White to draw. The king on h8 appears unable to catch the h-pawn, while White’s pawn on c6 looks vulnerable to the black king.",
+        "The white king advances diagonally, keeping two possibilities alive: supporting its own pawn or catching its opponent’s. The selected line below demonstrates the idea; it is one variation, not the complete solution tree.",
+        "Read this as a small authored experience: an apparent impossibility, a change of perspective, and a resolution. The composer arranges what the solver notices, and when."
+      ],
+      "source": "https://www.wfcc.ch/chess-compositions/",
+      "sourceLabel": "WFCC · position, publication and solution",
+      "related": ["carpenter", "manuscripts"],
+      "study": true
+    },
+    {
+      "id": "lewis",
+      "title": "A society carved into the pieces",
+      "subtitle": "The Lewis chessmen · Twelfth century",
+      "field": "history",
+      "kind": "Object",
+      "era": "medieval",
+      "place": "Norway / Scotland",
+      "cluster": "Makers & trade routes",
+      "person": "Unidentified ivory carvers",
+      "year": "12th c.",
+      "mark": "♜",
+      "status": "seed",
+      "summary": "Kings, bishops and shield-biting warriors: a board populated by a medieval social world.",
+      "body": [
+        "The Lewis chessmen were found on the Isle of Lewis in 1831. The Met describes their likely Norwegian manufacture, with stylistic and archaeological evidence pointing toward Trondheim. The attribution is a scholarly interpretation, not an identified workshop signature.",
+        "Their figures invite a different reading of chess: as material culture. The objects connect craftsmanship, religious authority and martial imagery with movement through North Atlantic trade routes.",
+        "Who carved them? Who bought them? Whose society appears on the board? These questions put makers, owners and circulation alongside the moves."
+      ],
+      "source": "https://www.metmuseum.org/exhibitions/listings/2011/the-game-of-kings-medieval-ivory-chessmen-from-the-isle-of-lewis",
+      "sourceLabel": "The Metropolitan Museum of Art · The Game of Kings",
+      "related": ["routes", "menchik"]
+    },
+    {
+      "id": "carpenter",
+      "title": "A quiet move, a composed surprise",
+      "subtitle": "George Edward Carpenter · A problem, 1873",
+      "field": "composition",
+      "kind": "Work",
+      "era": "nineteenth",
+      "place": "Print culture",
+      "cluster": "Problem composers",
+      "person": "George Edward Carpenter",
+      "year": "1873",
+      "mark": "♕",
+      "status": "seed",
+      "summary": "A mate in two turns the first move into an act of misdirection.",
+      "body": [
+        "Carpenter’s problem appeared in the Dubuque Chess Journal in October 1873. The position contains a white king on d6, rook on c2 and queen on f3, against a black king on d4.",
+        "The key is 1.Qh3! After 1…Ke4, White plays 2.Rc4 mate. The surprising first move is part of the artistic effect.",
+        "A composition also has a social life: a named author, a publication and readers invited to discover its mechanism. The journal belongs in its story alongside the diagram."
+      ],
+      "source": "https://www.wfcc.ch/chess-compositions/",
+      "sourceLabel": "WFCC · Carpenter problem and publication",
+      "related": ["reti", "manuscripts"]
+    },
+    {
+      "id": "menchik",
+      "title": "Who gets a seat at the board?",
+      "subtitle": "Vera Menchik · Player and pioneer",
+      "field": "history",
+      "kind": "Person",
+      "era": "modern",
+      "place": "England / international chess",
+      "cluster": "Women in competitive chess",
+      "person": "Vera Menchik",
+      "year": "1927",
+      "mark": "♛",
+      "status": "seed",
+      "summary": "A player’s life opens a larger question about recognition, institutions and belonging.",
+      "body": [
+        "Vera Menchik won the inaugural Women’s World Chess Championship in 1927. Born in Russia, she was a Czechoslovak player who lived primarily in England.",
+        "Her story offers an entry into the institutions that determine who can participate and how achievement is recognized. A championship is both a sporting event and a social arrangement.",
+        "The anthology’s research question: how did clubs, migration, gender and access shape the lives behind the results? A fuller biography and annotated game are still to be developed."
+      ],
+      "source": "https://wom.fide.com/vera-menchik/",
+      "sourceLabel": "FIDE Commission for Women’s Chess · Vera Menchik",
+      "related": ["polgar", "lewis"]
+    },
+    {
+      "id": "manuscripts",
+      "title": "Before the puzzle feed, the manuscript",
+      "subtitle": "Manṣūbāt · A research trail",
+      "field": "composition",
+      "kind": "Community",
+      "era": "medieval",
+      "place": "Arabic manuscript cultures",
+      "cluster": "Authors, scribes & solvers",
+      "person": "Multiple authors",
+      "year": "9th c. onward",
+      "mark": "♘",
+      "status": "research",
+      "summary": "Follow composed positions through the people who wrote, copied and solved them.",
+      "body": [
+        "The WFCC traces artistic chess positions to surviving ninth-century Arabic chess documents. This provides a starting point for investigating manṣūbāt.",
+        "Research lead: identify a manuscript, its author or attributed author, its copy history and the rules needed to read one position. Distinguish a work’s composition date from the date of a surviving copy.",
+        "Next artifact: a source-checked manuscript dossier with one playable position. This entry is a research brief, not a completed historical account."
+      ],
+      "source": "https://www.wfcc.ch/chess-compositions/",
+      "sourceLabel": "WFCC · historical introduction",
+      "related": ["routes", "carpenter"]
+    },
+    {
+      "id": "routes",
+      "title": "A travelling game changes its language",
+      "subtitle": "India, Persia and beyond · A research trail",
+      "field": "history",
+      "kind": "Place",
+      "era": "early",
+      "place": "South Asia / Persia / Europe",
+      "cluster": "Translation & circulation",
+      "person": "Players, translators & merchants",
+      "year": "c. 6th c. onward",
+      "mark": "♝",
+      "status": "research",
+      "summary": "Trace transformations through objects and texts, while keeping uncertain origins visible.",
+      "body": [
+        "The Met presents the game’s likely origin in sixth-century India and its westward movement through Persia and Islamic territories to Europe. This is an introductory route, not a complete global history.",
+        "Research lead: compare names, piece forms and rules across dated objects and texts. Treat origin stories, documented transmission and later interpretation separately.",
+        "Next artifact: an annotated route map that shows evidence and uncertainty rather than a single inevitable march toward modern chess."
+      ],
+      "source": "https://www.metmuseum.org/exhibitions/listings/2011/the-game-of-kings-medieval-ivory-chessmen-from-the-isle-of-lewis",
+      "sourceLabel": "The Metropolitan Museum of Art · historical overview",
+      "related": ["lewis", "manuscripts"]
+    },
+    {
+      "id": "polgar",
+      "title": "Learning, ambition and the limits of expectation",
+      "subtitle": "Judit Polgár · A research trail",
+      "field": "history",
+      "kind": "Person",
+      "era": "contemporary",
+      "place": "Hungary / international chess",
+      "cluster": "Education & participation",
+      "person": "Judit Polgár",
+      "year": "Contemporary",
+      "mark": "♞",
+      "status": "research",
+      "summary": "A player’s career becomes a lens on how talent is cultivated and recognized.",
+      "body": [
+        "Judit Polgár reached the world top ten. Her own site presents both her playing career and her work in chess education.",
+        "Research lead: examine her account alongside interviews, tournament records and independent scholarship. Separate documented achievements from claims about how talent develops.",
+        "Next artifact: a profile connecting a game, a learning environment and the broader institutions of competitive chess."
+      ],
+      "source": "https://juditpolgar.com/",
+      "sourceLabel": "Judit Polgár · official website",
+      "related": ["menchik", "digital"]
+    },
+    {
+      "id": "digital",
+      "title": "When the meeting place becomes a platform",
+      "subtitle": "Digital chess cultures · An open question",
+      "field": "history",
+      "kind": "Community",
+      "era": "contemporary",
+      "place": "Online / translocal",
+      "cluster": "Platforms & everyday play",
+      "person": "Players, streamers & moderators",
+      "year": "Today",
+      "mark": "♟",
+      "status": "research",
+      "summary": "What happens to chess communities when play, spectatorship and reputation share an interface?",
+      "body": [
+        "This is an open research brief. No empirical findings have been added yet.",
+        "Investigate everyday practices: watching, teaching, moderation, engine use, rankings and the movement between local clubs and online platforms. Look for accounts from participants as well as platform documentation.",
+        "Next artifact: a small, consent-based interview protocol and a bibliography. Avoid treating platform metrics as a complete description of a community."
+      ],
+      "source": null,
+      "sourceLabel": null,
+      "related": ["polgar", "menchik"]
+    }
+  ]
+}

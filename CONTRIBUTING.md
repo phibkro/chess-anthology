@@ -24,3 +24,10 @@ Before submitting copyrighted content or code, review the open licensing decisio
 6. For AI-assisted changes, describe the tool's role; verify generated facts and citations independently.
 
 Editorial disagreements and factual corrections deserve respectful discussion, not engagement-driven voting.
+## Prototype development
+
+Use Node 24.11+ and the pinned pnpm version. Run `pnpm install` and `pnpm setup:secrets` once. Installation enables Vite+ hooks; `pnpm exec vp hooks status` reports their state.
+
+Use Conventional Commits, for example `feat(lesson): add a composition checkpoint`. The commit-message hook checks the message. Pre-commit runs Oxfmt, Oxlint/type checks, lesson tests, jscpd, Knip and a staged Gitleaks scan. Gitleaks is required and its absence fails the hook; install it on PATH or run the checksum-verified setup script.
+
+Run `pnpm check:all` and `pnpm check:secrets` before pushing. CI repeats these checks. Archived design comparisons in `public/` are intentional snapshots, excluded from active-code duplication and dead-code checks.
