@@ -12,10 +12,21 @@ import { parseText } from "../100-parsing/index.js";
 import { lower } from "../200-semantic-analysis/index.js";
 import { digest } from "../identity.js";
 
+/**
+ * Parse flat source into its structured document model.
+ * @param source - Chess narrative source text.
+ * @returns The document or parsing and semantic diagnostics.
+ */
 export function decode(source: string): Result<DocumentData> {
   const parsed = parseText(source);
   return parsed.ok ? lower(parsed.value) : parsed;
 }
+/**
+ * Pair structured data with its original source for exact restoration.
+ * @param data - The structured representation of the source.
+ * @param sourceText - Original text, including comments and whitespace.
+ * @returns An envelope whose agreement is checked when restored.
+ */
 export function envelope(data: ReadonlyDeep<DocumentData>, sourceText: string) {
   return {
     format: "chess-source-envelope-prototype",
@@ -25,6 +36,11 @@ export function envelope(data: ReadonlyDeep<DocumentData>, sourceText: string) {
     digest: digest(sourceText),
   };
 }
+/**
+ * Restore original text only when its digest and structured data agree.
+ * @param input - An untrusted source envelope.
+ * @returns Exact original text or an integrity diagnostic.
+ */
 export function restore(input: unknown): Result<string> {
   if (
     !input ||
@@ -60,6 +76,12 @@ export function restore(input: unknown): Result<string> {
         "Source and structured data disagree."
       );
 }
+/**
+ * Print validated structured data in canonical flat syntax.
+ * @remarks This preserves the document model, but does not retain original formatting or comments.
+ * @param input - An untrusted structured document.
+ * @returns Canonical source text or validation diagnostics.
+ */
 export function printStructured(input: unknown): Result<string> {
   const checked = parseStructured(input);
   if (!checked.ok) return checked;

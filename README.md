@@ -6,9 +6,9 @@ Chess Anthology is a craft-first, open project for discovering and appreciating 
 
 ## Two distinct products
 
-| Product                          | Promise                                                                                                                                                                  |
-| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Chess Through History**        | Explore real games through people, rivalries, matches, tournaments, eras, and their historical context. Replay the games; make meaningful decisions along the way.       |
+| Product | Promise |
+| --- | --- |
+| **Chess Through History** | Explore real games through people, rivalries, matches, tournaments, eras, and their historical context. Replay the games; make meaningful decisions along the way. |
 | **The Art of Chess Composition** | Encounter deliberate works of chess art by named human composers. Solve their stipulations, discover the idea behind each construction, and understand their provenance. |
 
 Both products can eventually share a playable reader, portable narratives, and an optional research/import assistant. **Shared infrastructure is an implementation possibility, not a reason to collapse the editorial distinction between the products.**
@@ -22,6 +22,8 @@ Both products can eventually share a playable reader, portable narratives, and a
 - **Open by design:** Favor interoperable PGN/FEN and human-readable content; keep formats portable and contributors empowered.
 - **Agents as librarians, not authorities:** Research/import assistance is optional, inspectable, and subject to factual and chess verification.
 - **Build the tool before the business:** Do not introduce monetization or platform-growth obligations ahead of usefulness and quality.
+
+Tooling presets, migration exceptions, and the gdp-ts evaluation are recorded in [Tooling](docs/tooling.md).
 
 ## Start here
 

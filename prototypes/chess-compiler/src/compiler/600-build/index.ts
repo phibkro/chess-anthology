@@ -14,6 +14,7 @@ import {
 import { emitDocument, type EmittedDocument } from "../500-emission/index.js";
 import { freeze } from "../identity.js";
 
+/** An immutable revision of emitted documents and replayed game histories. */
 export type BuildSnapshot = {
   readonly revision: number;
   readonly parentRevision: number | null;
@@ -23,6 +24,10 @@ export type BuildSnapshot = {
     readonly result: Result<GameHistory>;
   }[];
 };
+/**
+ * Create an incremental compiler whose updates preserve earlier snapshots.
+ * @returns A compiler accepting complete source maps, with expected failures returned as values.
+ */
 export function createCompiler() {
   const analysis = createChessAnalysis();
   const workspace = createWorkspace(analysis);
@@ -99,12 +104,24 @@ export function createCompiler() {
   }
   return { update };
 }
+/**
+ * Compile a complete source map with a fresh compiler.
+ * @param sources - Source text keyed by its canonical URI.
+ * @returns The resulting snapshot or an infrastructure diagnostic.
+ */
 export async function compile(
   sources: Sources
 ): Promise<Result<BuildSnapshot>> {
   const built = await createCompiler().update(sources);
   return built.ok ? ok(built.value.snapshot) : built;
 }
+/**
+ * Select a historical board position without changing the snapshot.
+ * @param snapshot - The immutable revision to read.
+ * @param gameUri - A game source URI present in that revision.
+ * @param ply - A zero-based half-move index, including the initial position.
+ * @returns The frame or a diagnostic for an unavailable game or position.
+ */
 export function selectPosition(
   snapshot: BuildSnapshot,
   gameUri: string,
