@@ -9,19 +9,23 @@ const PromptFields = {
   explanation: v.string(),
   accepted: v.array(UciSchema),
   feedback: v.optional(
-    v.array(v.object({ move: UciSchema, message: v.pipe(v.string(), v.minLength(1)) })),
+    v.array(v.strictObject({ move: UciSchema, message: v.pipe(v.string(), v.minLength(1)) })),
     [],
   ),
 };
 const EventAnchor = { id: v.pipe(v.string(), v.minLength(1)), after: AnchorSchema };
 const EventSchema = v.variant("type", [
-  v.object({ ...EventAnchor, type: v.literal("text"), text: v.pipe(v.string(), v.minLength(1)) }),
-  v.object({ ...EventAnchor, type: v.literal("prompt"), ...PromptFields }),
+  v.strictObject({
+    ...EventAnchor,
+    type: v.literal("text"),
+    text: v.pipe(v.string(), v.minLength(1)),
+  }),
+  v.strictObject({ ...EventAnchor, type: v.literal("prompt"), ...PromptFields }),
 ]);
-const ArtifactSchema = v.object({
+const ArtifactSchema = v.strictObject({
   kind: v.picklist(["composition", "game"]),
   pgn: v.pipe(v.string(), v.maxLength(131072)),
-  source: v.object({
+  source: v.strictObject({
     title: v.string(),
     url: v.pipe(
       v.string(),
@@ -36,18 +40,18 @@ const ArtifactSchema = v.object({
   stipulation: v.optional(v.string()),
 });
 const NarrativeFields = { title: v.string(), subtitle: v.string(), introduction: v.string() };
-const LessonSchema = v.object({
+const LessonSchema = v.strictObject({
   formatVersion: v.literal(1),
   id: v.pipe(v.string(), v.minLength(1)),
   artifact: ArtifactSchema,
-  narrative: v.object({ ...NarrativeFields, events: v.array(EventSchema) }),
+  narrative: v.strictObject({ ...NarrativeFields, events: v.array(EventSchema) }),
 });
-const LegacySchema = v.object({
+const LegacySchema = v.strictObject({
   id: v.pipe(v.string(), v.minLength(1)),
   artifact: ArtifactSchema,
-  narrative: v.object({
+  narrative: v.strictObject({
     ...NarrativeFields,
-    checkpoints: v.array(v.object({ path: PathSchema, ...PromptFields })),
+    checkpoints: v.array(v.strictObject({ path: PathSchema, ...PromptFields })),
   }),
 });
 export type Lesson = v.InferOutput<typeof LessonSchema>;
@@ -63,7 +67,9 @@ export function parseLesson(input: unknown): Lesson {
     id: legacy.id,
     artifact: legacy.artifact,
     narrative: {
-      ...legacy.narrative,
+      title: legacy.narrative.title,
+      subtitle: legacy.narrative.subtitle,
+      introduction: legacy.narrative.introduction,
       events: legacy.narrative.checkpoints.map(({ path, ...prompt }, index) => ({
         id: `prompt-${index + 1}`,
         type: "prompt",

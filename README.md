@@ -74,3 +74,5 @@ The app uses Vite+ (Vite, Vitest, Oxfmt and Oxlint), React, Tailwind CSS, XState
 [Version 1 of the lesson document](docs/lesson-format.md) combines PGN with ordered text and prompt events, appended after a ply index or legal move path. Unversioned checkpoint lessons still import. [Lichess source research](docs/research/lichess-lesson-formats.md) explains why we adapt Study/gamebook concepts instead of importing its application controller.
 
 A legal off-line try now stays on the board. Continuation pauses until the reader retries, reveals the idea or navigates away. The default feedback is “Try again.” More specific encouragement is authored for individual moves; the reader does not guess whether an idea is close to the solution.
+
+The [authoring and codec contract](docs/authoring-codec-contract.md) records the proposed lossless flat/structured format and shared diagnostics pipeline; the flat codec is not implemented yet.

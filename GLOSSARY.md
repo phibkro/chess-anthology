@@ -72,3 +72,12 @@ An authored text or interaction attached to a position reached in a work's move 
 
 **Try**:
 A reader's legal move outside the supported lesson line, kept visible for reflection and feedback. It is distinct from the recorded score and does not imply an objectively losing move.
+
+**Story**:
+An authored sequence connecting chess works, people and ideas through prose, positions, annotations and optional interactions. It may revisit one work or draw on several.
+
+**Board occurrence**:
+A particular presentation of a work's position within a story. Repeated occurrences may explain different ideas or invite different reader actions while referring to the same source work.
+
+**Board annotation**:
+An explanatory mark attached to a chess position, such as an arrow, highlighted square or label. It can convey an idea without requiring an interaction.

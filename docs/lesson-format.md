@@ -74,3 +74,9 @@ Annotations at one anchor retain array order. Text appears after the associated 
 A reader's try stores a temporary position and SAN/UCI move. It does not enter the artifact PGN or its move history. The recorded cursor remains at the prompt anchor until the reader retries or explicitly navigates away. Continuation of the temporary line is paused.
 
 Lesson JSON export preserves annotations, hints and move-specific feedback. PGN export preserves the original chess record and PGN comments/variations, but does not encode lesson-specific JSON events. FEN export describes the position currently displayed, including a try. A future PGN adapter may embed structured annotations, but no undocumented comment directive is introduced here.
+
+## Losslessness and future authoring
+
+Unknown properties at every supported object boundary are rejected, not silently stripped. Unsupported versions and annotation types also fail import. Version 1 does not yet support arbitrary extensions or arrows; attempting to import them must produce an explicit error. Known omitted defaults, such as an empty alternative-feedback list, are normalized by the schema.
+
+The [authoring and codec contract](authoring-codec-contract.md) defines the proposed flat/structured round-trip guarantees, multi-game stories, supplementary annotations, semantic diagnostics and explicit projection losses. These are design requirements for a future codec, not capabilities of the current single-artifact runtime.

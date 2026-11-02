@@ -225,17 +225,49 @@ describe("move-anchored lesson annotations", () => {
       id: carpenter.content.id,
       artifact: carpenter.content.artifact,
       narrative: {
-        ...carpenter.content.narrative,
-        events: undefined,
+        title: carpenter.content.narrative.title,
+        subtitle: carpenter.content.narrative.subtitle,
+        introduction: carpenter.content.narrative.introduction,
         checkpoints: carpenter.events
           .filter(({ event }) => event.type === "prompt")
-          .map(({ event, cursor }) => ({ ...event, path: carpenter.frames[cursor].path })),
+          .map(({ event, cursor }) => {
+            if (event.type !== "prompt") throw new Error("Expected prompt");
+            const { prompt, hints, explanation, accepted, feedback } = event;
+            return {
+              prompt,
+              hints,
+              explanation,
+              accepted,
+              feedback,
+              path: carpenter.frames[cursor].path,
+            };
+          }),
       },
     };
     const imported = compileLesson(legacy);
     expect(imported.content.formatVersion).toBe(1);
     expect(imported.events.filter(({ event }) => event.type === "prompt")).toHaveLength(2);
     expect("checkpoints" in imported.content.narrative).toBe(false);
+  });
+  it("rejects unknown fields instead of silently discarding authored data", () => {
+    const original = JSON.stringify(carpenter.content);
+    const inputs = [
+      { ...carpenter.content, extra: "keep me" },
+      { ...carpenter.content, artifact: { ...carpenter.content.artifact, arrows: [] } },
+      { ...carpenter.content, narrative: { ...carpenter.content.narrative, style: {} } },
+    ];
+    for (const input of inputs) expect(() => compileLesson(input)).toThrow();
+    const nested = JSON.parse(original);
+    nested.artifact.source.extra = "provenance";
+    expect(() => compileLesson(nested)).toThrow();
+    const event = JSON.parse(original);
+    event.narrative.events[0].extra = "annotation";
+    expect(() => compileLesson(event)).toThrow();
+    const feedback = JSON.parse(original);
+    feedback.narrative.events.find((event: { type: string }) => event.type === "prompt").feedback =
+      [{ move: "f3g3", message: "Try again.", extra: "idea" }];
+    expect(() => compileLesson(feedback)).toThrow();
+    expect(JSON.stringify(carpenter.content)).toBe(original);
   });
   it("rejects duplicate IDs, missing anchors, and unsupported format versions", () => {
     const content = structuredClone(carpenter.content);
