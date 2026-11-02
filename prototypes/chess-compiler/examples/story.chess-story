@@ -1,0 +1,14 @@
+// PROTOTYPE syntax: the same idea in two historical games.
+module queenOffers;
+import "./library.chess-story";
+story matingNets {
+  board operaFinish game opera after 30 {
+    text "The queen opens a path to the back rank.";
+    arrow "b3" -> "b8" green;
+    prompt "Find the forcing move." answer "Qb8+";
+  }
+  board retiFinish game reti after 16 {
+    text "Compare the queen offer with a discovered attack.";
+    prompt "Offer the queen." answer "Qd8+";
+  }
+}

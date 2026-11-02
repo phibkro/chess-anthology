@@ -1,0 +1,5 @@
+module library;
+export game opera from "./opera.pgn";
+export game reti from "./reti.pgn";
+// This record is private and must not enter other modules' completion scopes.
+game privateGame from "./opera.pgn";

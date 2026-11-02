@@ -10,6 +10,8 @@ export default defineConfig({
       "public/original/**",
       "public/revised/**",
       "pnpm-lock.yaml",
+      "prototypes/chess-compiler/pnpm-lock.yaml",
+      "prototypes/chess-compiler/src/generated/**",
       "docs/4EM.md",
       "docs/CHARTER.md",
       "docs/COMMUNITY.md",
@@ -26,7 +28,7 @@ export default defineConfig({
     ],
   },
   lint: {
-    ignorePatterns: ["public/**"],
+    ignorePatterns: ["public/**", "prototypes/chess-compiler/src/generated/**"],
     options: { typeAware: true, typeCheck: true },
     rules: { "no-unused-vars": "error" },
   },
