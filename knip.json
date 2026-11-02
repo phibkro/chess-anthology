@@ -1,1 +1,12 @@
-{ "entry": ["scripts/*.mjs"], "project": ["src/**/*.{ts,tsx,css}", "scripts/*.mjs"] }
+{
+  "workspaces": {
+    ".": {
+      "entry": ["scripts/*.{mjs,mts}"],
+      "project": ["src/**/*.{ts,tsx,css}", "scripts/*.{mjs,mts}"]
+    },
+    "prototypes/chess-compiler": {
+      "entry": ["src/adapters/*.ts", "src/compiler/100-parsing/generated/*.ts"],
+      "project": ["src/**/*.ts"]
+    }
+  }
+}

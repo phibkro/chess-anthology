@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { makeSquare, parseSquare } from "chessops/util";
 import { Chessground } from "@lichess-org/chessground";
 import { chessgroundDests } from "chessops/compat";
 import { positionFromFen } from "./chess";
@@ -13,7 +14,9 @@ interface BoardProps {
   paused?: boolean;
   promotion: string;
   onMove: (uci: string) => void;
+  arrows?: readonly { from: string; to: string; color: string }[];
 }
+const noArrows: readonly { from: string; to: string; color: string }[] = [];
 export function Board({
   fen,
   orientation,
@@ -22,6 +25,7 @@ export function Board({
   promotion,
   onMove,
   paused = false,
+  arrows = noArrows,
 }: BoardProps) {
   const element = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -51,10 +55,20 @@ export function Board({
       draggable: { enabled: interactive },
       selectable: { enabled: interactive },
       premovable: { enabled: false },
-      drawable: { enabled: true, visible: true },
+      drawable: {
+        enabled: true,
+        visible: true,
+        autoShapes: arrows.flatMap((arrow) => {
+          const from = parseSquare(arrow.from);
+          const to = parseSquare(arrow.to);
+          return from === undefined || to === undefined
+            ? []
+            : [{ orig: makeSquare(from), dest: makeSquare(to), brush: arrow.color }];
+        }),
+      },
     });
     return () => board.destroy();
-  }, [fen, orientation, interactive, attempt, promotion, onMove]);
+  }, [fen, orientation, interactive, attempt, promotion, onMove, arrows]);
   return (
     <div className="lesson-board">
       <div

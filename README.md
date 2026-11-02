@@ -48,6 +48,7 @@ The original editorial design is the current default. The earlier `/original/` a
 
 ```sh
 pnpm install
+pnpm --dir prototypes/chess-compiler install
 pnpm setup:secrets
 pnpm dev
 ```
@@ -80,3 +81,5 @@ The [authoring and codec contract](docs/authoring-codec-contract.md) records the
 [Chess compiler decisions](docs/adr/0001-chess-compiler.md) and the [Langium experiment](docs/experiments/003-langium-compiler.md) describe the next authoring slice. Its disposable implementation is on branch `prototype/langium-chess-compiler`.
 
 [Internal module and compiler phase interfaces](MODULES.md) describe the current seams, snapshot/read model, incremental builds and error-value contracts.
+
+On the compiler branch, the web reader consumes the compiler package at build time. `pnpm compile:stories` generates a portable two-game playback plan; `pnpm dev` and `pnpm build` regenerate it. Open **A queen offered, a mating net** in the playable collection. The browser consumes the plan and browser-safe schema; Langium stays in the build tooling.

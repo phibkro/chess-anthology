@@ -60,3 +60,7 @@ Third-party parser/runtime exceptions and file-read failures are caught at their
 Property checks generate authored values, text, JSON and edit sequences, with reproducible seeds and shrinking. They cover semantic codec round-tripping, untouched source preservation, malformed inputs as values, old snapshot stability, no-op work, and incremental/clean-build equivalence.
 
 This still does not establish a complete isomorphic editing codec. Source-preserving semantic edits, exhaustive foreign-PGN loss reporting, EPD/database adapters and browser packaging remain open. Position histories currently expose mainline snapshots; parsed side variations are validated but not exposed as selectable history branches.
+
+## First product consumer
+
+The compiler branch now exports a playback-plan target and a separate browser-safe plan schema. Build tooling imports the compiler package by name; `src/story` imports only its playback contract and consumes generated JSON. Reader session state and tries remain outside the compiler. The [integration experiment](docs/experiments/004-compiler-reader.md) records the target's supported capabilities and verification limits.

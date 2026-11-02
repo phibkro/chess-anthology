@@ -1,0 +1,11 @@
+{
+  "projectName": "ChessNarrative",
+  "languages": [
+    {
+      "id": "chess-narrative",
+      "grammar": "src/compiler/100-parsing/chess-narrative.langium",
+      "fileExtensions": [".chess-story"]
+    }
+  ],
+  "out": "src/compiler/100-parsing/generated"
+}

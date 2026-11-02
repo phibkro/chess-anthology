@@ -1483,3 +1483,39 @@ html:has(dialog[open]) {
   line-height: 1.8;
   color: var(--muted);
 }
+
+.story-card {
+  border-color: var(--olive, #81876f);
+}
+.story-scenes,
+.story-next {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0 0 28px;
+}
+.story-scenes button,
+.story-next button {
+  border: 1px solid #c7c6b9;
+  padding: 12px 16px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.story-scenes button[aria-current="step"] {
+  background: #414a37;
+  color: #f6f2e8;
+  border-color: #414a37;
+}
+.story-next {
+  margin-top: 28px;
+}
+.story-next button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.story-reader .narrative-column > h3 {
+  font-size: 28px;
+  margin: 8px 0;
+}

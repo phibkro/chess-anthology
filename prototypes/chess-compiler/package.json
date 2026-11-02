@@ -1,0 +1,32 @@
+{
+  "name": "chess-compiler-prototype",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/compiler/index.ts",
+    "./playback": "./src/document/playback.ts"
+  },
+  "scripts": {
+    "generate": "langium generate",
+    "demo": "node --import tsx src/adapters/demo.ts",
+    "lsp": "node --import tsx src/adapters/lsp.ts --stdio",
+    "check": "tsc --noEmit",
+    "compile": "node --import tsx src/adapters/cli.ts",
+    "test": "node --import tsx --test src/seams.test.ts"
+  },
+  "dependencies": {
+    "chessops": "0.15.1",
+    "langium": "4.4.0",
+    "valibot": "1.5.0",
+    "vscode-languageserver": "10.1.2"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.6",
+    "fast-check": "4.10.2",
+    "langium-cli": "4.4.0",
+    "tsx": "4.20.6",
+    "typescript": "~7.0.2"
+  },
+  "packageManager": "pnpm@12.16.1"
+}
