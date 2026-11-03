@@ -1,5 +1,8 @@
 import type { PlaybackPlan } from "@chess-anthology/compiler/playback";
-import { parsePlaybackPlan } from "@chess-anthology/compiler/playback";
+import {
+  parsePlaybackPlan,
+  playbackFrames,
+} from "@chess-anthology/compiler/playback";
 import { parseSan } from "chessops/san";
 import { makeUci } from "chessops/util";
 import { useCallback, useMemo, useState, useSyncExternalStore } from "react";
@@ -45,22 +48,18 @@ const StoryPrompt = ({
   prompt,
   context,
   store,
-  scene,
+  frameCount,
 }: {
   atPrompt: boolean;
   prompt: StoryScene["notes"][number] | undefined;
   context: StoryContext;
   store: StorySession;
-  scene: StoryScene;
+  frameCount: number;
 }) => (
   <section className="checkpoint">
     <p className="eyebrow">{atPrompt ? "YOUR TURN" : "FOLLOW THE GAME"}</p>
     <h3>
-      {storyPromptTitle(
-        atPrompt,
-        prompt,
-        context.ply === scene.frames.length - 1
-      )}
+      {storyPromptTitle(atPrompt, prompt, context.ply === frameCount - 1)}
     </h3>
     {atPrompt && prompt?.type === "prompt" && (
       <div className="hint-actions">
@@ -114,7 +113,8 @@ const PlayableStory = ({ plan }: { plan: PlaybackPlan }) => {
   );
   const [move, setMove] = useState("");
   const scene = plan.scenes[context.scene];
-  const frame = scene.frames[context.ply];
+  const frames = playbackFrames(plan, scene);
+  const frame = frames[context.ply];
   const prompt = scene.notes.find((note) => note.type === "prompt");
   const atPrompt = context.ply === scene.after;
   const arrows = useMemo(
@@ -160,9 +160,7 @@ const PlayableStory = ({ plan }: { plan: PlaybackPlan }) => {
           <Board
             fen={context.attempt?.fen ?? frame.fen}
             orientation={context.orientation}
-            interactive={
-              !context.attempt && context.ply < scene.frames.length - 1
-            }
+            interactive={!context.attempt && context.ply < frames.length - 1}
             attempt={context.attempts}
             paused={Boolean(context.attempt)}
             promotion="q"
@@ -198,8 +196,7 @@ const PlayableStory = ({ plan }: { plan: PlaybackPlan }) => {
               type="button"
               aria-label="Next move"
               disabled={
-                Boolean(context.attempt) ||
-                context.ply === scene.frames.length - 1
+                Boolean(context.attempt) || context.ply === frames.length - 1
               }
               onClick={() => {
                 store.trigger.next();
@@ -267,7 +264,7 @@ const PlayableStory = ({ plan }: { plan: PlaybackPlan }) => {
             prompt={prompt}
             context={context}
             store={store}
-            scene={scene}
+            frameCount={frames.length}
           />
           {context.attempt && (
             <section className="try-panel">

@@ -54,3 +54,27 @@ test("an earlier read waits for a newer acquisition still in flight", async () =
   expect(await newer).toBe("new");
   expect(sources.get("file:///game.pgn")).toBe("new");
 });
+
+test("retired acquisition generations cannot overwrite a later in-flight read", async () => {
+  const sources = new Map<string, string>();
+  const first = Promise.withResolvers<string>();
+  const second = Promise.withResolvers<string>();
+  const third = Promise.withResolvers<string>();
+  const reads = [first, second, third];
+  let calls = 0;
+  const acquire = createSourceCache(sources, new Map(), async () => {
+    const index = calls;
+    calls += 1;
+    return await reads[index].promise;
+  });
+  const old = acquire("file:///game.pgn");
+  const middle = acquire("file:///game.pgn");
+  second.resolve("middle");
+  expect(await middle).toBe("middle");
+  const latest = acquire("file:///game.pgn");
+  first.resolve("old");
+  third.resolve("latest");
+  expect(await old).toBe("latest");
+  expect(await latest).toBe("latest");
+  expect(sources.get("file:///game.pgn")).toBe("latest");
+});

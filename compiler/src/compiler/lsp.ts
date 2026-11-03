@@ -11,6 +11,7 @@ import { createConnection, ProposedFeatures } from "vscode-languageserver/node";
 
 import { createBunFileSystem } from "../runtime/filesystem.js";
 import { createSourceCache } from "../runtime/source-cache.js";
+import { retainGameSources } from "../runtime/source-retention.js";
 import { readSourceText, decodeSourceText } from "../runtime/source-text.js";
 import { openResolver, isBareReference } from "../sources/index.js";
 import { isModule, isGame } from "./100-parsing/index.js";
@@ -36,6 +37,15 @@ const getResolver = async () => {
           `${process.env.CHESS_SOURCE_ROOT.replace(/\/+$/u, "")}/`
         );
   return await (resolver ??= openResolver({ overlays, root }));
+};
+const retainAcquired = () => {
+  retainGameSources(
+    sources,
+    overlays,
+    sourceReferences,
+    // oxlint-disable-next-line no-use-before-define -- Acquisition runs after editor services are constructed.
+    analysis.setActiveSources
+  );
 };
 const acquireSource = createSourceCache(sources, overlays, async (uri) => {
   try {
@@ -69,6 +79,7 @@ const acquire = async (
     }
   }
   const text = await acquireSource(uri);
+  retainAcquired();
   if (text !== undefined && uri.endsWith(".chess-story")) {
     const parsed = decode(text);
     if (parsed.ok) {
@@ -188,7 +199,7 @@ class ArtifactUpdates extends DefaultDocumentUpdateHandler {
     );
   }
 }
-const { shared } = createServices(
+const { shared, analysis } = createServices(
   sources,
   {
     connection,
@@ -210,6 +221,30 @@ const { shared } = createServices(
   undefined,
   (services) => new ArtifactUpdates(services)
 );
+const refreshReferencePolicies = () => {
+  // Collect policies before concurrent reads; a bare name cannot weaken an explicit file.
+  sourceReferences.clear();
+  for (const current of shared.workspace.LangiumDocuments.all) {
+    const module = current.parseResult.value;
+    if (!isModule(module)) {
+      continue;
+    }
+    for (const path of [
+      ...module.imports.map((item) => item.path),
+      ...module.declarations.filter(isGame).map((game) => game.path),
+    ]) {
+      const target = relative(current.uri.toString(), path);
+      const prior = sourceReferences.get(target);
+      if (prior === undefined || isBareReference(prior)) {
+        sourceReferences.set(target, path);
+      }
+    }
+  }
+};
+shared.workspace.DocumentBuilder.onUpdate(() => {
+  refreshReferencePolicies();
+  retainAcquired();
+});
 const publish = connection.sendDiagnostics.bind(connection);
 connection.sendDiagnostics = async (params) => {
   await publish({
@@ -225,24 +260,7 @@ shared.workspace.DocumentBuilder.onDocumentPhase(
     const uri = document.uri.toString();
     sources.set(uri, document.textDocument.getText());
     const root = document.parseResult.value;
-    // Collect policies before concurrent reads; a bare name cannot weaken an explicit file.
-    sourceReferences.clear();
-    for (const current of shared.workspace.LangiumDocuments.all) {
-      const module = current.parseResult.value;
-      if (!isModule(module)) {
-        continue;
-      }
-      for (const path of [
-        ...module.imports.map((item) => item.path),
-        ...module.declarations.filter(isGame).map((game) => game.path),
-      ]) {
-        const target = relative(current.uri.toString(), path);
-        const prior = sourceReferences.get(target);
-        if (prior === undefined || isBareReference(prior)) {
-          sourceReferences.set(target, path);
-        }
-      }
-    }
+    refreshReferencePolicies();
     if (isModule(root)) {
       await Promise.all(
         [
@@ -252,6 +270,7 @@ shared.workspace.DocumentBuilder.onDocumentPhase(
           await acquire(relative(uri, path), new Set(), path);
         })
       );
+      retainAcquired();
       try {
         const resolved = await getResolver();
         if (resolved.configured) {

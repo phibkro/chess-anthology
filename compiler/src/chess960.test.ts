@@ -8,6 +8,7 @@ import {
   selectPosition,
 } from "./compiler/index.js";
 import type { Result } from "./contracts/index.js";
+import { playbackFrames } from "./contracts/playback.js";
 import { assert } from "./runtime/assert.js";
 
 const value = <T>(result: Result<T>): T => {
@@ -120,7 +121,7 @@ test("400 → 500: castling fixtures produce literal positions and playable less
     );
     const [scene] = plan.scenes;
     assert.ok(scene !== undefined, fixture.id);
-    assert.deepEqual(scene.frames[1], selected, fixture.id);
+    assert.deepEqual(playbackFrames(plan, scene)[1], selected, fixture.id);
     assert.deepEqual(
       scene.notes,
       [

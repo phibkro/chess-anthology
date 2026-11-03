@@ -11,6 +11,7 @@ import type {
   GameHistory,
   SceneData,
   Issue,
+  ReplayCachePolicy,
 } from "../../contracts/index.js";
 import { digest, freeze } from "../identity.js";
 
@@ -55,44 +56,43 @@ const replayRaw = (
       "This prototype supports standard chess and Chess960 only."
     );
   }
-  const frames = [position.clone()];
+  const frames = [position];
   const moves: { san: string | null; uci: string | null }[] = [
     { san: null, uci: null },
   ];
-  // Validate every parsed branch even though this experiment only exposes mainline anchors.
+  // One traversal validates all branches and retains positions only along the mainline.
   const validateTree = (
     node: (typeof games)[number]["moves"],
-    pos: Position
+    pos: Position,
+    mainline: boolean
   ): string | undefined => {
-    for (const child of node.children) {
+    for (const [index, child] of node.children.entries()) {
       const move = parseSan(pos, child.data.san);
       if (!move || !pos.isLegal(move)) {
         return `Illegal recorded move: ${child.data.san}`;
       }
       const next = pos.clone();
+      const recorded = mainline && index === 0;
+      if (recorded) {
+        moves.push({
+          san: makeSan(pos, move),
+          uci: makeUci(normalizeMove(pos, move)),
+        });
+      }
       next.play(move);
-      const error = validateTree(child, next);
-      if (error !== undefined) {
-        return error;
+      if (recorded) {
+        frames.push(next);
+      }
+      const issue = validateTree(child, next, recorded);
+      if (issue !== undefined) {
+        return issue;
       }
     }
     return undefined;
   };
-  const issue = validateTree(games[0].moves, position);
+  const issue = validateTree(games[0].moves, position, true);
   if (issue !== undefined) {
     return err("chess", "chess/illegal-move", issue);
-  }
-  for (const node of games[0].moves.mainline()) {
-    const move = parseSan(position, node.san);
-    if (!move) {
-      return err("chess", "chess/illegal-move", `Illegal move: ${node.san}`);
-    }
-    moves.push({
-      san: makeSan(position, move),
-      uci: makeUci(normalizeMove(position, move)),
-    });
-    position.play(move);
-    frames.push(position.clone());
   }
   return ok({ frames, moves });
 };
@@ -178,30 +178,82 @@ export const positionData = (position: Position) => ({
 
 /**
  * Create shared content-addressed replay analysis for one compiler instance.
+ * @param limits - Budgets for inactive source revisions; active games remain retained.
  * @returns Create shared content-addressed replay analysis for one compiler instance.
  */
-export const createChessAnalysis = () => {
-  const entries = new Map<
-    string,
-    Result<{ frames: Position[]; history: GameHistory }>
-  >();
+export const createChessAnalysis = (limits: ReplayCachePolicy = {}) => {
+  const maxEntries = limits.maxInactiveEntries ?? 32;
+  const maxPositions = limits.maxInactivePositions ?? 1024;
+  const maxSourceBytes = limits.maxInactiveSourceBytes ?? 4 * 1024 * 1024;
+  if (
+    ![maxEntries, maxPositions, maxSourceBytes].every(
+      (limit) => Number.isSafeInteger(limit) && limit >= 0
+    )
+  ) {
+    throw new RangeError("Cache limits must be nonnegative safe integers.");
+  }
+  interface Entry {
+    result: Result<{ frames: Position[]; history: GameHistory }>;
+    positions: number;
+    sourceBytes: number;
+  }
+  const entries = new Map<string, Entry>();
+  const inactive = new Map<string, Entry>();
+  const projections = new WeakMap<Position, ReturnType<typeof positionData>>();
+  let active = new Set<string>();
+  let inactivePositions = 0;
+  let inactiveSourceBytes = 0;
   let replayCount = 0;
+  const trim = () => {
+    for (const [source, entry] of inactive) {
+      if (
+        inactive.size <= maxEntries &&
+        inactivePositions <= maxPositions &&
+        inactiveSourceBytes <= maxSourceBytes
+      ) {
+        break;
+      }
+      inactive.delete(source);
+      entries.delete(source);
+      inactivePositions -= entry.positions;
+      inactiveSourceBytes -= entry.sourceBytes;
+    }
+  };
+  const setActiveSources = (sources: Iterable<string>) => {
+    active = new Set(sources);
+    for (const [source, entry] of entries) {
+      if (active.has(source)) {
+        if (inactive.delete(source)) {
+          inactivePositions -= entry.positions;
+          inactiveSourceBytes -= entry.sourceBytes;
+        }
+      } else if (!inactive.has(source)) {
+        inactive.set(source, entry);
+        inactivePositions += entry.positions;
+        inactiveSourceBytes += entry.sourceBytes;
+      }
+    }
+    trim();
+  };
   const replay = (source: string) => {
-    const key = digest(`chessops-0.15.1:standard-v1:${source}`);
-    const hit = entries.get(key);
-    if (hit) {
-      return hit;
+    // Exact immutable text identifies content within this fixed engine/rules instance.
+    const hit = entries.get(source);
+    if (hit !== undefined) {
+      if (inactive.delete(source)) {
+        inactive.set(source, hit);
+      }
+      return hit.result;
     }
     replayCount += 1;
-    let result: Result<{ frames: Position[]; history: GameHistory }>;
+    let result: Entry["result"];
     try {
       const raw = replayRaw(source);
       result = raw.ok
         ? ok({
             frames: raw.value.frames,
             history: freeze({
-              frames: raw.value.frames.map((p, i) => ({
-                fen: makeFen(p.toSetup()),
+              frames: raw.value.frames.map((position, i) => ({
+                fen: makeFen(position.toSetup()),
                 ...raw.value.moves[i],
               })),
               sourceDigest: digest(source),
@@ -211,13 +263,45 @@ export const createChessAnalysis = () => {
     } catch (error) {
       result = err("infrastructure", "chess/failure", String(error));
     }
-    entries.set(key, result);
+    const entry = {
+      positions: result.ok ? result.value.frames.length : 0,
+      result,
+      sourceBytes: Buffer.byteLength(source),
+    };
+    entries.set(source, entry);
+    if (!active.has(source)) {
+      inactive.set(source, entry);
+      inactivePositions += entry.positions;
+      inactiveSourceBytes += entry.sourceBytes;
+    }
+    trim();
     return result;
   };
+  const project = (position: Position) => {
+    let value = projections.get(position);
+    if (value === undefined) {
+      value = freeze(positionData(position));
+      projections.set(position, value);
+    }
+    return value;
+  };
+  const stats = () => ({
+    entries: entries.size,
+    inactiveEntries: inactive.size,
+    inactivePositions,
+    inactiveSourceBytes,
+    positions: [...entries.values()].reduce(
+      (sum, entry) => sum + entry.positions,
+      0
+    ),
+  });
   return {
+    project,
     replay,
     get replayCount() {
       return replayCount;
     },
+    setActiveSources,
+    stats,
   };
 };

@@ -6,7 +6,6 @@ import type { CompletionParams } from "vscode-languageserver";
 
 import type { Sources } from "../../contracts/index.js";
 import { isScene } from "../100-parsing/index.js";
-import { positionData } from "../400-chess-analysis/index.js";
 import type { createChessAnalysis } from "../400-chess-analysis/index.js";
 import { relative } from "./source-uri.js";
 /** Provide chess-aware answer completion over the shared replay cache. */
@@ -70,7 +69,7 @@ export class ChessCompletion extends DefaultCompletionProvider {
               : document.textDocument.positionAt(endQuote);
           return {
             isIncomplete: false,
-            items: positionData(position).legalMoves.map((move) => ({
+            items: this.analysis.project(position).legalMoves.map((move) => ({
               detail: move.uci,
               label: move.san,
               textEdit: { newText: move.san, range: { end, start } },

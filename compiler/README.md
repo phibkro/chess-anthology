@@ -64,3 +64,11 @@ The library declares `export game opera from "./opera.pgn";`. Explicit imports g
 Canonical printing normalizes authored layout. Exact untouched text is preserved in source envelopes, but semantic edits do not preserve surrounding trivia. PGN parsing is permissive and does not report every ignored token. Legal answers are checked for legality; this does not establish best play or historical correctness. Exports, re-exports and aliases beyond the documented grammar, semantic game deduplication, persistent engine-position caches and browser compiler packaging remain open.
 
 The original [prototype results](RESULTS.md) are historical evidence. The alternative Go compiler and its LSP remain on [experimental/go-compiler](https://github.com/phibkro/chess-anthology/tree/experimental/go-compiler/prototypes/chess-compiler-go), outside the supported module and default CI. Optional cross-language experiments accept that branch's module through `CHESS_GO_MODULE` or `lsp_compare.py --go-module`.
+
+## Retention and playback representation
+
+Module version 0.2 emits playback format version 2: shared `histories` plus scene `historyId` references. `parsePlaybackPlan` accepts version 1 and normalizes it to version 2. Consumers should use `playbackFrames(plan, scene)` rather than reading `scene.frames` directly.
+
+`createCompiler({ cache: { maxInactiveEntries, maxInactivePositions, maxInactiveSourceBytes } })` and `createProjectCompiler` accept inactive replay budgets. Defaults are 32 entries, 1,024 engine positions and 4 MiB source bytes. Active games are protected; retained external snapshots can keep their histories alive. `cacheStats()` exposes retention counters for the kernel.
+
+See the [memory experiment](../docs/research/compiler-memory.md) for the reproducible retained-heap/payload probe. It does not measure peak RSS or cumulative allocation.

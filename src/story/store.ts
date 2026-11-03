@@ -1,3 +1,4 @@
+import { playbackFrames } from "@chess-anthology/compiler/playback";
 import type { PlaybackPlan } from "@chess-anthology/compiler/playback";
 import { createStore } from "@xstate/store";
 import { normalizeMove } from "chessops/chess";
@@ -52,7 +53,8 @@ export const createStoryStore = (plan: PlaybackPlan) => {
       }),
       next: (context) =>
         context.attempt ||
-        context.ply >= plan.scenes[context.scene].frames.length - 1
+        context.ply >=
+          playbackFrames(plan, plan.scenes[context.scene]).length - 1
           ? context
           : { ...context, ...clean, ply: context.ply + 1 },
       previous: (context) =>
@@ -69,7 +71,7 @@ export const createStoryStore = (plan: PlaybackPlan) => {
       seek: (context, event: { ply: number }) =>
         Number.isInteger(event.ply) &&
         event.ply >= 0 &&
-        event.ply < plan.scenes[context.scene].frames.length
+        event.ply < playbackFrames(plan, plan.scenes[context.scene]).length
           ? { ...context, ...clean, ply: event.ply }
           : context,
       selectScene: (context, event: { index: number }) =>
@@ -85,10 +87,11 @@ export const createStoryStore = (plan: PlaybackPlan) => {
           : context,
       submit: (context, event: { uci: string }) => {
         const scene = plan.scenes[context.scene];
-        if (context.attempt || context.ply + 1 >= scene.frames.length) {
+        const frames = playbackFrames(plan, scene);
+        if (context.attempt || context.ply + 1 >= frames.length) {
           return context;
         }
-        const position = positionFromFen(scene.frames[context.ply].fen);
+        const position = positionFromFen(frames[context.ply].fen);
         const move = parseUci(event.uci);
         if (!move || !position.isLegal(move)) {
           return {
@@ -106,7 +109,7 @@ export const createStoryStore = (plan: PlaybackPlan) => {
         const expected =
           prompt?.type === "prompt"
             ? prompt.answerUci
-            : scene.frames[context.ply + 1].uci;
+            : frames[context.ply + 1].uci;
         if (uci !== expected) {
           const san = makeSan(position, normalized);
           position.play(normalized);

@@ -28,3 +28,14 @@ export interface BuildUpdate {
   snapshot: BuildSnapshot;
   work: BuildWork;
 }
+
+/** Budgets for inactive replay state; active game histories are not evicted. */
+export interface ReplayCachePolicy {
+  maxInactiveEntries?: number;
+  maxInactivePositions?: number;
+  maxInactiveSourceBytes?: number;
+}
+/** Compiler-owned replay retention controls. */
+export interface CompilerOptions {
+  cache?: ReplayCachePolicy;
+}

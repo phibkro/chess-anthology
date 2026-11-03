@@ -1,9 +1,7 @@
 {
   "format": "chess-playback-plan",
-  "id": "queenOffers/matingNets",
-  "scenes": [
-    {
-      "after": 30,
+  "histories": {
+    "5d2a309aa43c42d20ada80a02be46a70cb45d29bbb28bdccdb52b06504479716": {
       "frames": [
         {
           "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
@@ -175,31 +173,9 @@
           "san": "Rd8#",
           "uci": "d1d8"
         }
-      ],
-      "game": "opera",
-      "id": "operaFinish",
-      "notes": [
-        {
-          "text": "The queen opens a path to the back rank.",
-          "type": "text"
-        },
-        {
-          "color": "green",
-          "from": "b3",
-          "to": "b8",
-          "type": "arrow"
-        },
-        {
-          "answer": "Qb8+",
-          "answerUci": "b3b8",
-          "text": "Find the forcing move.",
-          "type": "prompt"
-        }
-      ],
-      "sourceDigest": "5d2a309aa43c42d20ada80a02be46a70cb45d29bbb28bdccdb52b06504479716"
+      ]
     },
-    {
-      "after": 16,
+    "3e06d974c7abc3dafb02efe5365248aa02105737b6371a6341b54e92ee1824d8": {
       "frames": [
         {
           "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
@@ -301,7 +277,38 @@
           "san": "Bg5+",
           "uci": "d2g5"
         }
+      ]
+    }
+  },
+  "id": "queenOffers/matingNets",
+  "scenes": [
+    {
+      "after": 30,
+      "game": "opera",
+      "id": "operaFinish",
+      "notes": [
+        {
+          "text": "The queen opens a path to the back rank.",
+          "type": "text"
+        },
+        {
+          "color": "green",
+          "from": "b3",
+          "to": "b8",
+          "type": "arrow"
+        },
+        {
+          "answer": "Qb8+",
+          "answerUci": "b3b8",
+          "text": "Find the forcing move.",
+          "type": "prompt"
+        }
       ],
+      "sourceDigest": "5d2a309aa43c42d20ada80a02be46a70cb45d29bbb28bdccdb52b06504479716",
+      "historyId": "5d2a309aa43c42d20ada80a02be46a70cb45d29bbb28bdccdb52b06504479716"
+    },
+    {
+      "after": 16,
       "game": "reti",
       "id": "retiFinish",
       "notes": [
@@ -316,8 +323,9 @@
           "type": "prompt"
         }
       ],
-      "sourceDigest": "3e06d974c7abc3dafb02efe5365248aa02105737b6371a6341b54e92ee1824d8"
+      "sourceDigest": "3e06d974c7abc3dafb02efe5365248aa02105737b6371a6341b54e92ee1824d8",
+      "historyId": "3e06d974c7abc3dafb02efe5365248aa02105737b6371a6341b54e92ee1824d8"
     }
   ],
-  "version": 1
+  "version": 2
 }

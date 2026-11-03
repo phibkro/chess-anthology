@@ -25,23 +25,39 @@ const note = v.variant("type", [
     type: v.literal("prompt"),
   }),
 ]);
-const schema = v.strictObject({
+const sceneFields = {
+  after: v.pipe(v.number(), v.safeInteger(), v.minValue(0)),
+  game: v.string(),
+  id: v.string(),
+  notes: v.array(note),
+  sourceDigest: v.string(),
+};
+const legacy = v.strictObject({
   format: v.literal("chess-playback-plan"),
   id: v.string(),
   scenes: v.pipe(
     v.array(
       v.strictObject({
-        after: v.pipe(v.number(), v.integer(), v.minValue(0)),
-        frames: v.array(frame),
-        game: v.string(),
-        id: v.string(),
-        notes: v.array(note),
-        sourceDigest: v.string(),
+        ...sceneFields,
+        frames: v.pipe(v.array(frame), v.minLength(1)),
       })
     ),
     v.minLength(1)
   ),
   version: v.literal(1),
+});
+const schema = v.strictObject({
+  format: v.literal("chess-playback-plan"),
+  histories: v.record(
+    v.string(),
+    v.strictObject({ frames: v.pipe(v.array(frame), v.minLength(1)) })
+  ),
+  id: v.string(),
+  scenes: v.pipe(
+    v.array(v.strictObject({ ...sceneFields, historyId: v.string() })),
+    v.minLength(1)
+  ),
+  version: v.literal(2),
 });
 /**
  * A versioned browser-safe story plan with recorded frames and annotations.
@@ -54,8 +70,73 @@ export type PlaybackPlan = v.InferOutput<typeof schema>;
  */
 // oxlint-disable-next-line anti-slop/no-unknown-parameters -- This is an external-data validation boundary; accepting unknown prevents callers from assuming validation already happened.
 export const parsePlaybackPlan = (input: unknown): Result<PlaybackPlan> => {
-  const parsed = v.safeParse(schema, input);
-  return parsed.success
-    ? ok(parsed.output)
-    : err("schema", "plan/invalid-shape", "Invalid playback plan.");
+  const parsed = v.safeParse(v.variant("version", [legacy, schema]), input);
+  if (!parsed.success) {
+    return err("schema", "plan/invalid-shape", "Invalid playback plan.");
+  }
+  let plan: PlaybackPlan;
+  if (parsed.output.version === 1) {
+    const histories: PlaybackPlan["histories"] = {};
+    const identities = new Map<string, string>();
+    const scenes: PlaybackPlan["scenes"] = [];
+    for (const { frames, ...scene } of parsed.output.scenes) {
+      const identity = JSON.stringify(frames);
+      const prior = identities.get(scene.sourceDigest);
+      if (prior !== undefined && prior !== identity) {
+        return err(
+          "integrity",
+          "plan/conflicting-history",
+          "One source digest identifies conflicting game histories."
+        );
+      }
+      identities.set(scene.sourceDigest, identity);
+      Object.defineProperty(histories, scene.sourceDigest, {
+        configurable: true,
+        enumerable: true,
+        value: { frames },
+        writable: true,
+      });
+      scenes.push({ ...scene, historyId: scene.sourceDigest });
+    }
+    plan = {
+      format: parsed.output.format,
+      histories,
+      id: parsed.output.id,
+      scenes,
+      version: 2,
+    };
+  } else {
+    plan = parsed.output;
+  }
+  const ids = new Set<string>();
+  for (const scene of plan.scenes) {
+    const history = Object.hasOwn(plan.histories, scene.historyId)
+      ? plan.histories[scene.historyId]
+      : undefined;
+    if (
+      history === undefined ||
+      scene.historyId !== scene.sourceDigest ||
+      scene.after >= history.frames.length ||
+      ids.has(scene.id)
+    ) {
+      return err(
+        "integrity",
+        "plan/invalid-reference",
+        "A scene must identify a recorded position in one unique game history."
+      );
+    }
+    ids.add(scene.id);
+  }
+  return ok(plan);
 };
+
+/**
+ * Select a validated scene's shared recorded frames.
+ * @param plan - Validated normalized playback plan.
+ * @param scene - A scene belonging to that plan.
+ * @returns The history array shared by every occurrence of this game.
+ */
+export const playbackFrames = (
+  plan: PlaybackPlan,
+  scene: PlaybackPlan["scenes"][number]
+) => plan.histories[scene.historyId].frames;

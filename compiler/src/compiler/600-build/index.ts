@@ -5,6 +5,7 @@ import type {
   Result,
   BuildSnapshot,
   BuildUpdate,
+  CompilerOptions,
 } from "../../contracts/index.js";
 import { createWorkspace, relative } from "../300-linking/index.js";
 import type { Sources } from "../300-linking/index.js";
@@ -13,16 +14,25 @@ import { emitDocument } from "../500-emission/index.js";
 import type { EmittedDocument } from "../500-emission/index.js";
 import { freeze } from "../identity.js";
 
-export type { BuildSnapshot } from "../../contracts/index.js";
+export type { BuildSnapshot, CompilerOptions } from "../../contracts/index.js";
 
 /**
  * Create an incremental compiler whose updates preserve earlier snapshots.
- * @returns A compiler accepting complete source maps, with expected failures returned as values.
+ * @param options - Optional inactive replay-cache budgets.
+ * @returns An incremental compiler with owned source revisions and cache statistics.
  */
-export const createCompiler = () => {
-  const analysis = createChessAnalysis();
+export const createCompiler = (options: CompilerOptions = {}) => {
+  const analysis = createChessAnalysis(options.cache);
   const workspace = createWorkspace(analysis);
   const outputs = new Map<string, EmittedDocument>();
+  let orderedUris: string[] = [];
+  const outputAt = (uri: string) => {
+    const document = outputs.get(uri);
+    if (document === undefined) {
+      throw new Error("Missing indexed output.");
+    }
+    return document;
+  };
   let snapshot: BuildSnapshot = freeze({
     games: [],
     output: [],
@@ -51,16 +61,28 @@ export const createCompiler = () => {
     busy = true;
     try {
       const before = analysis.replayCount;
-      const changes = await workspace.update(new Map(sources));
+      const revision = new Map(sources);
+      analysis.setActiveSources(
+        [...revision]
+          .filter(([uri]) => !uri.endsWith(".chess-story"))
+          .map(([, text]) => text)
+      );
+      const changes = await workspace.update(revision);
       if (!changes.changed.length && !changes.deleted.length) {
         return ok({ snapshot, work: { emitted: 0, parsed: 0, replayed: 0 } });
       }
+      let orderChanged = false;
       for (const uri of changes.deleted) {
-        outputs.delete(uri);
+        if (outputs.delete(uri)) {
+          orderChanged = true;
+        }
       }
       for (const uri of changes.validated) {
         const document = workspace.documents.getDocument(URI.parse(uri));
         if (document) {
+          if (!outputs.has(uri)) {
+            orderChanged = true;
+          }
           outputs.set(uri, emitDocument(document, workspace.sources, analysis));
         }
       }
@@ -71,7 +93,7 @@ export const createCompiler = () => {
           )
         )
       );
-      const games = [...sources]
+      const games = [...revision]
         .filter(([uri]) => uri.endsWith(".pgn") || referenced.has(uri))
         .map(([uri, source]) => {
           const replayed = analysis.replay(source);
@@ -80,11 +102,14 @@ export const createCompiler = () => {
             uri,
           };
         });
+      if (orderChanged) {
+        orderedUris = [...outputs.keys()].toSorted((a, b) =>
+          a.localeCompare(b)
+        );
+      }
       snapshot = freeze({
         games,
-        output: [...outputs.values()].toSorted((a, b) =>
-          a.uri.localeCompare(b.uri)
-        ),
+        output: orderedUris.map(outputAt),
         parentRevision: snapshot.revision,
         revision: snapshot.revision + 1,
       });
@@ -103,7 +128,7 @@ export const createCompiler = () => {
       busy = false;
     }
   };
-  return { update };
+  return { cacheStats: analysis.stats, update };
 };
 /**
  * Compile a complete source map with a fresh compiler.
