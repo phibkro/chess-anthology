@@ -70,6 +70,16 @@ export const createPlaybackPlan = (
     return dependencies;
   }
   const scenes: unknown[] = [];
+  const histories = new Map<
+    string,
+    {
+      frames: readonly {
+        fen: string;
+        san: string | null;
+        uci: string | null;
+      }[];
+    }
+  >();
   for (const scene of story.scenes) {
     const occurrence = entry.occurrences.find(
       (o) => o.id === `${entryUri}#${storyName}/${scene.name}`
@@ -106,10 +116,13 @@ export const createPlaybackPlan = (
       }
       notes.push({ ...note, answerUci: answer.uci });
     }
+    histories.set(occurrence.sourceDigest, {
+      frames: game.result.value.frames,
+    });
     scenes.push({
       after: scene.ply,
-      frames: game.result.value.frames.map((f) => ({ ...f })),
       game: scene.game,
+      historyId: occurrence.sourceDigest,
       id: scene.name,
       notes,
       sourceDigest: occurrence.sourceDigest,
@@ -117,9 +130,10 @@ export const createPlaybackPlan = (
   }
   const validated = parsePlaybackPlan({
     format: "chess-playback-plan",
+    histories: Object.fromEntries(histories),
     id: `${entry.data?.name}/${storyName}`,
     scenes,
-    version: 1,
+    version: 2,
   });
   return validated.ok ? ok(freeze(validated.value)) : validated;
 };

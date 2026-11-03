@@ -1,0 +1,323 @@
+{
+  "format": "chess-playback-plan",
+  "id": "queenOffers/matingNets",
+  "scenes": [
+    {
+      "after": 30,
+      "frames": [
+        {
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "san": null,
+          "uci": null
+        },
+        {
+          "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+          "san": "e4",
+          "uci": "e2e4"
+        },
+        {
+          "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+          "san": "e5",
+          "uci": "e7e5"
+        },
+        {
+          "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2",
+          "san": "Nf3",
+          "uci": "g1f3"
+        },
+        {
+          "fen": "rnbqkbnr/ppp2ppp/3p4/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 3",
+          "san": "d6",
+          "uci": "d7d6"
+        },
+        {
+          "fen": "rnbqkbnr/ppp2ppp/3p4/4p3/3PP3/5N2/PPP2PPP/RNBQKB1R b KQkq - 0 3",
+          "san": "d4",
+          "uci": "d2d4"
+        },
+        {
+          "fen": "rn1qkbnr/ppp2ppp/3p4/4p3/3PP1b1/5N2/PPP2PPP/RNBQKB1R w KQkq - 1 4",
+          "san": "Bg4",
+          "uci": "c8g4"
+        },
+        {
+          "fen": "rn1qkbnr/ppp2ppp/3p4/4P3/4P1b1/5N2/PPP2PPP/RNBQKB1R b KQkq - 0 4",
+          "san": "dxe5",
+          "uci": "d4e5"
+        },
+        {
+          "fen": "rn1qkbnr/ppp2ppp/3p4/4P3/4P3/5b2/PPP2PPP/RNBQKB1R w KQkq - 0 5",
+          "san": "Bxf3",
+          "uci": "g4f3"
+        },
+        {
+          "fen": "rn1qkbnr/ppp2ppp/3p4/4P3/4P3/5Q2/PPP2PPP/RNB1KB1R b KQkq - 0 5",
+          "san": "Qxf3",
+          "uci": "d1f3"
+        },
+        {
+          "fen": "rn1qkbnr/ppp2ppp/8/4p3/4P3/5Q2/PPP2PPP/RNB1KB1R w KQkq - 0 6",
+          "san": "dxe5",
+          "uci": "d6e5"
+        },
+        {
+          "fen": "rn1qkbnr/ppp2ppp/8/4p3/2B1P3/5Q2/PPP2PPP/RNB1K2R b KQkq - 1 6",
+          "san": "Bc4",
+          "uci": "f1c4"
+        },
+        {
+          "fen": "rn1qkb1r/ppp2ppp/5n2/4p3/2B1P3/5Q2/PPP2PPP/RNB1K2R w KQkq - 2 7",
+          "san": "Nf6",
+          "uci": "g8f6"
+        },
+        {
+          "fen": "rn1qkb1r/ppp2ppp/5n2/4p3/2B1P3/1Q6/PPP2PPP/RNB1K2R b KQkq - 3 7",
+          "san": "Qb3",
+          "uci": "f3b3"
+        },
+        {
+          "fen": "rn2kb1r/ppp1qppp/5n2/4p3/2B1P3/1Q6/PPP2PPP/RNB1K2R w KQkq - 4 8",
+          "san": "Qe7",
+          "uci": "d8e7"
+        },
+        {
+          "fen": "rn2kb1r/ppp1qppp/5n2/4p3/2B1P3/1QN5/PPP2PPP/R1B1K2R b KQkq - 5 8",
+          "san": "Nc3",
+          "uci": "b1c3"
+        },
+        {
+          "fen": "rn2kb1r/pp2qppp/2p2n2/4p3/2B1P3/1QN5/PPP2PPP/R1B1K2R w KQkq - 0 9",
+          "san": "c6",
+          "uci": "c7c6"
+        },
+        {
+          "fen": "rn2kb1r/pp2qppp/2p2n2/4p1B1/2B1P3/1QN5/PPP2PPP/R3K2R b KQkq - 1 9",
+          "san": "Bg5",
+          "uci": "c1g5"
+        },
+        {
+          "fen": "rn2kb1r/p3qppp/2p2n2/1p2p1B1/2B1P3/1QN5/PPP2PPP/R3K2R w KQkq - 0 10",
+          "san": "b5",
+          "uci": "b7b5"
+        },
+        {
+          "fen": "rn2kb1r/p3qppp/2p2n2/1N2p1B1/2B1P3/1Q6/PPP2PPP/R3K2R b KQkq - 0 10",
+          "san": "Nxb5",
+          "uci": "c3b5"
+        },
+        {
+          "fen": "rn2kb1r/p3qppp/5n2/1p2p1B1/2B1P3/1Q6/PPP2PPP/R3K2R w KQkq - 0 11",
+          "san": "cxb5",
+          "uci": "c6b5"
+        },
+        {
+          "fen": "rn2kb1r/p3qppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/R3K2R b KQkq - 0 11",
+          "san": "Bxb5+",
+          "uci": "c4b5"
+        },
+        {
+          "fen": "r3kb1r/p2nqppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/R3K2R w KQkq - 1 12",
+          "san": "Nbd7",
+          "uci": "b8d7"
+        },
+        {
+          "fen": "r3kb1r/p2nqppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/2KR3R b kq - 2 12",
+          "san": "O-O-O",
+          "uci": "e1a1"
+        },
+        {
+          "fen": "3rkb1r/p2nqppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/2KR3R w k - 3 13",
+          "san": "Rd8",
+          "uci": "a8d8"
+        },
+        {
+          "fen": "3rkb1r/p2Rqppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/2K4R b k - 0 13",
+          "san": "Rxd7",
+          "uci": "d1d7"
+        },
+        {
+          "fen": "4kb1r/p2rqppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/2K4R w k - 0 14",
+          "san": "Rxd7",
+          "uci": "d8d7"
+        },
+        {
+          "fen": "4kb1r/p2rqppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/2KR4 b k - 1 14",
+          "san": "Rd1",
+          "uci": "h1d1"
+        },
+        {
+          "fen": "4kb1r/p2r1ppp/4qn2/1B2p1B1/4P3/1Q6/PPP2PPP/2KR4 w k - 2 15",
+          "san": "Qe6",
+          "uci": "e7e6"
+        },
+        {
+          "fen": "4kb1r/p2B1ppp/4qn2/4p1B1/4P3/1Q6/PPP2PPP/2KR4 b k - 0 15",
+          "san": "Bxd7+",
+          "uci": "b5d7"
+        },
+        {
+          "fen": "4kb1r/p2n1ppp/4q3/4p1B1/4P3/1Q6/PPP2PPP/2KR4 w k - 0 16",
+          "san": "Nxd7",
+          "uci": "f6d7"
+        },
+        {
+          "fen": "1Q2kb1r/p2n1ppp/4q3/4p1B1/4P3/8/PPP2PPP/2KR4 b k - 1 16",
+          "san": "Qb8+",
+          "uci": "b3b8"
+        },
+        {
+          "fen": "1n2kb1r/p4ppp/4q3/4p1B1/4P3/8/PPP2PPP/2KR4 w k - 0 17",
+          "san": "Nxb8",
+          "uci": "d7b8"
+        },
+        {
+          "fen": "1n1Rkb1r/p4ppp/4q3/4p1B1/4P3/8/PPP2PPP/2K5 b k - 1 17",
+          "san": "Rd8#",
+          "uci": "d1d8"
+        }
+      ],
+      "game": "opera",
+      "id": "operaFinish",
+      "notes": [
+        {
+          "text": "The queen opens a path to the back rank.",
+          "type": "text"
+        },
+        {
+          "color": "green",
+          "from": "b3",
+          "to": "b8",
+          "type": "arrow"
+        },
+        {
+          "answer": "Qb8+",
+          "answerUci": "b3b8",
+          "text": "Find the forcing move.",
+          "type": "prompt"
+        }
+      ],
+      "sourceDigest": "5d2a309aa43c42d20ada80a02be46a70cb45d29bbb28bdccdb52b06504479716"
+    },
+    {
+      "after": 16,
+      "frames": [
+        {
+          "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+          "san": null,
+          "uci": null
+        },
+        {
+          "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+          "san": "e4",
+          "uci": "e2e4"
+        },
+        {
+          "fen": "rnbqkbnr/pp1ppppp/2p5/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+          "san": "c6",
+          "uci": "c7c6"
+        },
+        {
+          "fen": "rnbqkbnr/pp1ppppp/2p5/8/3PP3/8/PPP2PPP/RNBQKBNR b KQkq - 0 2",
+          "san": "d4",
+          "uci": "d2d4"
+        },
+        {
+          "fen": "rnbqkbnr/pp2pppp/2p5/3p4/3PP3/8/PPP2PPP/RNBQKBNR w KQkq - 0 3",
+          "san": "d5",
+          "uci": "d7d5"
+        },
+        {
+          "fen": "rnbqkbnr/pp2pppp/2p5/3p4/3PP3/2N5/PPP2PPP/R1BQKBNR b KQkq - 1 3",
+          "san": "Nc3",
+          "uci": "b1c3"
+        },
+        {
+          "fen": "rnbqkbnr/pp2pppp/2p5/8/3Pp3/2N5/PPP2PPP/R1BQKBNR w KQkq - 0 4",
+          "san": "dxe4",
+          "uci": "d5e4"
+        },
+        {
+          "fen": "rnbqkbnr/pp2pppp/2p5/8/3PN3/8/PPP2PPP/R1BQKBNR b KQkq - 0 4",
+          "san": "Nxe4",
+          "uci": "c3e4"
+        },
+        {
+          "fen": "rnbqkb1r/pp2pppp/2p2n2/8/3PN3/8/PPP2PPP/R1BQKBNR w KQkq - 1 5",
+          "san": "Nf6",
+          "uci": "g8f6"
+        },
+        {
+          "fen": "rnbqkb1r/pp2pppp/2p2n2/8/3PN3/3Q4/PPP2PPP/R1B1KBNR b KQkq - 2 5",
+          "san": "Qd3",
+          "uci": "d1d3"
+        },
+        {
+          "fen": "rnbqkb1r/pp3ppp/2p2n2/4p3/3PN3/3Q4/PPP2PPP/R1B1KBNR w KQkq - 0 6",
+          "san": "e5",
+          "uci": "e7e5"
+        },
+        {
+          "fen": "rnbqkb1r/pp3ppp/2p2n2/4P3/4N3/3Q4/PPP2PPP/R1B1KBNR b KQkq - 0 6",
+          "san": "dxe5",
+          "uci": "d4e5"
+        },
+        {
+          "fen": "rnb1kb1r/pp3ppp/2p2n2/q3P3/4N3/3Q4/PPP2PPP/R1B1KBNR w KQkq - 1 7",
+          "san": "Qa5+",
+          "uci": "d8a5"
+        },
+        {
+          "fen": "rnb1kb1r/pp3ppp/2p2n2/q3P3/4N3/3Q4/PPPB1PPP/R3KBNR b KQkq - 2 7",
+          "san": "Bd2",
+          "uci": "c1d2"
+        },
+        {
+          "fen": "rnb1kb1r/pp3ppp/2p2n2/4q3/4N3/3Q4/PPPB1PPP/R3KBNR w KQkq - 0 8",
+          "san": "Qxe5",
+          "uci": "a5e5"
+        },
+        {
+          "fen": "rnb1kb1r/pp3ppp/2p2n2/4q3/4N3/3Q4/PPPB1PPP/2KR1BNR b kq - 1 8",
+          "san": "O-O-O",
+          "uci": "e1a1"
+        },
+        {
+          "fen": "rnb1kb1r/pp3ppp/2p5/4q3/4n3/3Q4/PPPB1PPP/2KR1BNR w kq - 0 9",
+          "san": "Nxe4",
+          "uci": "f6e4"
+        },
+        {
+          "fen": "rnbQkb1r/pp3ppp/2p5/4q3/4n3/8/PPPB1PPP/2KR1BNR b kq - 1 9",
+          "san": "Qd8+",
+          "uci": "d3d8"
+        },
+        {
+          "fen": "rnbk1b1r/pp3ppp/2p5/4q3/4n3/8/PPPB1PPP/2KR1BNR w - - 0 10",
+          "san": "Kxd8",
+          "uci": "e8d8"
+        },
+        {
+          "fen": "rnbk1b1r/pp3ppp/2p5/4q1B1/4n3/8/PPP2PPP/2KR1BNR b - - 1 10",
+          "san": "Bg5+",
+          "uci": "d2g5"
+        }
+      ],
+      "game": "reti",
+      "id": "retiFinish",
+      "notes": [
+        {
+          "text": "Compare the queen offer with a discovered attack.",
+          "type": "text"
+        },
+        {
+          "answer": "Qd8+",
+          "answerUci": "d3d8",
+          "text": "Offer the queen.",
+          "type": "prompt"
+        }
+      ],
+      "sourceDigest": "3e06d974c7abc3dafb02efe5365248aa02105737b6371a6341b54e92ee1824d8"
+    }
+  ],
+  "version": 1
+}

@@ -4,6 +4,7 @@ export {
   compile,
   selectPosition,
   type BuildSnapshot,
+  type CompilerOptions,
 } from "./600-build/index.js";
 export {
   decode,

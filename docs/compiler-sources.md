@@ -86,8 +86,10 @@ The source directory's top-level `.chess-story` and `.pgn` files are default ent
 
 The Bun LSP uses the first initialized workspace folder as its source root. `CHESS_SOURCE_ROOT` overrides it. Existing PGN overlays and file watches remain authoritative. Config/provider changes require restarting the server; use the CLI for explicit refresh and publication. Multiple independent source roots in one server are not supported yet. Remote acquisition failures currently surface as unavailable-source diagnostics. Unchanged remote records reuse locked blobs; dependency discovery and local reads are separate from replay caching.
 
-Chess replay remains cached by content within a compiler session. Persisted engine-position analysis and semantic game deduplication remain future work.
+Chess replay remains cached by content within a compiler session, with bounded inactive revisions and protected active inputs. Persisted engine-position analysis and semantic game deduplication remain future work.
 
 ## Verification
 
 `src/sources/sources.test.ts` covers fresh-process HTTP acquisition and frozen offline reuse; cache/catalog reuse; live files and buffers; provider precedence; changed locked content; multi-game selection; byte integrity; edition mismatch; configuration changes; and overlapping project updates. Existing compiler conformance and LSP acceptance suites remain required.
+
+Project updates report `acquisition.parsedNarratives` separately from kernel work; unchanged narrative dependency discovery is reused across project updates.

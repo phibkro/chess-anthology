@@ -1,7 +1,10 @@
 import { describe, it, expect } from "bun:test";
 
 import { compile, createPlaybackPlan } from "@chess-anthology/compiler";
-import { parsePlaybackPlan } from "@chess-anthology/compiler/playback";
+import {
+  parsePlaybackPlan,
+  playbackFrames,
+} from "@chess-anthology/compiler/playback";
 
 import saved from "../content/generated/queen-offers.json";
 import { createStoryStore } from "./store";
@@ -63,10 +66,9 @@ describe("compiler package → playback plan → reader session", () => {
     }
     expect(Bun.deepEquals(built.value, saved, true)).toBe(true);
     expect(JSON.stringify(built.value)).not.toContain("file:///");
-    expect(built.value.scenes.map((s) => s.frames[s.after].san)).toEqual([
-      "Nxd7",
-      "Nxe4",
-    ]);
+    expect(
+      built.value.scenes.map((s) => playbackFrames(built.value, s)[s.after].san)
+    ).toEqual(["Nxd7", "Nxe4"]);
     expect(built.value.scenes[0].notes.some((n) => n.type === "arrow")).toBe(
       true
     );

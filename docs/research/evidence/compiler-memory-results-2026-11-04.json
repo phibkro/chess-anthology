@@ -1,0 +1,576 @@
+{
+  "method": "Three fresh processes per mode/revision; forced full GC and sweep before samples. Retained JSC heap, not cumulative allocation or peak RSS. No performance significance claim.",
+  "harnessDigest": "e7969829e41e4f0337861d3c7799718747ddf063fcd535019a0be700e4117b25",
+  "samples": {
+    "baseline": {
+      "unchanged": [
+        {
+          "mode": "unchanged",
+          "playbackBytes": 347466,
+          "samples": [
+            {
+              "edit": 0,
+              "heapSize": 7719800,
+              "objectCount": 48465
+            },
+            {
+              "edit": 50,
+              "heapSize": 7871549,
+              "objectCount": 48467
+            },
+            {
+              "edit": 100,
+              "heapSize": 7878379,
+              "objectCount": 48491
+            },
+            {
+              "edit": 200,
+              "heapSize": 7900820,
+              "objectCount": 48499
+            }
+          ],
+          "storedFrames": 3400
+        },
+        {
+          "mode": "unchanged",
+          "playbackBytes": 347466,
+          "samples": [
+            {
+              "edit": 0,
+              "heapSize": 7721006,
+              "objectCount": 48554
+            },
+            {
+              "edit": 50,
+              "heapSize": 7875617,
+              "objectCount": 48555
+            },
+            {
+              "edit": 100,
+              "heapSize": 7885114,
+              "objectCount": 48571
+            },
+            {
+              "edit": 200,
+              "heapSize": 7905160,
+              "objectCount": 48600
+            }
+          ],
+          "storedFrames": 3400
+        },
+        {
+          "mode": "unchanged",
+          "playbackBytes": 347466,
+          "samples": [
+            {
+              "edit": 0,
+              "heapSize": 7719492,
+              "objectCount": 48506
+            },
+            {
+              "edit": 50,
+              "heapSize": 7875945,
+              "objectCount": 48522
+            },
+            {
+              "edit": 100,
+              "heapSize": 7881623,
+              "objectCount": 48553
+            },
+            {
+              "edit": 200,
+              "heapSize": 7902464,
+              "objectCount": 48565
+            }
+          ],
+          "storedFrames": 3400
+        }
+      ],
+      "prose": [
+        {
+          "mode": "prose",
+          "playbackBytes": 347466,
+          "samples": [
+            {
+              "edit": 0,
+              "heapSize": 7713399,
+              "objectCount": 48477
+            },
+            {
+              "edit": 50,
+              "heapSize": 9495177,
+              "objectCount": 49060
+            },
+            {
+              "edit": 100,
+              "heapSize": 9673270,
+              "objectCount": 49285
+            },
+            {
+              "edit": 200,
+              "heapSize": 9915381,
+              "objectCount": 49400
+            }
+          ],
+          "storedFrames": 3400
+        },
+        {
+          "mode": "prose",
+          "playbackBytes": 347466,
+          "samples": [
+            {
+              "edit": 0,
+              "heapSize": 7713548,
+              "objectCount": 48535
+            },
+            {
+              "edit": 50,
+              "heapSize": 9523041,
+              "objectCount": 49117
+            },
+            {
+              "edit": 100,
+              "heapSize": 9693181,
+              "objectCount": 49336
+            },
+            {
+              "edit": 200,
+              "heapSize": 9931113,
+              "objectCount": 49456
+            }
+          ],
+          "storedFrames": 3400
+        },
+        {
+          "mode": "prose",
+          "playbackBytes": 347466,
+          "samples": [
+            {
+              "edit": 0,
+              "heapSize": 7718512,
+              "objectCount": 48542
+            },
+            {
+              "edit": 50,
+              "heapSize": 9514012,
+              "objectCount": 49151
+            },
+            {
+              "edit": 100,
+              "heapSize": 9685898,
+              "objectCount": 49400
+            },
+            {
+              "edit": 200,
+              "heapSize": 9928273,
+              "objectCount": 49474
+            }
+          ],
+          "storedFrames": 3400
+        }
+      ],
+      "pgn": [
+        {
+          "mode": "pgn",
+          "playbackBytes": 347466,
+          "samples": [
+            {
+              "edit": 0,
+              "heapSize": 7720268,
+              "objectCount": 48499
+            },
+            {
+              "edit": 50,
+              "heapSize": 10858833,
+              "objectCount": 89271
+            },
+            {
+              "edit": 100,
+              "heapSize": 12607315,
+              "objectCount": 129888
+            },
+            {
+              "edit": 200,
+              "heapSize": 15991782,
+              "objectCount": 210009
+            }
+          ],
+          "storedFrames": 3400
+        },
+        {
+          "mode": "pgn",
+          "playbackBytes": 347466,
+          "samples": [
+            {
+              "edit": 0,
+              "heapSize": 7705664,
+              "objectCount": 48541
+            },
+            {
+              "edit": 50,
+              "heapSize": 10851918,
+              "objectCount": 89241
+            },
+            {
+              "edit": 100,
+              "heapSize": 12604341,
+              "objectCount": 129726
+            },
+            {
+              "edit": 200,
+              "heapSize": 15997167,
+              "objectCount": 210015
+            }
+          ],
+          "storedFrames": 3400
+        },
+        {
+          "mode": "pgn",
+          "playbackBytes": 347466,
+          "samples": [
+            {
+              "edit": 0,
+              "heapSize": 7714980,
+              "objectCount": 48563
+            },
+            {
+              "edit": 50,
+              "heapSize": 10861639,
+              "objectCount": 89281
+            },
+            {
+              "edit": 100,
+              "heapSize": 12620150,
+              "objectCount": 129874
+            },
+            {
+              "edit": 200,
+              "heapSize": 15996809,
+              "objectCount": 210046
+            }
+          ],
+          "storedFrames": 3400
+        }
+      ]
+    },
+    "candidate": {
+      "unchanged": [
+        {
+          "mode": "unchanged",
+          "playbackBytes": 28155,
+          "samples": [
+            {
+              "edit": 0,
+              "heapSize": 7738402,
+              "objectCount": 48939
+            },
+            {
+              "edit": 50,
+              "heapSize": 7893676,
+              "objectCount": 48939
+            },
+            {
+              "edit": 100,
+              "heapSize": 7897393,
+              "objectCount": 48940
+            },
+            {
+              "edit": 200,
+              "heapSize": 7904378,
+              "objectCount": 48970
+            }
+          ],
+          "storedFrames": 34
+        },
+        {
+          "mode": "unchanged",
+          "playbackBytes": 28155,
+          "samples": [
+            {
+              "edit": 0,
+              "heapSize": 7735705,
+              "objectCount": 48919
+            },
+            {
+              "edit": 50,
+              "heapSize": 7810405,
+              "objectCount": 48877
+            },
+            {
+              "edit": 100,
+              "heapSize": 7894838,
+              "objectCount": 48896
+            },
+            {
+              "edit": 200,
+              "heapSize": 7900147,
+              "objectCount": 48901
+            }
+          ],
+          "storedFrames": 34
+        },
+        {
+          "mode": "unchanged",
+          "playbackBytes": 28155,
+          "samples": [
+            {
+              "edit": 0,
+              "heapSize": 7732047,
+              "objectCount": 48946
+            },
+            {
+              "edit": 50,
+              "heapSize": 7888945,
+              "objectCount": 48954
+            },
+            {
+              "edit": 100,
+              "heapSize": 7892338,
+              "objectCount": 48954
+            },
+            {
+              "edit": 200,
+              "heapSize": 7899647,
+              "objectCount": 48985
+            }
+          ],
+          "storedFrames": 34
+        }
+      ],
+      "prose": [
+        {
+          "mode": "prose",
+          "playbackBytes": 28155,
+          "samples": [
+            {
+              "edit": 0,
+              "heapSize": 7738891,
+              "objectCount": 48908
+            },
+            {
+              "edit": 50,
+              "heapSize": 9413046,
+              "objectCount": 49460
+            },
+            {
+              "edit": 100,
+              "heapSize": 9585689,
+              "objectCount": 49646
+            },
+            {
+              "edit": 200,
+              "heapSize": 9793958,
+              "objectCount": 49839
+            }
+          ],
+          "storedFrames": 34
+        },
+        {
+          "mode": "prose",
+          "playbackBytes": 28155,
+          "samples": [
+            {
+              "edit": 0,
+              "heapSize": 7740016,
+              "objectCount": 48913
+            },
+            {
+              "edit": 50,
+              "heapSize": 9421806,
+              "objectCount": 49467
+            },
+            {
+              "edit": 100,
+              "heapSize": 9584911,
+              "objectCount": 49727
+            },
+            {
+              "edit": 200,
+              "heapSize": 9807909,
+              "objectCount": 49809
+            }
+          ],
+          "storedFrames": 34
+        },
+        {
+          "mode": "prose",
+          "playbackBytes": 28155,
+          "samples": [
+            {
+              "edit": 0,
+              "heapSize": 7741689,
+              "objectCount": 48959
+            },
+            {
+              "edit": 50,
+              "heapSize": 9430245,
+              "objectCount": 49499
+            },
+            {
+              "edit": 100,
+              "heapSize": 9593878,
+              "objectCount": 49724
+            },
+            {
+              "edit": 200,
+              "heapSize": 9803305,
+              "objectCount": 49909
+            }
+          ],
+          "storedFrames": 34
+        }
+      ],
+      "pgn": [
+        {
+          "mode": "pgn",
+          "playbackBytes": 28155,
+          "samples": [
+            {
+              "edit": 0,
+              "heapSize": 7739533,
+              "objectCount": 48940
+            },
+            {
+              "edit": 50,
+              "heapSize": 10577396,
+              "objectCount": 82218
+            },
+            {
+              "edit": 100,
+              "heapSize": 10748782,
+              "objectCount": 82630
+            },
+            {
+              "edit": 200,
+              "heapSize": 10922060,
+              "objectCount": 82340
+            }
+          ],
+          "storedFrames": 34
+        },
+        {
+          "mode": "pgn",
+          "playbackBytes": 28155,
+          "samples": [
+            {
+              "edit": 0,
+              "heapSize": 7739343,
+              "objectCount": 48934
+            },
+            {
+              "edit": 50,
+              "heapSize": 10589886,
+              "objectCount": 82257
+            },
+            {
+              "edit": 100,
+              "heapSize": 10717491,
+              "objectCount": 82373
+            },
+            {
+              "edit": 200,
+              "heapSize": 10927411,
+              "objectCount": 82405
+            }
+          ],
+          "storedFrames": 34
+        },
+        {
+          "mode": "pgn",
+          "playbackBytes": 28155,
+          "samples": [
+            {
+              "edit": 0,
+              "heapSize": 7739921,
+              "objectCount": 48929
+            },
+            {
+              "edit": 50,
+              "heapSize": 10588173,
+              "objectCount": 82174
+            },
+            {
+              "edit": 100,
+              "heapSize": 10728019,
+              "objectCount": 82529
+            },
+            {
+              "edit": 200,
+              "heapSize": 10923103,
+              "objectCount": 82340
+            }
+          ],
+          "storedFrames": 34
+        }
+      ]
+    }
+  },
+  "medians": {
+    "baseline": {
+      "unchanged": {
+        "initialHeap": 7719800,
+        "finalHeap": 7902464,
+        "finalObjects": 48565,
+        "playbackBytes": 347466,
+        "storedFrames": 3400
+      },
+      "prose": {
+        "initialHeap": 7713548,
+        "finalHeap": 9928273,
+        "finalObjects": 49456,
+        "playbackBytes": 347466,
+        "storedFrames": 3400
+      },
+      "pgn": {
+        "initialHeap": 7714980,
+        "finalHeap": 15996809,
+        "finalObjects": 210015,
+        "playbackBytes": 347466,
+        "storedFrames": 3400
+      }
+    },
+    "candidate": {
+      "unchanged": {
+        "initialHeap": 7735705,
+        "finalHeap": 7900147,
+        "finalObjects": 48970,
+        "playbackBytes": 28155,
+        "storedFrames": 34
+      },
+      "prose": {
+        "initialHeap": 7740016,
+        "finalHeap": 9803305,
+        "finalObjects": 49839,
+        "playbackBytes": 28155,
+        "storedFrames": 34
+      },
+      "pgn": {
+        "initialHeap": 7739533,
+        "finalHeap": 10923103,
+        "finalObjects": 82340,
+        "playbackBytes": 28155,
+        "storedFrames": 34
+      }
+    }
+  },
+  "identities": {
+    "baseline": {
+      "commit": "8d7cf9a98b4c040a539a2ee8c1ec373f0ebb965e",
+      "lockDigest": "8dd060ef89a80c6fc00093eea541cbd6a03da3706bbd0d7d138067fccd82aa12",
+      "fixtureDigest": "5d2a309aa43c42d20ada80a02be46a70cb45d29bbb28bdccdb52b06504479716",
+      "dirty": false,
+      "sourceDigest": "1669a9b36b1d56fc40148ba52abc81fb29e53f36ba35e4a43a44d365de35fcf2"
+    },
+    "candidate": {
+      "commit": "b57b9ca3442bc7cafc792d09dd09cda78907f0e5",
+      "lockDigest": "8dd060ef89a80c6fc00093eea541cbd6a03da3706bbd0d7d138067fccd82aa12",
+      "fixtureDigest": "5d2a309aa43c42d20ada80a02be46a70cb45d29bbb28bdccdb52b06504479716",
+      "dirty": false,
+      "sourceDigest": "abe8ea9c1db2146644d5eb9797f483fb24f250f2c99f57966d342029666a61cb",
+      "publishedEquivalentCommit": "ce4909504333d895efc807f306da8c290572c197"
+    }
+  },
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "bun": "1.4.4"
+}

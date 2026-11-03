@@ -61,6 +61,32 @@ export const createWorkspace = (analysis = createChessAnalysis()) => {
   );
   const documents = services.shared.workspace.LangiumDocuments;
   const builder = services.shared.workspace.DocumentBuilder;
+  const forward = new Map<string, Set<string>>();
+  const reverse = new Map<string, Set<string>>();
+  const indexDependencies = (uri: string) => {
+    for (const dependency of forward.get(uri) ?? []) {
+      const dependents = reverse.get(dependency);
+      dependents?.delete(uri);
+      if (dependents?.size === 0) {
+        reverse.delete(dependency);
+      }
+    }
+    const document = documents.getDocument(URI.parse(uri));
+    if (!document) {
+      forward.delete(uri);
+      return;
+    }
+    const next = new Set(dependencies(document));
+    forward.set(uri, next);
+    for (const dependency of next) {
+      let dependents = reverse.get(dependency);
+      if (dependents === undefined) {
+        dependents = new Set();
+        reverse.set(dependency, dependents);
+      }
+      dependents.add(uri);
+    }
+  };
   let parsed = 0;
   const validated = new Set<string>();
   builder.onDocumentPhase(DocumentState.Parsed, () => {
@@ -76,16 +102,12 @@ export const createWorkspace = (analysis = createChessAnalysis()) => {
       .filter(([uri, text]) => sources.get(uri) !== text)
       .map(([uri]) => uri);
     const deleted = [...sources.keys()].filter((uri) => !next.has(uri));
-    const affected = new Set([...changed, ...deleted]);
-    const reverse = new Map<string, string[]>();
-    for (const document of documents.all) {
-      for (const dep of dependencies(document)) {
-        reverse.set(dep, [
-          ...(reverse.get(dep) ?? []),
-          document.uri.toString(),
-        ]);
-      }
+    if (changed.length === 0 && deleted.length === 0) {
+      return { changed, deleted, parsed, validated: [] };
     }
+    const changedSet = new Set(changed);
+    const deletedSet = new Set(deleted);
+    const affected = new Set([...changed, ...deleted]);
     const queue = [...affected];
     for (const queued of queue) {
       for (const dependent of reverse.get(queued) ?? []) {
@@ -104,7 +126,7 @@ export const createWorkspace = (analysis = createChessAnalysis()) => {
     // Imports and PGN paths are dependency edges even without a resolved Langium reference.
     for (const uri of affected) {
       const document = documents.getDocument(URI.parse(uri));
-      if (document && !changed.includes(uri) && !deleted.includes(uri)) {
+      if (document && !changedSet.has(uri) && !deletedSet.has(uri)) {
         builder.resetToState(document, DocumentState.ComputedScopes);
       }
     }
@@ -117,6 +139,11 @@ export const createWorkspace = (analysis = createChessAnalysis()) => {
           .filter((uri) => uri.endsWith(".chess-story"))
           .map((uri) => URI.parse(uri))
       );
+    }
+    for (const uri of [...changed, ...deleted]) {
+      if (uri.endsWith(".chess-story")) {
+        indexDependencies(uri);
+      }
     }
     return { changed, deleted, parsed, validated: [...validated] };
   };

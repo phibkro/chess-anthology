@@ -10,8 +10,7 @@ import { lower } from "../200-semantic-analysis/index.js";
 import { relative } from "../300-linking/index.js";
 import type { Sources } from "../300-linking/index.js";
 import type { createChessAnalysis } from "../400-chess-analysis/index.js";
-import { positionData } from "../400-chess-analysis/index.js";
-import { digest, freeze } from "../identity.js";
+import { freeze } from "../identity.js";
 
 export { decode, envelope, restore, printStructured } from "./codec.js";
 /**
@@ -82,9 +81,10 @@ export const emitDocument = (
               return [];
             }
             const replayed = analysis.replay(pgn);
-            const position = replayed.ok
-              ? replayed.value.frames[scene.ply]
-              : undefined;
+            if (!replayed.ok) {
+              return [];
+            }
+            const position = replayed.value.frames.at(scene.ply);
             if (!position) {
               return [];
             }
@@ -93,8 +93,8 @@ export const emitDocument = (
                 game: `${AstUtils.getDocument(game).uri.toString()}#${game.name}`,
                 id: `${document.uri.toString()}#${story.name}/${scene.name}`,
                 ply: scene.ply,
-                ...positionData(position),
-                sourceDigest: digest(pgn),
+                ...analysis.project(position),
+                sourceDigest: replayed.value.history.sourceDigest,
                 sourceUri: gameUri,
               },
             ];

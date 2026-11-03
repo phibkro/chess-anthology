@@ -10,11 +10,11 @@ export const createSourceCache = (
   overlays: ReadonlyMap<string, string>,
   read: (uri: string) => Promise<string>
 ) => {
-  const generations = new Map<string, number>();
+  const generations = new Map<string, symbol>();
   const pending = new Map<string, Promise<string | undefined>>();
   return async (uri: string): Promise<string | undefined> => {
     const task = (async (): Promise<string | undefined> => {
-      const generation = (generations.get(uri) ?? 0) + 1;
+      const generation = Symbol("source-acquisition");
       generations.set(uri, generation);
       let acquired: string | undefined;
       try {
@@ -23,7 +23,8 @@ export const createSourceCache = (
         acquired = undefined;
       }
       if (generations.get(uri) !== generation) {
-        return await pending.get(uri);
+        const newer = pending.get(uri);
+        return newer === undefined ? sources.get(uri) : await newer;
       }
       const text = overlays.get(uri) ?? acquired;
       if (text === undefined) {
@@ -34,6 +35,13 @@ export const createSourceCache = (
       return text;
     })();
     pending.set(uri, task);
-    return await task;
+    try {
+      return await task;
+    } finally {
+      if (pending.get(uri) === task) {
+        pending.delete(uri);
+        generations.delete(uri);
+      }
+    }
   };
 };

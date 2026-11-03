@@ -41,11 +41,17 @@ Changes to source text are write commands. Persisting a document, refreshing a d
 
 ## Incremental build behavior
 
-The compiler owns a persistent in-memory Langium workspace. It diffs source revisions, updates changed narrative files and propagates invalidation through reverse dependency edges for module imports and PGN paths. Unchanged syntax and unaffected emitted documents are retained. Linked dependencies can revalidate without reparsing unchanged source.
+The compiler owns a persistent in-memory Langium workspace. It captures one owned source revision, diffs it against the workspace, updates changed narrative files and propagates invalidation through persistent reverse dependency edges for module imports and PGN paths. Dependency edges are replaced only for changed/deleted modules; unchanged updates return before dependency traversal. Unchanged syntax and unaffected emitted documents are retained. Linked dependencies can revalidate without reparsing unchanged source.
 
-Chess replay is cached by SHA-256 of source content plus a rules/library configuration key. Validator callbacks, emission and completion share the workspace's chess-analysis instance. Stored mutable chessops positions remain private to compiler analysis; public history frames and build output are deeply frozen, plain data.
+Chess replay is indexed by exact immutable source text within a compiler instance with fixed engine/rules configuration. SHA-256 provenance is computed once on a successful cache miss. One tree traversal validates recorded branches and builds mainline history. Emission and completion share frozen position projections through weak references to engine positions.
 
-A prose edit does not replay a game. A PGN edit invalidates its importers and stories without reparsing their unchanged text; only changed game content is replayed. Invalidation is currently at document granularity, not per paragraph or AST node. Cache entries are in-memory and unbounded for this experiment; discarding the compiler releases the cache. No durable build database, distributed scheduler or filesystem watcher is implied.
+Inactive replay state has configurable LRU budgets: 32 entries, 1,024 engine positions and 4 MiB of UTF-8 source text by default. Active games remain protected even if they exceed those limits. These are inactive-cache budgets, not a hard process-memory limit. Eviction releases compiler references; callers retaining immutable snapshots keep their public history data valid. `cacheStats()` reads owned counters without rebuilding. Failed entries are also subject to entry/source-byte budgets.
+
+A prose edit does not replay a game. A PGN edit invalidates its importers and stories without reparsing their unchanged text. Invalidation is at document granularity. Output URI order is sorted only when module membership changes. Project source acquisition caches dependency discovery by URI and exact narrative text, including cleaning obsolete entries after failed acquisition; its `acquisition.parsedNarratives` counter is separate from kernel work.
+
+Playback format version 2 stores one history per source digest and scene references to those histories. `parsePlaybackPlan` validates references and normalizes legacy version-1 plans into version 2; browser consumers read frames through `playbackFrames`. The compiler still exposes plain JSON contracts, and no packed engine objects cross the browser boundary.
+
+The [memory experiment](docs/research/compiler-memory.md) records the retained-heap and payload comparison and its measurement limits.
 
 ## Errors are values
 

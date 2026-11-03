@@ -77,6 +77,7 @@ test("remote resolution survives fresh compilers, supports playback, and updates
   }
   expect(first.value.snapshot.output[0].diagnostics).toEqual([]);
   expect(first.value.work.replayed).toBe(1);
+  expect(first.value.acquisition.parsedNarratives).toBe(1);
   expect(
     createPlaybackPlan(
       first.value.snapshot,
@@ -94,6 +95,7 @@ test("remote resolution survives fresh compilers, supports playback, and updates
   expect(cached.ok).toBe(true);
   expect(calls).toBe(1);
   const noChange = await compiler.update({ fetch: fetcher, root });
+  expect(noChange.ok && noChange.value.acquisition.parsedNarratives).toBe(0);
   expect(noChange.ok && noChange.value.work).toEqual({
     emitted: 0,
     parsed: 0,
