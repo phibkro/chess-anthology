@@ -11,7 +11,8 @@ import { createConnection, ProposedFeatures } from "vscode-languageserver/node";
 
 import { createBunFileSystem } from "../runtime/filesystem.js";
 import { createSourceCache } from "../runtime/source-cache.js";
-import { readSourceText } from "../runtime/source-text.js";
+import { readSourceText, decodeSourceText } from "../runtime/source-text.js";
+import { openResolver, isBareReference } from "../sources/index.js";
 import { isModule, isGame } from "./100-parsing/index.js";
 import { createServices, relative } from "./300-linking/index.js";
 import { decode } from "./index.js";
@@ -19,20 +20,54 @@ import { decode } from "./index.js";
 const sources = new Map<string, string>();
 const overlays = new Map<string, string>();
 const connection = createConnection(ProposedFeatures.all);
-const acquireSource = createSourceCache(
-  sources,
-  overlays,
-  async (uri) => await readSourceText(new URL(uri))
-);
+const sourceReferences = new Map<string, string>();
+let resolver: ReturnType<typeof openResolver> | undefined;
+const getResolver = async () => {
+  // oxlint-disable-next-line no-use-before-define -- Acquisition runs after the server services have been constructed and initialized.
+  const folder = shared.workspace.WorkspaceManager.workspaceFolders?.[0]?.uri;
+  const root =
+    process.env.CHESS_SOURCE_ROOT === undefined
+      ? new URL(
+          folder === undefined
+            ? Bun.pathToFileURL(`${process.cwd()}/`).href
+            : `${folder.replace(/\/+$/u, "")}/`
+        )
+      : Bun.pathToFileURL(
+          `${process.env.CHESS_SOURCE_ROOT.replace(/\/+$/u, "")}/`
+        );
+  return await (resolver ??= openResolver({ overlays, root }));
+};
+const acquireSource = createSourceCache(sources, overlays, async (uri) => {
+  try {
+    const resolved = await getResolver();
+    return decodeSourceText(
+      await resolved.read(uri, sourceReferences.get(uri))
+    );
+  } catch (error) {
+    connection.console.error(String(error));
+    // Invalid provider configuration must not prevent ordinary local editing.
+    if (new URL(uri).protocol === "file:" && !uri.includes("#")) {
+      return await readSourceText(new URL(uri));
+    }
+    throw error;
+  }
+});
 
 const acquire = async (
   uri: string,
-  visited = new Set<string>()
+  visited = new Set<string>(),
+  reference?: string
 ): Promise<void> => {
   if (visited.has(uri)) {
     return;
   }
   visited.add(uri);
+  if (reference !== undefined) {
+    const existing = sourceReferences.get(uri);
+    if (existing === undefined || isBareReference(existing)) {
+      sourceReferences.set(uri, reference);
+    }
+  }
   const text = await acquireSource(uri);
   if (text !== undefined && uri.endsWith(".chess-story")) {
     const parsed = decode(text);
@@ -42,7 +77,7 @@ const acquire = async (
           ...parsed.value.imports,
           ...parsed.value.games.map((game) => game.source),
         ].map(async (path) => {
-          await acquire(relative(uri, path), visited);
+          await acquire(relative(uri, path), visited, path);
         })
       );
     }
@@ -74,7 +109,11 @@ class ArtifactUpdates extends DefaultDocumentUpdateHandler {
           [
             ...root.imports.map((item) => item.path),
             ...root.declarations.filter(isGame).map((game) => game.path),
-          ].some((path) => affected.has(relative(uri, path)))
+          ].some(
+            (path) =>
+              affected.has(relative(uri, path)) ||
+              affected.has(relative(uri, path).split("#")[0])
+          )
         ) {
           affected.add(uri);
           growing = true;
@@ -121,6 +160,15 @@ class ArtifactUpdates extends DefaultDocumentUpdateHandler {
     await Promise.all(
       params.changes.map(async (change) => {
         await acquire(change.uri);
+        await Promise.all(
+          [...sources.keys()]
+            .filter(
+              (uri) => uri !== change.uri && uri.split("#")[0] === change.uri
+            )
+            .map(async (uri) => {
+              await acquire(uri);
+            })
+        );
       })
     );
     const deleted = params.changes
@@ -177,15 +225,41 @@ shared.workspace.DocumentBuilder.onDocumentPhase(
     const uri = document.uri.toString();
     sources.set(uri, document.textDocument.getText());
     const root = document.parseResult.value;
+    // Collect policies before concurrent reads; a bare name cannot weaken an explicit file.
+    sourceReferences.clear();
+    for (const current of shared.workspace.LangiumDocuments.all) {
+      const module = current.parseResult.value;
+      if (!isModule(module)) {
+        continue;
+      }
+      for (const path of [
+        ...module.imports.map((item) => item.path),
+        ...module.declarations.filter(isGame).map((game) => game.path),
+      ]) {
+        const target = relative(current.uri.toString(), path);
+        const prior = sourceReferences.get(target);
+        if (prior === undefined || isBareReference(prior)) {
+          sourceReferences.set(target, path);
+        }
+      }
+    }
     if (isModule(root)) {
       await Promise.all(
         [
           ...root.imports.map((item) => item.path),
           ...root.declarations.filter(isGame).map((game) => game.path),
         ].map(async (path) => {
-          await acquire(relative(uri, path));
+          await acquire(relative(uri, path), new Set(), path);
         })
       );
+      try {
+        const resolved = await getResolver();
+        if (resolved.configured) {
+          await resolved.finish();
+        }
+      } catch (error) {
+        connection.console.error(String(error));
+      }
     }
   }
 );

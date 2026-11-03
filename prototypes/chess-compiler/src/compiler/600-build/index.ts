@@ -6,7 +6,7 @@ import type {
   BuildSnapshot,
   BuildUpdate,
 } from "../../contracts/index.js";
-import { createWorkspace } from "../300-linking/index.js";
+import { createWorkspace, relative } from "../300-linking/index.js";
 import type { Sources } from "../300-linking/index.js";
 import { createChessAnalysis } from "../400-chess-analysis/index.js";
 import { emitDocument } from "../500-emission/index.js";
@@ -64,8 +64,15 @@ export const createCompiler = () => {
           outputs.set(uri, emitDocument(document, workspace.sources, analysis));
         }
       }
+      const referenced = new Set(
+        [...outputs.values()].flatMap((document) =>
+          (document.data?.games ?? []).map((game) =>
+            relative(document.uri, game.source)
+          )
+        )
+      );
       const games = [...sources]
-        .filter(([uri]) => uri.endsWith(".pgn"))
+        .filter(([uri]) => uri.endsWith(".pgn") || referenced.has(uri))
         .map(([uri, source]) => {
           const replayed = analysis.replay(source);
           return {

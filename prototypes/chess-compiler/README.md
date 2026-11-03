@@ -67,3 +67,7 @@ The public compiler interface is `src/compiler/index.ts`; its phase directories 
 See [RESULTS.md](RESULTS.md) for observed outcomes and [the architecture decision](../../docs/adr/0001-chess-compiler.md).
 
 `pnpm test` runs seeded property/fuzz checks and phase-interface guards. Set `FC_SEED=8128 pnpm test` to reproduce another seed; failures print a shrinking path. These checks also run in repository pre-commit and CI on this branch.
+
+### Source providers and reproducible editions
+
+The Bun CLI and LSP support configured directory/HTTP PGN providers, content-addressed blobs, persistent external-resolution locks and frozen edition manifests. See [source resolution](../../docs/compiler-sources.md) for configuration, reference syntax, update/offline commands and limitations. The low-level compiler API remains an in-memory source-map boundary; the Go and historical Node adapters are unchanged.

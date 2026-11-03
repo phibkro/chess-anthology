@@ -8,3 +8,10 @@ with tempfile.TemporaryDirectory(prefix="chess-lsp-") as folder:
                          Path(folder), iterations=1)
     assert not result["failures"], result["failures"]
     print(f"Bun LSP: {len(result['checks'])} shared acceptance checks passed")
+
+from lsp_sources import run as run_source_checks, configuration_health, alias_health
+run_source_checks()
+
+configuration_health()
+
+alias_health()

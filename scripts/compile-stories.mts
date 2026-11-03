@@ -1,37 +1,17 @@
-import { compile, createPlaybackPlan } from "chess-compiler-prototype";
+import { createPlaybackPlan } from "chess-compiler-prototype";
+import { createProjectCompiler } from "chess-compiler-prototype/sources";
 
 const directory = new URL(
   "../prototypes/chess-compiler/examples/",
   import.meta.url
 );
-const sources = new Map(
-  await Promise.all(
-    [
-      ...new Bun.Glob("*").scanSync({
-        cwd: Bun.fileURLToPath(directory),
-        dot: true,
-        onlyFiles: true,
-      }),
-    ]
-      .filter((name) => /\.(?<capture1>pgn|chess-story)$/u.test(name))
-      .map(async (name) => {
-        const uri = new URL(name, directory);
-        return [
-          uri.href,
-          new TextDecoder("utf-8", { ignoreBOM: true }).decode(
-            await Bun.file(uri).arrayBuffer()
-          ),
-        ] as const;
-      })
-  )
-);
-const compiled = await compile(sources);
+const compiled = await createProjectCompiler().update({ root: directory });
 if (!compiled.ok) {
   console.error(compiled.error);
   process.exit(1);
 }
 const plan = createPlaybackPlan(
-  compiled.value,
+  compiled.value.snapshot,
   new URL("story.chess-story", directory).href,
   "matingNets"
 );
