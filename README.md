@@ -6,9 +6,9 @@ Chess Anthology is a craft-first, open project for discovering and appreciating 
 
 ## Two distinct products
 
-| Product                          | Promise                                                                                                                                                                  |
-| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Chess Through History**        | Explore real games through people, rivalries, matches, tournaments, eras, and their historical context. Replay the games; make meaningful decisions along the way.       |
+| Product | Promise |
+| --- | --- |
+| **Chess Through History** | Explore real games through people, rivalries, matches, tournaments, eras, and their historical context. Replay the games; make meaningful decisions along the way. |
 | **The Art of Chess Composition** | Encounter deliberate works of chess art by named human composers. Solve their stipulations, discover the idea behind each construction, and understand their provenance. |
 
 Both products can eventually share a playable reader, portable narratives, and an optional research/import assistant. **Shared infrastructure is an implementation possibility, not a reason to collapse the editorial distinction between the products.**
@@ -22,6 +22,8 @@ Both products can eventually share a playable reader, portable narratives, and a
 - **Open by design:** Favor interoperable PGN/FEN and human-readable content; keep formats portable and contributors empowered.
 - **Agents as librarians, not authorities:** Research/import assistance is optional, inspectable, and subject to factual and chess verification.
 - **Build the tool before the business:** Do not introduce monetization or platform-growth obligations ahead of usefulness and quality.
+
+Tooling presets, migration exceptions, and the gdp-ts evaluation are recorded in [Tooling](docs/tooling.md). Compiler seam contracts and benchmark commands are in [Compiler evaluations](docs/compiler-evaluations.md).
 
 ## Start here
 
@@ -48,7 +50,7 @@ The original editorial design is the current default. The earlier `/original/` a
 
 ```sh
 pnpm install
-pnpm --dir prototypes/chess-compiler install
+pnpm --dir compiler install
 pnpm setup:secrets
 pnpm dev
 ```
@@ -76,10 +78,16 @@ The app uses Vite+ (Vite, Vitest, Oxfmt and Oxlint), React, Tailwind CSS, XState
 
 A legal off-line try now stays on the board. Continuation pauses until the reader retries, reveals the idea or navigates away. The default feedback is “Try again.” More specific encouragement is authored for individual moves; the reader does not guess whether an idea is close to the solution.
 
-The [authoring and codec contract](docs/authoring-codec-contract.md) records the proposed lossless flat/structured format and shared diagnostics pipeline; the flat codec is not implemented yet.
+The [authoring and codec contract](docs/authoring-codec-contract.md) records the format design. The compiler implements canonical flat/structured conversion, exact untouched-source envelopes and shared diagnostics; source-preserving semantic edits remain open.
 
-[Chess compiler decisions](docs/adr/0001-chess-compiler.md) and the [Langium experiment](docs/experiments/003-langium-compiler.md) describe the next authoring slice. Its disposable implementation is on branch `prototype/langium-chess-compiler`.
+The supported [Bun compiler](compiler/README.md) owns narrative compilation, incremental linking, game validation, source resolution and editor tooling. The [Langium experiment](docs/experiments/003-langium-compiler.md) records its origins.
 
 [Internal module and compiler phase interfaces](MODULES.md) describe the current seams, snapshot/read model, incremental builds and error-value contracts.
 
-On the compiler branch, the web reader consumes the compiler package at build time. `pnpm compile:stories` generates a portable two-game playback plan; `pnpm dev` and `pnpm build` regenerate it. Open **A queen offered, a mating net** in the playable collection. The browser consumes the plan and browser-safe schema; Langium stays in the build tooling.
+The web reader consumes `@chess-anthology/compiler` at build time. `pnpm compile:stories` generates a portable two-game playback plan; `pnpm dev` and `pnpm build` regenerate it. Open **A queen offered, a mating net** in the playable collection. The browser consumes the plan and browser-safe schema; Langium stays in the build tooling.
+
+Runtime: **Bun 1.4.4** (`.bun-version`); package management: **pnpm 12.16.1**. Install Bun before `pnpm install`. Node remains only for pnpm bootstrap and the migration comparison baseline.
+
+[Go compiler research](docs/research/go-chess-compiler.md) and the proposed [Chess960 compatibility profile](docs/research/chess960-compatibility-profile.md) record the alternative implementation and its conformance requirements.
+
+The alternative [Go compiler](https://github.com/phibkro/chess-anthology/tree/experimental/go-compiler/prototypes/chess-compiler-go) remains experimental on its own branch.

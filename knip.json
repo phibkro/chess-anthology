@@ -2,11 +2,13 @@
   "workspaces": {
     ".": {
       "entry": ["scripts/*.{mjs,mts}"],
-      "project": ["src/**/*.{ts,tsx,css}", "scripts/*.{mjs,mts}"]
+      "project": ["src/**/*.{ts,tsx,css}", "scripts/*.{mjs,mts}"],
+      "ignoreDependencies": ["@commitlint/cli", "jscpd"]
     },
-    "prototypes/chess-compiler": {
+    "compiler": {
       "entry": ["src/adapters/*.ts", "src/compiler/100-parsing/generated/*.ts"],
-      "project": ["src/**/*.ts"]
+      "project": ["src/**/*.ts", "evaluation/**/*.mts"],
+      "ignoreDependencies": ["langium-cli"]
     }
   }
 }

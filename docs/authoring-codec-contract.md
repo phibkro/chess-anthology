@@ -10,11 +10,11 @@ Move history, prose, supplementary annotations, presentation and interaction rul
 
 Separate responsibilities while allowing authors to write them together:
 
-| Responsibility        | Examples                                                                                                                  |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Responsibility | Examples |
+| --- | --- |
 | Structure and meaning | Ordered prose, games, positions, variations, source attribution, board occurrences, explanatory arrows and marked squares |
-| Presentation          | Layout, emphasis, board orientation, arrow brush, labels, transitions                                                     |
-| Behavior              | Learner turn, accepted moves, authored alternative feedback, hints, retry and reveal rules                                |
+| Presentation | Layout, emphasis, board orientation, arrow brush, labels, transitions |
+| Behavior | Learner turn, accepted moves, authored alternative feedback, hints, retry and reveal rules |
 
 An arrow's endpoints and explanatory label convey meaning. Its brush and line treatment convey presentation. Neither requires a user action. Defaults must not erase the distinction between an explicitly authored value and an inherited value when that distinction affects later editing.
 
@@ -34,11 +34,11 @@ The flat language and structured document both express module imports, named exp
 
 Distinguish three operations:
 
-| Operation                       | Meaning                                                                   |
-| ------------------------------- | ------------------------------------------------------------------------- |
-| Module import/export            | Name and reuse authored declarations across narrative modules             |
-| Source ingestion                | Adapt external PGN, FEN, EPD or database records into typed chess records |
-| Serialization/export projection | Encode the native document or produce a target such as PGN                |
+| Operation | Meaning |
+| --- | --- |
+| Module import/export | Name and reuse authored declarations across narrative modules |
+| Source ingestion | Adapt external PGN, FEN, EPD or database records into typed chess records |
+| Serialization/export projection | Encode the native document or produce a target such as PGN |
 
 A narrative module may export a story or reusable annotations as well as game references. An imported chess record may contain only a position; it must not acquire an invented move history. PGN can carry game scores and variations; FEN supplies a position; EPD supplies a position plus operations. Preserve EPD operations, including unknown ones, rather than treating EPD as merely a FEN string. These distinctions follow the [PGN specification and implementation guide, sections 16.1–16.2](https://www.saremba.de/chessgml/standards/pgn/pgn-complete.htm). Adapter support is proposed; the runtime currently supports PGN/FEN, not EPD or database resolution.
 
@@ -98,14 +98,14 @@ Native decoding must reject unsupported versions and unknown meaningful fields, 
 
 ## Diagnostics pipeline
 
-| Stage                | Responsibility                                | Example                                      |
-| -------------------- | --------------------------------------------- | -------------------------------------------- |
-| Lexical              | Recognize source tokens                       | Unterminated quoted value                    |
-| Syntax               | Build the source tree                         | Unclosed directive                           |
-| Structural           | Validate node shapes and versions             | Prompt missing its answer field              |
-| Reference resolution | Resolve identities and move selectors         | Unknown game; ambiguous variation target     |
-| Chess semantics      | Validate positions, paths and answers         | Move illegal in the referenced position      |
-| Capability analysis  | Check the chosen target supports the document | Reader cannot execute a declared interaction |
+| Stage | Responsibility | Example |
+| --- | --- | --- |
+| Lexical | Recognize source tokens | Unterminated quoted value |
+| Syntax | Build the source tree | Unclosed directive |
+| Structural | Validate node shapes and versions | Prompt missing its answer field |
+| Reference resolution | Resolve identities and move selectors | Unknown game; ambiguous variation target |
+| Chess semantics | Validate positions, paths and answers | Move illegal in the referenced position |
+| Capability analysis | Check the chosen target supports the document | Reader cannot execute a declared interaction |
 
 Flat input passes through all stages. Structured input skips lexing and parsing, then uses the same structural validator and semantic analyzer. Chess analysis operates on well-formed relevant nodes; recovery should still report independent errors elsewhere. No renderer-specific interpretation of chess references.
 

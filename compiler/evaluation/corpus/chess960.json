@@ -1,0 +1,139 @@
+{
+  "version": 1,
+  "accepted": [
+    {
+      "id": "white-both-move",
+      "fen": "k7/8/8/8/8/8/8/4K2R w H - 0 1",
+      "moves": "O-O",
+      "expectedFen": "k7/8/8/8/8/8/8/5RK1 b - - 1 1",
+      "expectedUci": "e1h1"
+    },
+    {
+      "id": "white-stationary-king",
+      "fen": "k7/8/8/8/8/8/8/6KR w H - 0 1",
+      "moves": "O-O",
+      "expectedFen": "k7/8/8/8/8/8/8/5RK1 b - - 1 1",
+      "expectedUci": "g1h1"
+    },
+    {
+      "id": "white-stationary-rook",
+      "fen": "k7/8/8/8/8/8/8/4KR2 w F - 0 1",
+      "moves": "O-O",
+      "expectedFen": "k7/8/8/8/8/8/8/5RK1 b - - 1 1",
+      "expectedUci": "e1f1"
+    },
+    {
+      "id": "white-swap",
+      "fen": "7k/8/8/8/8/8/8/2RK4 w C - 0 1",
+      "moves": "O-O-O",
+      "expectedFen": "7k/8/8/8/8/8/8/2KR4 b - - 1 1",
+      "expectedUci": "d1c1"
+    },
+    {
+      "id": "white-queenside",
+      "fen": "7k/8/8/8/8/8/8/R3K3 w A - 0 1",
+      "moves": "O-O-O",
+      "expectedFen": "7k/8/8/8/8/8/8/2KR4 b - - 1 1",
+      "expectedUci": "e1a1"
+    },
+    {
+      "id": "white-queenside-stationary-king",
+      "fen": "7k/8/8/8/8/8/8/R1K5 w A - 0 1",
+      "moves": "O-O-O",
+      "expectedFen": "7k/8/8/8/8/8/8/2KR4 b - - 1 1",
+      "expectedUci": "c1a1"
+    },
+    {
+      "id": "white-queenside-stationary-rook",
+      "fen": "7k/8/8/8/8/8/8/3RK3 w D - 0 1",
+      "moves": "O-O-O",
+      "expectedFen": "7k/8/8/8/8/8/8/2KR4 b - - 1 1",
+      "expectedUci": "e1d1"
+    },
+    {
+      "id": "black-stationary-king",
+      "fen": "6kr/8/8/8/8/8/8/K7 b h - 0 1",
+      "moves": "O-O",
+      "expectedFen": "5rk1/8/8/8/8/8/8/K7 w - - 1 2",
+      "expectedUci": "g8h8"
+    },
+    {
+      "id": "black-queenside",
+      "fen": "r3k3/8/8/8/8/8/8/7K b a - 0 1",
+      "moves": "O-O-O",
+      "expectedFen": "2kr4/8/8/8/8/8/8/7K w - - 1 2",
+      "expectedUci": "e8a8"
+    },
+    {
+      "id": "explicit-inner-rook",
+      "fen": "k7/8/8/8/8/8/8/4KR1R w F - 0 1",
+      "moves": "O-O",
+      "expectedFen": "k7/8/8/8/8/8/8/5RKR b - - 1 1",
+      "expectedUci": "e1f1"
+    },
+    {
+      "id": "attacked-rook-allowed",
+      "fen": "k6r/8/8/8/8/8/8/4K2R w H - 0 1",
+      "moves": "O-O",
+      "expectedFen": "k6r/8/8/8/8/8/8/5RK1 b - - 1 1",
+      "expectedUci": "e1h1"
+    },
+    {
+      "id": "xfen-kingside",
+      "fen": "k7/8/8/8/8/8/8/6KR w K - 0 1",
+      "moves": "O-O",
+      "expectedFen": "k7/8/8/8/8/8/8/5RK1 b - - 1 1",
+      "expectedUci": "g1h1"
+    }
+  ],
+  "rejected": [
+    {
+      "id": "no-rights",
+      "fen": "k7/8/8/8/8/8/8/4K2R w - - 0 1",
+      "moves": "O-O",
+      "expectedCode": "chess/illegal-move"
+    },
+    {
+      "id": "attacked-transit",
+      "fen": "k4r2/8/8/8/8/8/8/4K2R w H - 0 1",
+      "moves": "O-O",
+      "expectedCode": "chess/illegal-move"
+    },
+    {
+      "id": "attacked-destination",
+      "fen": "k5r1/8/8/8/8/8/8/4K2R w H - 0 1",
+      "moves": "O-O",
+      "expectedCode": "chess/illegal-move"
+    },
+    {
+      "id": "king-in-check",
+      "fen": "k3r3/8/8/8/8/8/8/4K2R w H - 0 1",
+      "moves": "O-O",
+      "expectedCode": "chess/illegal-move"
+    },
+    {
+      "id": "occupied-path",
+      "fen": "k7/8/8/8/8/8/8/4KB1R w H - 0 1",
+      "moves": "O-O",
+      "expectedCode": "chess/illegal-move"
+    },
+    {
+      "id": "stationary-king-uncovered-attack",
+      "fen": "7k/8/8/8/8/8/8/rRK5 w B - 0 1",
+      "moves": "O-O-O",
+      "expectedCode": "chess/illegal-move"
+    },
+    {
+      "id": "rook-return-does-not-restore-right",
+      "fen": "k7/8/8/8/8/8/8/4K2R w H - 0 1",
+      "moves": "Rh2 Kb8 Rh1 Ka8 O-O",
+      "expectedCode": "chess/illegal-move"
+    },
+    {
+      "id": "king-return-does-not-restore-right",
+      "fen": "k7/8/8/8/8/8/8/4K2R w H - 0 1",
+      "moves": "Kf1 Kb8 Ke1 Ka8 O-O",
+      "expectedCode": "chess/illegal-move"
+    }
+  ]
+}

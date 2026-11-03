@@ -1,5 +1,7 @@
 # Compiler package → multi-game reader
 
+Promotion note: the supported package is now `@chess-anthology/compiler` in `compiler/`. Package names below record the original integration experiment.
+
 This slice consumes the compiler through the package export `chess-compiler-prototype`, before merging the compiler branch. It does not import the compiler's internal files into the app.
 
 ## Data path

@@ -1,33 +1,33 @@
 # Internal modules and compiler phases
 
-These are internal modules with explicit interfaces, not a collection of new packages or network services. The existing isolated compiler experiment remains on `prototype/langium-chess-compiler` until it is integrated into the reader. Names indicate ownership; implementation files are not public interfaces.
+These are internal modules with explicit interfaces, not a collection of new packages or network services. The supported Bun compiler is the `compiler/` module (`@chess-anthology/compiler`), consumed by the story reader through its public entrypoints. Names indicate ownership; implementation files are not public interfaces.
 
-| Module                   | Interface / current location         | Owns                                                          | Must not own                                            |
-| ------------------------ | ------------------------------------ | ------------------------------------------------------------- | ------------------------------------------------------- |
-| Anthology/discovery      | `src/App.tsx`, `src/collection.json` | Browsing, contextual entries, editorial navigation            | Chess rules or session transitions                      |
-| Reader                   | `src/lesson/index.ts`                | Opening compiled lessons and rendering the current experience | External source acquisition or compiler workspace state |
-| Reader document/notation | Internal `schema.ts`, `chess.ts`     | Current version-1 lesson validation and recorded notation     | UI layout or reader tries                               |
-| Player                   | Internal `store.ts`                  | Session commands, cursor, hints, tries and reveal             | Rewriting recorded games or authored content            |
-| Board presentation       | Internal `Board.tsx`                 | Chessground adaptation and pointer interaction                | Deciding whether an authored answer is supported        |
-| Compiler document        | Prototype `src/document/index.ts`    | Plain authored values, structural schema, result/error types  | Langium, React, filesystem or chess-engine objects      |
-| Compiler                 | Prototype `src/compiler/index.ts`    | Compiler operations and immutable build snapshots             | Reader session state or credentials                     |
-| Source/CLI adapters      | Prototype `src/adapters/`            | Explicit file reads and command output                        | Independent semantic rules                              |
-| Language-server adapter  | Prototype `src/compiler/lsp.ts`      | Mapping editor document lifecycle to compiler checks          | A competing authored model                              |
+| Module | Interface / current location | Owns | Must not own |
+| --- | --- | --- | --- |
+| Anthology/discovery | `src/app.tsx`, `src/collection.json` | Browsing, contextual entries, editorial navigation | Chess rules or session transitions |
+| Reader | `src/lesson/index.ts` | Opening compiled lessons and rendering the current experience | External source acquisition or compiler workspace state |
+| Reader document/notation | Internal `schema.ts`, `chess.ts` | Current version-1 lesson validation and recorded notation | UI layout or reader tries |
+| Player | Internal `store.ts` | Session commands, cursor, hints, tries and reveal | Rewriting recorded games or authored content |
+| Board presentation | Internal `board.tsx` | Chessground adaptation and pointer interaction | Deciding whether an authored answer is supported |
+| Compiler contracts | `compiler/src/contracts/index.ts` | Explicit authored, history, emission and build IRs; structural schemas and result/error types | Langium, React, filesystem or chess-engine objects |
+| Compiler | `compiler/src/compiler/index.ts` | Compiler operations and immutable build snapshots | Reader session state or credentials |
+| Source/CLI adapters | `compiler/src/adapters/` | Explicit file reads and command output | Independent semantic rules |
+| Language-server adapter | `compiler/src/compiler/lsp.ts` | Mapping editor document lifecycle to compiler checks | A competing authored model |
 
-The smaller reader modules still live inside `src/lesson`. Extract separate entrypoints/packages only when actual consumers need them. The reader's version-1 model and compiler's version-0 model are not yet unified.
+The smaller reader modules still live inside `src/lesson`. Extract separate entrypoints/packages only when actual consumers need them. The reader's version-1 model and compiler's version-0 model are not yet unified. Authored compiler runtime adapters use Bun; the third-party LSP stdio transport uses its compatibility layer.
 
 ## Compiler phase interfaces
 
-Every numbered directory exposes `index.ts`. Other phases import through it. A static-import architecture check enforces this for the prototype; generated parser files are private to parsing. The guard covers current static imports/re-exports and rejects dynamic imports pending a stronger scanner.
+Every numbered directory exposes `index.ts`. Other phases import through it. A static-import architecture check enforces this for the compiler; generated parser files are private to parsing. The guard covers current static imports/re-exports and rejects dynamic imports pending a stronger scanner.
 
-| Phase                   | Input → output                                                                  | Invariants and failure values                                                                              | Verification                                                                        |
-| ----------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `100-parsing`           | Flat text → Langium syntax representation                                       | Explicit JSON string semantics; lexical/syntax failure is a value; source remains available                | Malformed-source fuzzing; escaped-Unicode round trips                               |
-| `200-semantic-analysis` | Parsed/structured authored values → validated shape and local issues            | Local shape, names and occurrence identities do not require available games                                | Schema fuzzing; duplicate-name/occurrence checks; codec properties                  |
-| `300-linking`           | Modules, declarations, configured sources → resolved references and diagnostics | Explicit imports/exports; missing dependencies remain identifiable; private workspace state stays internal | Missing/private/ambiguous references; cycles; dependency removal/restoration        |
-| `400-chess-analysis`    | Linked game source and scene → game history, legal moves and chess issues       | Standard/Chess960 rules; all parsed branches checked; answers checked for legality, not optimality         | PGN fuzzing; historical fixtures; content-cache reuse                               |
-| `500-emission`          | Authored/linked values → plain output, canonical text or source envelope        | No Langium objects in emitted values; projections cannot silently claim losslessness                       | Structured↔flat property; exact untouched-source property; stale-envelope rejection |
-| `600-build`             | Source revisions → immutable snapshot and work report                           | Dependency invalidation, content-addressed reuse, previous snapshots stable                                | Incremental-vs-clean property; pure-view and immutability checks                    |
+| Phase | Input → output | Invariants and failure values | Verification |
+| --- | --- | --- | --- |
+| `100-parsing` | Flat text → Langium syntax representation | Explicit JSON string semantics; lexical/syntax failure is a value; source remains available | Malformed-source fuzzing; escaped-Unicode round trips |
+| `200-semantic-analysis` | Parsed/structured authored values → validated shape and local issues | Local shape, names and occurrence identities do not require available games | Schema fuzzing; duplicate-name/occurrence checks; codec properties |
+| `300-linking` | Modules, declarations, configured sources → resolved references and diagnostics | Explicit imports/exports; missing dependencies remain identifiable; private workspace state stays internal | Missing/private/ambiguous references; cycles; dependency removal/restoration |
+| `400-chess-analysis` | Linked game source and scene → game history, legal moves and chess issues | Standard/Chess960 rules; all parsed branches checked; answers checked for legality, not optimality | PGN fuzzing; historical fixtures; content-cache reuse |
+| `500-emission` | Authored/linked values → plain output, canonical text or source envelope | No Langium objects in emitted values; projections cannot silently claim losslessness | Structured↔flat property; exact untouched-source property; stale-envelope rejection |
+| `600-build` | Source revisions → immutable snapshot and work report | Dependency invalidation, content-addressed reuse, previous snapshots stable | Incremental-vs-clean property; pure-view and immutability checks |
 
 The numbering identifies responsibilities and prerequisites, not an arbitrary configurable list of passes. Local semantic analysis is separate from chess analysis that requires linking. Langium's adapter registers linking/validation callbacks; its document builder controls their lifecycle. We have not reimplemented that lifecycle as six independent processes.
 
@@ -37,7 +37,7 @@ A game history contains immutable position frames derived by replaying its recor
 
 `selectPosition(snapshot, gameUri, ply)` is a pure selection returning `Result<Frame, Failure>`. Reading a position does not append an event, advance a build revision or trigger replay. A UI may keep a cursor as ephemeral session state; analytics are not implied by viewing a position.
 
-Changes to source text are write commands. Persisting a document, refreshing a database record or publishing is an external effect handled by an adapter. We do not event-source ordinary reads, and this prototype does not introduce an event store.
+Changes to source text are write commands. Persisting a document, refreshing a database record or publishing is an external effect handled by an adapter. We do not event-source ordinary reads, and the compiler does not introduce an event store.
 
 ## Incremental build behavior
 
@@ -63,4 +63,14 @@ This still does not establish a complete isomorphic editing codec. Source-preser
 
 ## First product consumer
 
-The compiler branch now exports a playback-plan target and a separate browser-safe plan schema. Build tooling imports the compiler package by name; `src/story` imports only its playback contract and consumes generated JSON. Reader session state and tries remain outside the compiler. The [integration experiment](docs/experiments/004-compiler-reader.md) records the target's supported capabilities and verification limits.
+The compiler exports a playback-plan target and a separate browser-safe plan schema. Build tooling imports the compiler package by name; `src/story` imports only its playback contract and consumes generated JSON. Reader session state and tries remain outside the compiler. The [integration experiment](docs/experiments/004-compiler-reader.md) records the target's supported capabilities and verification limits.
+
+## Data contracts and executable specifications
+
+Shared IRs live in `src/contracts` inside the compiler package; procedural phases consume and implement those declared contracts. Generated syntax types remain owned by `100-parsing/contract.ts`. [Compiler evaluations](docs/compiler-evaluations.md) maps each contract to its invariants, corpus evaluations, work budgets and performance measurements. A contract defines a seam; a specification describes the broader intended behavior; an IR is a representation crossing that seam.
+
+## Experimental Go alternative
+
+The Go compiler, generated Fastbelt parser and Go LSP remain on [experimental/go-compiler](https://github.com/phibkro/chess-anthology/tree/experimental/go-compiler/prototypes/chess-compiler-go). They are not part of the supported module or default build/CI. The branch retains its source, conformance checks, evaluations and reproduction instructions.
+
+The active compiler evaluation harness can optionally compare that separate checkout through `CHESS_GO_MODULE=/absolute/path/to/checkout/prototypes/chess-compiler-go` for execution-mode experiments, or `--go-module` for LSP experiments. Historical reports remain evidence about their recorded revisions, not the current module's measured performance.

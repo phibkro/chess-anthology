@@ -12,13 +12,47 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 24
-      - name: Install pinned pnpm
-        run: npm install --global pnpm@12.16.1
+      - name: Install pinned pnpm and Bun
+        run: npm install --global pnpm@12.16.1 bun@1.4.4
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --dir prototypes/chess-compiler install --frozen-lockfile
-      - run: node --import tsx src/adapters/demo.ts
-        working-directory: prototypes/chess-compiler
+      - run: pnpm --dir compiler install --frozen-lockfile
+      - run: bun src/adapters/demo.ts
+        working-directory: compiler
       - run: pnpm setup:secrets
       - run: pnpm check:all
       - run: pnpm check:secrets
       - run: pnpm commitlint --last
+  compiler-runtime-benchmark:
+    if: github.event_name == 'pull_request'
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+      - name: Install pinned pnpm and Bun
+        run: npm install --global pnpm@12.16.1 bun@1.4.4
+      - name: Prepare frozen Node control and maintained compiler
+        run: |
+          git worktree add --detach "$RUNNER_TEMP/chess-compiler-base" f2068c0d8ab86c80706fa59867e127101fa51fae
+          pnpm --dir compiler install --frozen-lockfile
+          pnpm --dir "$RUNNER_TEMP/chess-compiler-base/prototypes/chess-compiler" install --frozen-lockfile
+      - name: Paired Node and Bun experiment
+        shell: bash
+        env:
+          CHESS_RUNTIME_BLOCKS: 12
+          CHESS_BENCH_ITERATIONS: 5
+          CHESS_BENCH_WARMUPS: 2
+          CHESS_BENCH_SIZES: 1,10,100
+        run: |
+          python3 compiler/evaluation/runtime_compare.py "$RUNNER_TEMP/chess-compiler-base/prototypes/chess-compiler" "$GITHUB_WORKSPACE/compiler" report/compiler | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Preserve raw compiler evaluation reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: compiler-runtime-comparison
+          path: report/compiler/*
+          if-no-files-found: warn
