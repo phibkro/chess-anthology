@@ -1,0 +1,83 @@
+# Compiler execution modes
+
+The maintained compiler currently runs TypeScript under Bun. The historical Node implementation runs through tsx. Neither uses a single-executable build in normal project commands. Both ordinary runtimes can JIT-compile hot JavaScript; TypeScript transpilation, bundling, bytecode generation, runtime snapshots and native ahead-of-time compilation are different operations.
+
+## Compared artifacts
+
+| Revision | Mode | What changes |
+| --- | --- | --- |
+| Pinned Node-era compiler | Node + tsx | Source execution control; runtime transpilation |
+| Same Node-era compiler | Node + CommonJS bundle | esbuild 0.25.12 removes TypeScript and bundles dependencies before launch |
+| Same Node-era compiler | Node bundle + populated compile cache | V8 persisted code cache; still uses JIT, not native AOT |
+| Same Node-era compiler | Node SEA, with/without code cache | Runtime plus bundle in an executable; optional V8 code cache |
+| Same Node-era compiler | Bun source | Identical-implementation runtime control |
+| Current compiler | Bun source | Maintained implementation control |
+| Same current compiler | Bun JavaScript bundle | Build-time bundling/transpilation, JIT at runtime |
+| Same current compiler | Bun executable | Runtime plus bundled application, JIT at runtime |
+| Same current compiler | Bun executable + bytecode | Adds build-time bytecode generation, JIT remains |
+| Same current compiler | Bun native AOT, if verified available | Documented `bun compile` behavior must pass a capability probe; a successful unknown `--aot` flag does not establish support |
+
+Node arms use the pinned historical commit `f2068c0d8ab86c80706fa59867e127101fa51fae`; current authored code remains Bun-native. Compare packaging effects **within each revision**. Comparing a legacy Node artifact with a current Bun artifact also includes implementation changes. Source and executable controls share staged entry code and identical dependencies within each revision. Node bundles use the historical lockfile's esbuild, while Bun artifacts use Bun's bundler. An initial Bun CommonJS build for Node failed correctness with `ReferenceError: exports_index_esm is not defined`; its timing is not an accepted comparison.
+
+Bun 1.4.4's published AOT documentation describes `bun compile` and type-directed native compilation. The installed release binary instead reports `Script not found "compile"`. Moreover, `bun build --compile` accepts both `--aot` and a deliberately nonexistent option, even for a documented type-error example. The harness therefore records AOT as unavailable on that binary. It does not relabel a JIT executable as native code. Another Bun can be selected through `CHESS_BUN`; a verified capability followed by a failed compiler build is recorded separately.
+
+Node SEA and code cache are available in the selected Node 24 runtime. Startup snapshots are not measured here: they require an initialization/serialization boundary, rather than simply rebuilding the same entry file, and should get a separate capability/equivalence experiment. Node's SEA `useCodeCache` is not a native machine-code AOT compiler.
+
+Primary references: [Bun executable builds](https://bun.sh/docs/compiler/executables), [bytecode](https://bun.sh/docs/compiler/bytecode), [native AOT](https://bun.sh/docs/compiler/aot), [AOT compatibility](https://bun.sh/docs/compiler/compatibility), [Node SEA](https://nodejs.org/docs/latest-v24.x/api/single-executable-applications.html), [Node module compile cache](https://nodejs.org/docs/latest-v24.x/api/module.html#module-compile-cache).
+
+## Evaluations and timing boundaries
+
+`evaluation/execution_modes.py` stages the existing acceptance and benchmark entry files. It relocates relative imports and source-relative corpus URLs, wraps their top-level bodies in async functions for CommonJS/SEA compatibility, and replaces only untimed provenance collection with build-recorded metadata. Compiler implementations and assertion/timing bodies are not rewritten. Generated files and binaries stay under ignored `report/` paths. Corpus assets remain on disk: this experiment does not prove a distributable executable embeds all required resources.
+
+Each built artifact must pass the existing eight acceptance cases (including diagnostic ranges, recovery, codec/envelope checks and all three playback scenes) and eight work budgets. Evaluation digests, cases and budgets must match the source control for that revision. Failed modes are excluded from timing, recorded explicitly and cause an unsuccessful experiment exit. Required source controls must pass. These are acceptance evaluations, not the full property/fuzz suite inside every artifact.
+
+The default is 16 paired blocks. Each block launches a fresh process per arm for the warm benchmark and another process for one first compilation. Arm order rotates from a seeded permutation and reverses on later cycles. Five measured samples follow two warmups per workload; workload order within a process remains fixed at 1/10/100 stories, so size-to-size comparisons are not isolated warmup experiments.
+
+| Measurement | Includes | Excludes |
+| --- | --- | --- |
+| First compilation wall time | Process launch, module initialization, one-story compilation, JSON output and process exit | Artifact construction and dependency installation |
+| Warm operations | Fresh compiler creation for initial builds; prepared incremental updates for other cases | Process launch, module loading, untimed initial population |
+| Build duration and artifact size | One observed construction duration and file size | Repeated-build statistical inference; source modes have no standalone artifact |
+| RSS | Whole-process samples retained in raw benchmark reports | Per-operation allocation accounting |
+
+The shared driver contains evaluation and timing modules even when selecting first compilation; its startup is not a minimal production CLI measurement. Code-cache controls are explicitly prepopulated outside timing. Other arms do not inherit the parent's Node compile cache, cache-disable switch or runtime-option environment. Untimed preparation verifies that Node reports an active cache directory and that it contains entries. These are warm filesystem/page-cache measurements, not disk-cold launches. Compiler cache state resets as specified by the existing benchmark.
+
+Effects use paired per-process medians, geometric-mean latency ratios, nominal 95% bootstrap intervals, exact two-sided sign-flip tests and Holm correction across all reported mode/metric comparisons. Use the JSON's intervals and adjusted p-values; a raw median decrease alone does not establish a performance improvement. The larger test family is why the default uses 16 blocks. Shared-runner noise still limits generalization.
+
+## Reproduce
+
+Install the project's pinned Bun and pnpm, then install frozen dependencies in both compiler checkouts. Keep the Node baseline disposable:
+
+```sh
+git worktree add --detach /tmp/compiler-node-baseline f2068c0d8ab86c80706fa59867e127101fa51fae
+pnpm --dir /tmp/compiler-node-baseline/prototypes/chess-compiler install --frozen-lockfile
+pnpm --dir prototypes/chess-compiler install --frozen-lockfile
+python3 prototypes/chess-compiler/evaluation/execution_modes.py \
+  /tmp/compiler-node-baseline/prototypes/chess-compiler \
+  prototypes/chess-compiler report/execution-modes
+```
+
+`CHESS_NODE` and `CHESS_BUN` select explicit runtime paths; `CHESS_RUNTIME_BLOCKS` accepts 3–16 blocks (small runs are smoke checks). Node SEA generation uses pinned `postject@1.0.0-alpha.6` through pnpm. The dedicated GitHub workflow runs this matrix on harness PR changes or manual dispatch, and uploads reports rather than large generated binaries. Normal quality checks exercise the comparison guards with `--self-test`.
+
+## Local measured results, 3 November 2026
+
+A 16-block run completed on Linux x64 with Node 24.22.1 and Bun 1.4.4. All ten available artifacts passed the acceptance evaluations and work budgets; native AOT was unavailable through the documented command. The source controls are Node-era `f2068c0` and current Bun-era `1686d2b`. This run preceded the environment/timeout-report hardening, with the cache-disable variable absent and an actual Node cache file present. Those fixes do not alter compiler or timing bodies.
+
+| Mode | First compilation median ms | Warm initial build, 100 stories median ms |
+| --- | --: | --: |
+| Node + tsx | 691.84 | 27.14 |
+| Node bundle | 179.67 | 28.72 |
+| Node bundle + populated cache | 149.50 | 26.57 |
+| Node SEA | 161.21 | 27.13 |
+| Node SEA + code cache | 143.62 | 26.75 |
+| Historical compiler on Bun source | 135.61 | 33.20 |
+| Current Bun source | 133.39 | 33.79 |
+| Current Bun bundle | 103.82 | 35.00 |
+| Current Bun executable | 100.85 | 33.80 |
+| Current Bun executable + bytecode | 41.97 | 33.33 |
+
+Every startup comparison against its revision's source control was detectable after Holm correction across 104 mode/metric comparisons (adjusted p = 0.00317). For current Bun, the paired ratios and nominal 95% intervals were 0.71 [0.64, 0.78] for the bundle, 0.71 [0.66, 0.76] for the executable, and 0.29 [0.27, 0.32] for the bytecode executable. These are geometric means of paired ratios, not quotients of the displayed aggregate medians.
+
+None of the current Bun delivery modes had a detectable difference for the 100-story warm initial build. Bytecode did improve the one-story warm initial case in this run (paired ratio 0.83). The broader matrix has other detectable small-workload effects, so this is not a claim that packaging can only affect startup. The strongest demonstrated benefit is first compilation; bundling already captures much of the Node/tsx difference, before adding a single-executable container.
+
+The current Bun executable was about 105.5 MiB and its bytecode counterpart 107.5 MiB. Node SEA artifacts were about 122.6–123.0 MiB; bundles were about 1.5 MiB and require their runtime separately. All figures describe these benchmark artifacts, not minimal release builds. This experiment does not change normal project execution to packaged binaries.

@@ -83,3 +83,7 @@ For later PRs with a Bun-native base, the job detects the base package `engines.
 ### Chess960 conformance
 
 The compiler test command also runs `src/chess960.test.ts`: all 960 independently enumerated complete starting arrays, 12 literal accepted castling fixtures through compilation/selection/lesson emission, eight rejected castling fixtures, and explicit missing-setup diagnostics. Shared edge cases are versioned in `evaluation/corpus/chess960.json`; they can be reused by another rules adapter without importing the TypeScript test runner. See the [compatibility profile](research/chess960-compatibility-profile.md) for the implemented subset and remaining proposals.
+
+### Delivery and compilation modes
+
+The [execution-mode experiment](compiler-execution-modes.md) evaluates source execution, bundles, Node code cache/SEA, Bun executables and bytecode, with native AOT capability detection. It reports first-compilation wall time separately from warm operations and compares delivery modes within each compiler revision.

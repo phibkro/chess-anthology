@@ -23,7 +23,7 @@
     "check:compiler": "pnpm --dir prototypes/chess-compiler check && pnpm --dir prototypes/chess-compiler test && pnpm --dir prototypes/chess-compiler run eval",
     "compile:stories": "bun scripts/compile-stories.mts",
     "predev": "pnpm compile:stories",
-    "check:runtime-inference": "python3 prototypes/chess-compiler/evaluation/runtime_compare.py --self-test",
+    "check:runtime-inference": "python3 prototypes/chess-compiler/evaluation/runtime_compare.py --self-test && python3 prototypes/chess-compiler/evaluation/execution_modes.py --self-test",
     "check:lsp": "python3 prototypes/chess-compiler/evaluation/lsp_smoke.py"
   },
   "dependencies": {
