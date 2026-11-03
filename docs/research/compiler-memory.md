@@ -4,7 +4,7 @@ This change captures one source revision for each build, bounds inactive replay 
 
 ## Measured workload
 
-The [raw record](evidence/compiler-memory-results-2026-11-04.json) includes every sample, Bun/platform identity, source and harness digests, fixture/lockfile digests, and dirty state. Baseline is main commit `8d7cf9a98b4c040a539a2ee8c1ec373f0ebb965e`; candidate code is identified by its source digest. The raw record identifies the candidate code revision and source state used for measurement.
+The [raw record](evidence/compiler-memory-results-2026-11-04.json) includes every sample, Bun/platform identity, source and harness digests, fixture/lockfile digests, and dirty state. Baseline is main commit `8d7cf9a98b4c040a539a2ee8c1ec373f0ebb965e`; candidate code is identified by its source digest. The raw record identifies the local candidate code revision and source state used for measurement; `publishedEquivalentCommit` identifies the identical tree available on GitHub.
 
 Three fresh processes per revision and mode; 200 sequential updates to one story referencing the Opera Game. The PGN workload edits the Event tag without changing moves. Each sample forces JavaScriptCore full GC and sweeping. Public snapshots are not accumulated by the caller. All builds must remain valid.
 
