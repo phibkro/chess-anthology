@@ -5,7 +5,9 @@ go 1.27.3
 require (
 	github.com/chesshere-com/chess-on-go v0.22.2
 	github.com/nationallibraryofnorway/whatwg-url v0.7.0
+	golang.org/x/exp/jsonrpc2 v0.0.0-20260312153236-7ab1446f8b90
 	typefox.dev/fastbelt v0.1.1-0.20261026125838-e6491141491b
+	typefox.dev/lsp v0.1.0
 )
 
 require (
@@ -17,12 +19,10 @@ require (
 	github.com/spf13/pflag v1.0.10 // indirect
 	github.com/stretchr/testify v1.11.1 // indirect
 	golang.org/x/exp/event v0.0.0-20260312153236-7ab1446f8b90 // indirect
-	golang.org/x/exp/jsonrpc2 v0.0.0-20260312153236-7ab1446f8b90 // indirect
 	golang.org/x/net v0.49.0 // indirect
 	golang.org/x/text v0.33.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	typefox.dev/lsp v0.1.0 // indirect
 )
 
 tool typefox.dev/fastbelt/cmd/fastbelt

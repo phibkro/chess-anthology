@@ -6,6 +6,7 @@ import (
 
 	c "github.com/phibkro/chess-anthology/compiler/contracts"
 	semantic "github.com/phibkro/chess-anthology/compiler/internal/phases/200-semantic-analysis"
+	linking "github.com/phibkro/chess-anthology/compiler/internal/phases/300-linking"
 	emission "github.com/phibkro/chess-anthology/compiler/internal/phases/500-emission"
 	build "github.com/phibkro/chess-anthology/compiler/internal/phases/600-build"
 )
@@ -80,3 +81,6 @@ func CompileOrdered(sources []c.Source) (c.Snapshot, *c.Failure) {
 	u, f := CreateCompiler().UpdateOrdered(sources)
 	return u.Snapshot, f
 }
+
+// ResolveSourceURI resolves configured artifact paths using the compiler URI policy.
+func ResolveSourceURI(base string, path c.Text) string { return linking.Relative(base, path) }

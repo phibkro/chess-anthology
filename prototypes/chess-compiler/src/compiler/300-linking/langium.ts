@@ -1,7 +1,16 @@
 import { EmptyFileSystem, inject, AstUtils, URI } from "langium";
 import type { AstNode, ValidationChecks } from "langium";
-import { createDefaultModule, createDefaultSharedModule } from "langium/lsp";
-import type { DefaultSharedModuleContext, LangiumServices } from "langium/lsp";
+import {
+  createDefaultModule,
+  createDefaultSharedModule,
+  DefaultDocumentUpdateHandler,
+} from "langium/lsp";
+import type {
+  DefaultSharedModuleContext,
+  LangiumServices,
+  LangiumSharedServices,
+  DocumentUpdateHandler,
+} from "langium/lsp";
 
 import type { Sources } from "../../contracts/index.js";
 import {
@@ -35,16 +44,24 @@ export type { Sources } from "../../contracts/index.js";
  * @param sources - Configured source text indexed by canonical URI.
  * @param context - Framework filesystem and language-server connection services.
  * @param analysis - Shared chess replay analysis for this workspace.
+ * @param updates - Optional editor lifecycle adapter.
  * @returns Configure Langium parsing, linking, validation and completion services.
  */
 export const createServices = (
   sources: Sources,
   context: DefaultSharedModuleContext = EmptyFileSystem,
-  analysis = createChessAnalysis()
+  analysis = createChessAnalysis(),
+  updates?: (services: LangiumSharedServices) => DocumentUpdateHandler
 ) => {
   const shared = inject(
     createDefaultSharedModule(context),
-    ChessNarrativeGeneratedSharedModule
+    ChessNarrativeGeneratedSharedModule,
+    {
+      lsp: {
+        DocumentUpdateHandler: (services: LangiumSharedServices) =>
+          updates?.(services) ?? new DefaultDocumentUpdateHandler(services),
+      },
+    }
   );
   const language = inject(
     createDefaultModule({ shared }),

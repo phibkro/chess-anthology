@@ -131,3 +131,33 @@ func (t *Text) UnmarshalJSON(raw []byte) error {
 
 // Digest matches SHA-256 over JavaScript's UTF-8 encoding of source text.
 func Digest(t Text) string { h := sha256.Sum256([]byte(t.UTF8())); return hex.EncodeToString(h[:]) }
+
+// UTF16 returns an independent code-unit view, including unpaired surrogates.
+func (t Text) UTF16() []uint16 {
+	out := []uint16{}
+	for i := 0; i < len(t); {
+		r, n := codepoint(string(t), i)
+		i += n
+		if r > 0xffff {
+			r -= 0x10000
+			out = append(out, uint16(0xd800+r/1024), uint16(0xdc00+r%1024))
+		} else {
+			out = append(out, uint16(r))
+		}
+	}
+	return out
+}
+
+// FromUTF16 restores text without replacing unpaired surrogates.
+func FromUTF16(units []uint16) Text {
+	out := []byte{}
+	for i := 0; i < len(units); i++ {
+		r := rune(units[i])
+		if r >= 0xd800 && r <= 0xdbff && i+1 < len(units) && units[i+1] >= 0xdc00 && units[i+1] <= 0xdfff {
+			i++
+			r = 0x10000 + (r-0xd800)*1024 + rune(units[i]) - 0xdc00
+		}
+		out = appendPoint(out, r)
+	}
+	return Text(out)
+}

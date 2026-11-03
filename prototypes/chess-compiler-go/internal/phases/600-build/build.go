@@ -201,3 +201,16 @@ func (b *Compiler) update(next map[string]c.Text, order []string) (c.Update, *c.
 	copy, f := clone(snapshot)
 	return c.Update{Snapshot: copy, Work: work}, f
 }
+
+// Describe returns owned source metadata without exposing the parser AST or rebuilding.
+func (b *Compiler) Describe(uri string) (c.SourceInfo, *c.Failure) {
+	if !b.mu.TryLock() {
+		return c.SourceInfo{}, c.Fail("infrastructure", "build/busy", "Await the current update.")
+	}
+	defer b.mu.Unlock()
+	p, ok := b.syntax[uri]
+	if !ok {
+		return c.SourceInfo{}, c.Fail("selection", "view/missing-source", "Source is unavailable.")
+	}
+	return clone(c.SourceInfo{Data: p.Data, Spans: p.Spans})
+}

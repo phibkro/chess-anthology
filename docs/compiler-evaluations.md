@@ -87,3 +87,7 @@ The compiler test command also runs `src/chess960.test.ts`: all 960 independentl
 ### Delivery and compilation modes
 
 The [execution-mode experiment](compiler-execution-modes.md) evaluates source execution, bundles, Node code cache/SEA, Bun executables and bytecode, with native AOT capability detection. It reports first-compilation wall time separately from warm operations and compares delivery modes within each compiler revision.
+
+### Editor protocol
+
+The [LSP evaluation suite](compiler-lsp-evaluations.md) exercises real editor messages against Go, maintained Bun delivery modes and frozen Node-era controls. It separates startup through first diagnostics from persistent-session edits/queries and records unsupported historical behavior explicitly.

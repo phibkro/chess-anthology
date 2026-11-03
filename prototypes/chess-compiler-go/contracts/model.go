@@ -281,3 +281,9 @@ type Source struct {
 	URI  Text `json:"uri"`
 	Text Text `json:"text"`
 }
+
+// SourceInfo is an owned authored model and source spans for editor queries.
+type SourceInfo struct {
+	Data  *Document        `json:"data"`
+	Spans map[string]Range `json:"spans"`
+}

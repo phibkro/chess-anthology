@@ -40,6 +40,7 @@ jobs:
           go test ./contracts -fuzz=FuzzText -fuzztime=5s -parallel=2
           go test . -fuzz=FuzzDecode -fuzztime=5s -parallel=2
           go test . -fuzz=FuzzPGN -fuzztime=5s -parallel=2
+          go test ./internal/lsp -fuzz=FuzzUTF16Edit -fuzztime=5s -parallel=2
       - name: Evaluate Go and compare native execution with Bun
         shell: bash
         env:

@@ -43,7 +43,7 @@ func TestPhaseDependencies(t *testing.T) {
 				if owner != "" && other != owner && !allowed[owner][other] {
 					t.Errorf("%s imports forbidden phase %s", path, other)
 				}
-				if strings.HasPrefix(normalized, "cmd/") {
+				if strings.HasPrefix(normalized, "cmd/") || strings.HasPrefix(normalized, "internal/lsp/") {
 					t.Errorf("adapter bypasses public compiler: %s", path)
 				}
 			}

@@ -257,3 +257,27 @@ func TestEnvelopeRejectsUnknownVersionField(t *testing.T) {
 		t.Fatal("unknown envelope key accepted")
 	}
 }
+
+func TestDescribeOwnsSourceMetadata(t *testing.T) {
+	b := compiler.CreateCompiler()
+	uri := "file:///owned.chess-story"
+	if _, f := b.Update(map[string]c.Text{uri: "module owned; game example from \"./game.pgn\";"}); f != nil {
+		t.Fatal(f)
+	}
+	first, f := b.Describe(uri)
+	if f != nil {
+		t.Fatal(f)
+	}
+	first.Data.Games[0].Name = "changed"
+	delete(first.Spans, "games.0.name")
+	second, f := b.Describe(uri)
+	if f != nil {
+		t.Fatal(f)
+	}
+	if second.Data.Games[0].Name != "example" {
+		t.Fatal("model aliases compiler cache")
+	}
+	if _, ok := second.Spans["games.0.name"]; !ok {
+		t.Fatal("spans alias compiler cache")
+	}
+}
