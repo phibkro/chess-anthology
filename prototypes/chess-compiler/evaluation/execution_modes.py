@@ -14,6 +14,7 @@ import time
 sys.dont_write_bytecode = True
 
 from runtime_compare import holm, inference
+from go_adapter import stage_go
 
 
 def run(command, cwd, env=None, timeout=180):
@@ -30,7 +31,7 @@ def failure_output(error):
 
 def controlled_environment(parent):
     env = dict(parent, CHESS_BENCH_ITERATIONS="5", CHESS_BENCH_WARMUPS="2", CHESS_BENCH_SIZES="1,10,100")
-    for key in ["NODE_COMPILE_CACHE", "NODE_DISABLE_COMPILE_CACHE", "NODE_OPTIONS", "BUN_OPTIONS"]:
+    for key in ["NODE_COMPILE_CACHE", "NODE_DISABLE_COMPILE_CACHE", "NODE_OPTIONS", "BUN_OPTIONS", "GOGC", "GOMEMLIMIT", "GOMAXPROCS"]:
         env.pop(key, None)
     return env
 
@@ -112,6 +113,9 @@ def make_sea(node, bundle, destination, cache, log):
 def prepare(base, current, destination, bun, node):
     arms, builds, unavailable = {}, {}, {}
     for label, directory in [("legacy", base), ("current", current)]:
+        requested = set(os.environ.get("CHESS_MODE_ARMS", "").split(",")) - {""}
+        if label == "legacy" and requested and not requested.intersection({"node-tsx","node-bundle","node-cache","node-sea","node-sea-cache","legacy-bun-source"}):
+            continue
         folder = destination / label
         folder.mkdir(parents=True, exist_ok=True)
         entry, provenance = stage(directory, folder)
@@ -168,6 +172,31 @@ def prepare(base, current, destination, bun, node):
                     unavailable["bun-aot"] = {**failure_output(error), "reason": "Capability probe passed but compiler build failed"}
             else:
                 unavailable["bun-aot"] = capability
+    go_module = current.parent / "chess-compiler-go"
+    if go_module.is_dir():
+        go = shutil.which(os.environ.get("CHESS_GO", "go"))
+        if not go:
+            unavailable["go-native"] = {"reason": "Go toolchain unavailable; set CHESS_GO"}
+        else:
+            folder = destination / "go"
+            folder.mkdir(parents=True, exist_ok=True)
+            binary = folder / "chess-compiler-go"
+            started = time.perf_counter()
+            command = [go, "build", "-trimpath", "-o", str(binary), "./cmd/chess-compiler"]
+            log = run(command, go_module, dict(os.environ, CGO_ENABLED="0"))
+            version = run([go, "version"], go_module).stdout.strip()
+            builds["go-native"] = {"seconds": time.perf_counter()-started, "command": command, "stdout": log.stdout, "stderr": log.stderr}
+            entry, payload, provenance = stage_go(current, folder, binary, bun, stage, run)
+            parity = run([sys.executable, current / "evaluation/go_conformance.py", current, binary, folder], current, dict(os.environ, CHESS_BUN=bun))
+            (folder / "conformance-output.txt").write_text(parity.stdout)
+            provenance["compilerDirty"] = bool(run(["git","status","--porcelain","--","."],go_module).stdout)
+            provenance["lockDigest"] = sha(go_module / "go.sum")
+            sources = sorted(go_module.rglob("*.go"))
+            source_digest = hashlib.sha256(b"".join(str(p.relative_to(go_module)).encode()+b"\0"+p.read_bytes() for p in sources)).hexdigest()
+            arms["go-native"] = {"command": [str(binary), "--worker", str(payload)], "evaluationCommand": [bun,str(entry)],
+                                 "cwd": str(current), "env": {}, "revision": "current", "crossLanguage": True,
+                                 "runtimeVersion": version, "sourceDigest": source_digest, "workloadDigest": sha(payload),
+                                 "artifactBytes": binary.stat().st_size, "artifactDigest": sha(binary), **provenance}
     return arms, builds, unavailable
 
 
@@ -181,7 +210,16 @@ def check_evaluations(arms, evaluations):
             if arms[name]["revision"] != revision:
                 continue
             for key in ["corpusDigest", "budgets", "cases"]:
-                if report[key] != reference[key]:
+                left, right = report[key], reference[key]
+                if key == "cases" and arms[name].get("crossLanguage"):
+                    def diagnostics(value):
+                        copy = json.loads(json.dumps(value))
+                        for case in copy:
+                            for diagnostic in case["diagnostics"]:
+                                diagnostic.pop("message", None)
+                        return copy
+                    left, right = diagnostics(left), diagnostics(right)
+                if left != right:
                     raise ValueError(f"{name} differs from {control} in {key}")
 
 
@@ -214,7 +252,8 @@ def self_test():
 def invoke(arm, task, env):
     child_env = dict(env, **arm["env"], CHESS_MODE_TASK=task)
     started = time.perf_counter()
-    result = run(arm["command"], arm["cwd"], child_env)
+    command = arm.get("evaluationCommand", arm["command"]) if task == "evaluate" else arm["command"]
+    result = run(command, arm["cwd"], child_env)
     return json.loads(result.stdout), (time.perf_counter() - started) * 1000
 
 
@@ -236,6 +275,8 @@ def main():
             report, _ = invoke(arm, "evaluate", env)
             if report.get("passed") is not True:
                 raise ValueError("Evaluation did not pass")
+            if arm.get("crossLanguage"):
+                report["environment"]["runtime"] = {"name":"go", "version":arm["runtimeVersion"], "adapter":"Bun shared acceptance harness"}
             evaluations[name] = report
             (destination / f"{name}-evaluation.json").write_text(json.dumps(report, indent=2) + "\n")
         except (subprocess.CalledProcessError, subprocess.TimeoutExpired, ValueError) as error:
@@ -249,6 +290,13 @@ def main():
         arms["node-cache"]["cacheDirectoryVerified"] = cache_directory
     check_evaluations(arms, evaluations)
     active = {name: arm for name, arm in arms.items() if name in evaluations}
+    requested = set(os.environ.get("CHESS_MODE_ARMS", "").split(",")) - {""}
+    if requested:
+        unknown = requested - arms.keys() - unavailable.keys()
+        if unknown:
+            raise ValueError(f"Unknown modes: {unknown}")
+        controls = {"node-tsx" if arm["revision"] == "legacy" else "bun-source" for name,arm in active.items() if name in requested}
+        active = {name: arm for name,arm in active.items() if name in requested or name in controls}
     # Evaluation warms Node's explicitly persistent disk cache; all other runtime/JIT state dies per child.
     for name, arm in active.items():
         invoke(arm, "benchmark", env)
@@ -268,6 +316,9 @@ def main():
             report, wall = invoke(active[name], "benchmark", env)
             first, first_wall = invoke(active[name], "once", env)
             report.update(processWallMs=wall, firstCompileWallMs=first_wall, firstCompileWork=first)
+            if active[name].get("crossLanguage"):
+                for key in ["compilerCommit", "compilerDirty", "harnessDigest", "lockDigest", "sourceDigest"]:
+                    report[key] = active[name][key]
             reports[name].append(report)
             (destination / f"{name}-{block:02}.json").write_text(json.dumps(report, indent=2) + "\n")
     rows = []
@@ -286,7 +337,7 @@ def main():
             rows.append({"control": control, "arm": name, "metric": metric,
                          "beforeMs": statistics.median(before), "afterMs": statistics.median(after), **inference(before, after)})
     holm(rows)
-    summary = {"format": "chess-execution-modes", "version": 1, "blocks": blocks, "schedule": schedule, "harnessDigest": harness_digest, "machine": {"platform": platform.platform(), "cpu": next((line.split(":", 1)[1].strip() for line in Path("/proc/cpuinfo").read_text().splitlines() if line.startswith("model name")), "unavailable") if Path("/proc/cpuinfo").exists() else platform.processor()},
+    summary = {"format": "chess-execution-modes", "version": 1, "blocks": blocks, "schedule": schedule, "harnessDigest": harness_digest, "supportDigests": {name: sha(current / "evaluation" / name) for name in ["go_adapter.py","go_conformance.py"] if (current / "evaluation" / name).is_file()}, "machine": {"platform": platform.platform(), "cpu": next((line.split(":", 1)[1].strip() for line in Path("/proc/cpuinfo").read_text().splitlines() if line.startswith("model name")), "unavailable") if Path("/proc/cpuinfo").exists() else platform.processor()},
                "versions": {"bun": run([bun, "--version"], current).stdout.strip(), "node": run([node, "--version"], current).stdout.strip()},
                "arms": active, "builds": builds, "unavailable": unavailable, "evaluationFailures": failures,
                "method": "Paired fresh process blocks, warm-operation medians and separate end-to-end first compile wall time; nominal paired-bootstrap 95% intervals, exact sign-flip test, Holm correction across all rows; controls within each compiler revision only",

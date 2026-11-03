@@ -1,6 +1,6 @@
 # A Go counterpart to the chess compiler
 
-Research date: 2 November 2026. Status: researched design with bounded library acceptance probes; not an implemented compiler or a measured compiler-performance result.
+Research date: 2 November 2026. This report records the original design and library audit. Update, 3 November 2026: an independent [Go compiler prototype](../../prototypes/chess-compiler-go/README.md) now implements the public compiler/codec/playback seams and participates in shared evaluations and benchmarks. The [tooling refresh](go-compiler-tooling.md) led to adopting Fastbelt syntax generation instead of the handwritten-parser proposal below. Statements about scratch-only probes describe the original audit, not the newer compiler implementation.
 
 ## Recommendation
 

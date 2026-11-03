@@ -10,6 +10,7 @@ import {
   jsonParserModule,
   isModule,
   isGame,
+  isStory,
 } from "../100-parsing/index.js";
 import type { Module, ChessNarrativeAstType } from "../100-parsing/index.js";
 import {
@@ -115,10 +116,16 @@ export const createServices = (
           const declaration =
             issue.path[0] === "games"
               ? module.declarations.filter(isGame)[Number(issue.path[1])]
-              : module;
+              : module.declarations.filter(isStory)[Number(issue.path[1])];
+          const node =
+            issue.path[2] === "scenes" &&
+            declaration !== undefined &&
+            isStory(declaration)
+              ? declaration.scenes[Number(issue.path[3])]
+              : declaration;
           accept("error", issue.message, {
             code: issue.code,
-            node: declaration,
+            node: node ?? module,
             property: "name",
           });
         }

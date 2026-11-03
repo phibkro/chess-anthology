@@ -1,0 +1,59 @@
+name: Go compiler
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - prototypes/chess-compiler-go/**
+      - prototypes/chess-compiler/**
+      - .github/workflows/go-compiler.yml
+permissions:
+  contents: read
+jobs:
+  go-quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version: 1.27.3
+          cache-dependency-path: prototypes/chess-compiler-go/go.sum
+      - name: Install pinned Bun, pnpm and TypeScript compiler dependencies
+        run: |
+          npm install --global pnpm@12.16.1 bun@1.4.4
+          pnpm --dir prototypes/chess-compiler install --frozen-lockfile
+      - name: Test, vet and verify generated syntax
+        working-directory: prototypes/chess-compiler-go
+        run: |
+          go mod download
+          go mod verify
+          go generate ./...
+          git diff --exit-code -- internal/phases/100-parsing/generated
+          test -z "$(gofmt -l $(git ls-files '*.go' ':!:internal/phases/100-parsing/generated/*'))"
+          go vet ./...
+          go test -race ./...
+          go test ./contracts -fuzz=FuzzText -fuzztime=5s -parallel=2
+          go test . -fuzz=FuzzDecode -fuzztime=5s -parallel=2
+          go test . -fuzz=FuzzPGN -fuzztime=5s -parallel=2
+      - name: Evaluate Go and compare native execution with Bun
+        shell: bash
+        env:
+          CHESS_MODE_ARMS: bun-source,bun-bytecode,go-native
+          CHESS_RUNTIME_BLOCKS: 16
+        run: |
+          python3 prototypes/chess-compiler/evaluation/execution_modes.py prototypes/chess-compiler prototypes/chess-compiler report/go-compiler | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Preserve differential and benchmark reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: go-compiler-comparison
+          path: |
+            report/go-compiler/*.json
+            report/go-compiler/*.md
+            report/go-compiler/go/go-conformance.json
+          if-no-files-found: warn

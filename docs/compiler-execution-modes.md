@@ -81,3 +81,29 @@ Every startup comparison against its revision's source control was detectable af
 None of the current Bun delivery modes had a detectable difference for the 100-story warm initial build. Bytecode did improve the one-story warm initial case in this run (paired ratio 0.83). The broader matrix has other detectable small-workload effects, so this is not a claim that packaging can only affect startup. The strongest demonstrated benefit is first compilation; bundling already captures much of the Node/tsx difference, before adding a single-executable container.
 
 The current Bun executable was about 105.5 MiB and its bytecode counterpart 107.5 MiB. Node SEA artifacts were about 122.6–123.0 MiB; bundles were about 1.5 MiB and require their runtime separately. All figures describe these benchmark artifacts, not minimal release builds. This experiment does not change normal project execution to packaged binaries.
+
+## Go counterpart
+
+When Go is installed (or selected with `CHESS_GO`), the suite builds `prototypes/chess-compiler-go` with `CGO_ENABLED=0 go build -trimpath` and adds `go-native`. Its public API is exercised by the unchanged acceptance harness through an untimed adapter, plus the generated/full-snapshot differential suite. Diagnostic prose is implementation-specific; evaluation comparison retains codes, phases, severities and UTF-16 spans. Native timing runs inside the Go worker without IPC and receives the maintained fixture factory's exact source maps. Go source/dependency/binary identities and toolchain version are recorded separately.
+
+Use `CHESS_MODE_ARMS=bun-source,bun-bytecode,go-native` for the focused comparison. The source control for every selected revision is retained automatically. Default selection still includes all available modes. This is a comparison of compiler implementations, libraries and delivery modes, rather than an isolated runtime effect. Inherited `GOGC`, `GOMEMLIMIT` and `GOMAXPROCS` tuning is removed; Go defaults remain in force.
+
+The dedicated Go workflow checks generation, formatting, vet, race tests and bounded fuzzing before the 16-block comparison. The compiler's [conformance profile](../prototypes/chess-compiler-go/README.md) makes its supported operations and remaining limits explicit.
+
+### Go prototype measurement, 3 November 2026
+
+The final local 16-block comparison passed the shared acceptance corpus/work budgets and 594 differential cases. Node/Bun package controls retain their previous scope; this focused run compares the current Bun compiler with the Go implementation, including Fastbelt, chess-on-go, WHATWG resolution and defensive DTO ownership.
+
+| Operation | Bun source median ms | Go native median ms | Paired Go/Bun ratio [95% interval] |
+| --- | --: | --: | --- |
+| Launch + one-story first compile | 151.89 | 14.20 | 0.10 [0.09, 0.11] |
+| Initial build, 100 stories | 39.14 | 8.78 | 0.23 [0.22, 0.25] |
+| Unchanged, 100 stories | 0.39 | 3.40 | 9.47 [8.41, 10.75] |
+| Prose edit, 100 stories | 1.60 | 3.92 | 2.47 [2.22, 2.76] |
+| Shared-game edit, 100 stories | 21.65 | 5.84 | 0.29 [0.27, 0.31] |
+
+All five displayed Go comparisons were detectable after Holm correction across 26 mode/metric comparisons (adjusted p = 0.000793). Ratios are paired geometric means, not quotients of aggregate medians. These are observations on one Linux x64 environment, not universal language rankings.
+
+Bun's bytecode executable measured 48.18 ms for first compilation and 38.26 ms for the 100-story initial build; the native Go artifact was 6.18 MiB versus 107.47 MiB for that Bun artifact. The Go first-compilation worker streams only the one-story case, avoiding unrelated full-matrix fixture loading. Each warm sample receives the exact revision-specific source map generated for the corresponding TypeScript sample; there is no IPC in native timings.
+
+The larger unchanged/prose regression is consistent with Go's snapshot-copy strategy, which serializes and reconstructs the full DTO before returning it. That is a code-level cost hypothesis, not an allocation profile or isolated causal experiment. Consider immutable handles or more selective defensive copying in a later measured revision, while retaining ownership tests.

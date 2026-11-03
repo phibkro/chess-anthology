@@ -68,3 +68,9 @@ The compiler branch now exports a playback-plan target and a separate browser-sa
 ## Data contracts and executable specifications
 
 Shared IRs live in `src/contracts` inside the compiler package; procedural phases consume and implement those declared contracts. Generated syntax types remain owned by `100-parsing/contract.ts`. [Compiler evaluations](docs/compiler-evaluations.md) maps each contract to its invariants, corpus evaluations, work budgets and performance measurements. A contract defines a seam; a specification describes the broader intended behavior; an IR is a representation crossing that seam.
+
+## Go compiler counterpart
+
+`prototypes/chess-compiler-go` implements the same authored/history/playback contracts as a separate Go module. Its `contracts/` DTOs cannot import Fastbelt or the chess engine. The six numbered internal phase packages mirror the existing seams; an architecture test enforces permitted cross-phase imports and requires command adapters to enter through the public compiler package. Fastbelt's generated syntax stays inside phase 100. Public DTO snapshots use defensive ownership rather than exposing mutable parser/rules objects.
+
+The application still consumes the TypeScript package. The [Go module README](prototypes/chess-compiler-go/README.md) defines its current conformance profile, known differences and reproduction commands. Shared acceptance/differential checks are outside benchmark intervals; the native worker measures Go directly.

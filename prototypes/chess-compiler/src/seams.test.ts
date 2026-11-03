@@ -477,3 +477,45 @@ test("Bun acquisition preserves BOMs and dot-prefixed sources through exact rest
     await $`rm -rf ${directory}`.quiet();
   }
 });
+
+test("200 → 300: duplicate story and board diagnostics select the repeated name", async () => {
+  const duplicateCases = [
+    {
+      code: "semantic/duplicate-symbol",
+      name: "repeated",
+      source: "module identities; story repeated {} story repeated {}",
+    },
+    {
+      code: "semantic/duplicate-occurrence",
+      name: "same",
+      source:
+        'module identities; game g from "./g.pgn"; story lesson { board same game g after 0 {} board same game g after 0 {} }',
+    },
+  ];
+  await Promise.all(
+    duplicateCases.map(async (fixture) => {
+      const snapshot = value(
+        await compile(
+          new Map([
+            ["file:///duplicates/story.chess-story", fixture.source],
+            ["file:///duplicates/g.pgn", "*"],
+          ])
+        )
+      );
+      const document = required(
+        snapshot.output.find((item) => item.uri.endsWith("story.chess-story"))
+      );
+      const diagnostic = required(
+        document.diagnostics.find((item) => item.code === fixture.code)
+      );
+      assert.equal(
+        diagnostic.range.start.character,
+        fixture.source.lastIndexOf(fixture.name)
+      );
+      assert.equal(
+        diagnostic.range.end.character - diagnostic.range.start.character,
+        fixture.name.length
+      );
+    })
+  );
+});

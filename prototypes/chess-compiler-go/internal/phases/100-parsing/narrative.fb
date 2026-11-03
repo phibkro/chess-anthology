@@ -1,0 +1,27 @@
+grammar Narrative
+interface Module { Name string Imports []Import Declarations []Declaration }
+interface Import { Path string }
+interface Declaration {}
+interface Note {}
+interface Game extends Declaration { Exported bool Name string Path string }
+interface Story extends Declaration { Name string Scenes []Scene }
+interface Scene { Name string Game string Ply string Notes []Note }
+interface TextNote extends Note { Content string }
+interface ArrowNote extends Note { From string To string Color string }
+interface PromptNote extends Note { Content string Answer string }
+entry Module returns Module: "module" Name=ID ";" Imports+=Import* Declarations+=Declaration*;
+Import returns Import: "import" Path=STRING ";";
+Declaration returns Declaration: Game | Story;
+Game returns Game: Exported?="export"? "game" Name=ID "from" Path=STRING ";";
+Story returns Story: "story" Name=ID "{" Scenes+=Scene* "}";
+Scene returns Scene: "board" Name=ID "game" Game=ID "after" Ply=INT "{" Notes+=Note* "}";
+Note returns Note: TextNote | ArrowNote | PromptNote;
+TextNote returns TextNote: "text" Content=STRING ";";
+ArrowNote returns ArrowNote: "arrow" From=STRING "->" To=STRING Color=ID ";";
+PromptNote returns PromptNote: "prompt" Content=STRING "answer" Answer=STRING ";";
+token ID: /[_a-zA-Z][_a-zA-Z0-9]*/;
+token INT: /[0-9]+/;
+token STRING: /"([^"\\\x00-\x1F]|\\(["\\\/bfnrt]|u[0-9a-fA-F]{4}))*"/;
+hidden token WS: /[\s\p{Z}\x{FEFF}\x{000B}]+/;
+comment token SL_COMMENT: /\/\/[^\n\r]*/;
+comment token ML_COMMENT: /\/\*[\s\S]*?\*\//;
