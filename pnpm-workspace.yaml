@@ -11,3 +11,6 @@ peerDependencyRules:
 
 allowBuilds:
   esbuild: true
+minimumReleaseAgeExclude:
+  - "@shadcn/lint@0.2.4"
+  - ultracite@8.0.0

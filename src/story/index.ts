@@ -1,1 +1,1 @@
-export { StoryReader } from "./Reader";
+export { StoryReader } from "./reader";

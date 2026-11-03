@@ -1,0 +1,86 @@
+[
+  {
+    "candidate": "chess-on-go",
+    "case": "double-move-castling",
+    "passed": true,
+    "observed": "k7/8/8/8/8/8/8/5RK1 b - - 1 1"
+  },
+  {
+    "candidate": "chess-on-go",
+    "case": "stationary-king",
+    "passed": true,
+    "observed": "6k1/8/8/8/8/8/8/5RK1 b - - 1 1"
+  },
+  {
+    "candidate": "chess-on-go",
+    "case": "stationary-rook",
+    "passed": true,
+    "observed": "k7/8/8/8/8/8/8/5RK1 b - - 1 1"
+  },
+  {
+    "candidate": "chess-on-go",
+    "case": "king-rook-swap",
+    "passed": true,
+    "observed": "4k3/8/8/8/8/8/8/2KR4 b - - 1 1"
+  },
+  {
+    "candidate": "chess-on-go",
+    "case": "black-stationary-king",
+    "passed": true,
+    "observed": "fen=5rk1/8/8/8/8/8/8/6K1 w - - 1 2 error=\u003cnil\u003e"
+  },
+  {
+    "candidate": "chess-on-go",
+    "case": "no-rights-no-castling",
+    "passed": true,
+    "observed": "castles=0 error=\u003cnil\u003e"
+  },
+  {
+    "candidate": "chess-on-go",
+    "case": "attacked-transit-forbids-castling",
+    "passed": true,
+    "observed": "castles=0 error=\u003cnil\u003e"
+  },
+  {
+    "candidate": "chess-on-go",
+    "case": "960-unique-valid-starts-roundtrip",
+    "passed": true,
+    "observed": "uniqueStarts=960"
+  },
+  {
+    "candidate": "chess-on-go",
+    "case": "explicit-variant-orthodox-array",
+    "passed": true,
+    "observed": "error=\u003cnil\u003e"
+  },
+  {
+    "candidate": "chess-on-go",
+    "case": "invalid-side-variation-rejected",
+    "passed": false,
+    "observed": "error=\u003cnil\u003e"
+  },
+  {
+    "candidate": "chess-on-go",
+    "case": "pgn-annotations-variation-preserved",
+    "passed": false,
+    "observed": "[Event \"Probe\"]\n[Site \"?\"]\n[Date \"????.??.??\"]\n[Round \"?\"]\n[White \"?\"]\n[Black \"?\"]\n[Result \"*\"]\n\n1. e4 e5 2. Nf3 *"
+  },
+  {
+    "candidate": "chess-on-go",
+    "case": "duplicate-epd-operation-retained",
+    "passed": false,
+    "observed": "custom=[second] error=\u003cnil\u003e"
+  },
+  {
+    "candidate": "lavren1974/chess960",
+    "case": "no-rights-no-castling",
+    "passed": false,
+    "observed": "castles=1 error=\u003cnil\u003e"
+  },
+  {
+    "candidate": "lavren1974/chess960",
+    "case": "shredder-fen-accepted",
+    "passed": false,
+    "observed": "error=chess: fen invalid castle rights H"
+  }
+]

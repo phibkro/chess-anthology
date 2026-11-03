@@ -411,7 +411,8 @@ select {
   content: "";
   position: absolute;
   inset: 24px;
-  background: repeating-conic-gradient(#8a927d40 0% 25%, transparent 0% 50%) 0 0/42px 42px;
+  background: repeating-conic-gradient(#8a927d40 0% 25%, transparent 0% 50%) 0
+    0/42px 42px;
   transform: rotate(-12deg) scale(1.3);
 }
 .entry:nth-child(2n) .entry-art {
@@ -1051,7 +1052,13 @@ dialog.lesson-dialog {
   height: 100%;
 }
 .lesson-board cg-board {
-  background: conic-gradient(#879078 25%, #e3dcc8 0 50%, #879078 0 75%, #e3dcc8 0) 0 0/25% 25%;
+  background: conic-gradient(
+      #879078 25%,
+      #e3dcc8 0 50%,
+      #879078 0 75%,
+      #e3dcc8 0
+    )
+    0 0/25% 25%;
 }
 .lesson-board cg-board square.last-move {
   background-color: #c0aa5780;
@@ -1518,4 +1525,34 @@ html:has(dialog[open]) {
 .story-reader .narrative-column > h3 {
   font-size: 28px;
   margin: 8px 0;
+}
+
+/* Preserve the board layout while using native descriptive grouping. */
+figure.hero-board,
+figure.cg-wrap {
+  margin: 0;
+}
+fieldset.tabs {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+progress.progress-track {
+  appearance: none;
+  width: 100%;
+  border: 0;
+}
+progress.progress-track::-webkit-progress-bar {
+  background: var(--line);
+}
+progress.progress-track::-webkit-progress-value {
+  background: var(--ink);
+}
+progress.progress-track::-moz-progress-bar {
+  background: var(--ink);
+}
+output.move-feedback {
+  display: block;
+  margin-block: 1em;
 }

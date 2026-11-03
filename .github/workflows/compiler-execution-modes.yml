@@ -1,0 +1,42 @@
+name: Compiler execution modes
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - compiler/evaluation/execution_modes.py
+      - .github/workflows/compiler-execution-modes.yml
+permissions:
+  contents: read
+jobs:
+  execution-modes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+      - name: Install pinned tools and compiler dependencies
+        run: |
+          npm install --global pnpm@12.16.1 bun@1.4.4
+          pnpm --dir compiler install --frozen-lockfile
+          git worktree add --detach "$RUNNER_TEMP/compiler-node-baseline" f2068c0d8ab86c80706fa59867e127101fa51fae
+          pnpm --dir "$RUNNER_TEMP/compiler-node-baseline/prototypes/chess-compiler" install --frozen-lockfile
+      - name: Evaluate artifacts and compare execution modes
+        shell: bash
+        env:
+          CHESS_RUNTIME_BLOCKS: 16
+        run: |
+          python3 compiler/evaluation/execution_modes.py "$RUNNER_TEMP/compiler-node-baseline/prototypes/chess-compiler" compiler report/execution-modes | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Preserve reports and build evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: compiler-execution-modes
+          path: |
+            report/execution-modes/*.json
+            report/execution-modes/*.md
+            report/execution-modes/current/aot-capability.json
+          if-no-files-found: error

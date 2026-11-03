@@ -1,0 +1,149 @@
+{
+  "version": 1,
+  "provenance": {
+    "opening.pgn": "Synthetic four-ply opening. Initial and e4 FEN expectations are specified directly. Emitted FEN normalizes an uncapturable en-passant target to a dash.",
+    "composition.pgn": "Short legal excerpt from the well-known Reti study position, 1921; this checks replay, not the study's solution or attribution research.",
+    "reti.pgn": "Existing repository Reti\u2013Tartakower 1910 fixture, copied for a self-contained corpus. Final frame count is pinned; no independent full-game oracle is claimed."
+  },
+  "cases": [
+    {
+      "id": "valid-contexts",
+      "edit": "none",
+      "diagnostics": [],
+      "plan": "ok",
+      "target": "",
+      "phase": ""
+    },
+    {
+      "id": "syntax",
+      "edit": "syntax",
+      "diagnostics": ["lexing-error"],
+      "plan": "plan/missing-story",
+      "target": "@",
+      "phase": "100-parsing"
+    },
+    {
+      "id": "missing-source",
+      "edit": "missing-source",
+      "diagnostics": ["source/missing-game"],
+      "plan": "plan/invalid-content",
+      "target": "./unavailable.pgn",
+      "phase": "300-linking"
+    },
+    {
+      "id": "missing-game",
+      "edit": "missing-game",
+      "diagnostics": ["link/unresolved-game"],
+      "plan": "plan/invalid-content",
+      "target": "unavailable",
+      "phase": "300-linking"
+    },
+    {
+      "id": "missing-position",
+      "edit": "missing-position",
+      "diagnostics": ["chess/missing-position"],
+      "plan": "plan/invalid-content",
+      "target": "999",
+      "phase": "400-chess-analysis"
+    },
+    {
+      "id": "illegal-answer",
+      "edit": "illegal-answer",
+      "diagnostics": ["chess/illegal-answer"],
+      "plan": "plan/invalid-content",
+      "target": "e4",
+      "phase": "400-chess-analysis"
+    },
+    {
+      "id": "invalid-arrow",
+      "edit": "invalid-arrow",
+      "diagnostics": ["annotation/invalid-square"],
+      "plan": "plan/invalid-content",
+      "target": "z9",
+      "phase": "400-chess-analysis"
+    },
+    {
+      "id": "illegal-recorded-move",
+      "edit": "illegal-recorded-move",
+      "diagnostics": ["chess/invalid-game"],
+      "plan": "plan/invalid-content",
+      "target": "./opening.pgn",
+      "phase": "400-chess-analysis"
+    }
+  ],
+  "positions": [
+    {
+      "game": "opening.pgn",
+      "frames": 5,
+      "ply": 1,
+      "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1"
+    },
+    {
+      "game": "composition.pgn",
+      "frames": 4,
+      "ply": 0,
+      "fen": "7K/8/k1P5/7p/8/8/8/8 w - - 0 1"
+    },
+    {
+      "game": "reti.pgn",
+      "frames": 20,
+      "ply": 0,
+      "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "first",
+      "game": "opening",
+      "after": 1,
+      "notes": [
+        {
+          "type": "text",
+          "text": "A central pawn move."
+        },
+        {
+          "type": "arrow",
+          "from": "e2",
+          "to": "e4",
+          "color": "green"
+        },
+        {
+          "type": "prompt",
+          "text": "Black answers in the centre.",
+          "answer": "e5",
+          "answerUci": "e7e5"
+        }
+      ]
+    },
+    {
+      "id": "composed",
+      "game": "study",
+      "after": 0,
+      "notes": [
+        {
+          "type": "text",
+          "text": "A composed king and pawn study position."
+        },
+        {
+          "type": "prompt",
+          "text": "Bring the king closer.",
+          "answer": "Kg7",
+          "answerUci": "h8g7"
+        }
+      ]
+    },
+    {
+      "id": "played",
+      "game": "historical",
+      "after": 16,
+      "notes": [
+        {
+          "type": "prompt",
+          "text": "The queen offer.",
+          "answer": "Qd8+",
+          "answerUci": "d3d8"
+        }
+      ]
+    }
+  ]
+}

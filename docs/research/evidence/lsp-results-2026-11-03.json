@@ -1,0 +1,3423 @@
+{
+  "schema": 1,
+  "arms": {
+    "bun-source": {
+      "command": [
+        "/workspace/scratch/12352969c972/bin/bun",
+        "src/adapters/lsp.ts",
+        "--stdio"
+      ],
+      "cwd": "/workspace/projects/chess-anthology/prototypes/chess-compiler",
+      "revision": "4c28b54ad67c9f74762bd1a4f9012480d7531ca1"
+    },
+    "bun-bundle": {
+      "command": [
+        "/workspace/scratch/12352969c972/bin/bun",
+        "/workspace/projects/chess-anthology/report/lsp-cached/bun-bundle.mjs",
+        "--stdio"
+      ],
+      "cwd": "/workspace/projects/chess-anthology/prototypes/chess-compiler",
+      "revision": "4c28b54ad67c9f74762bd1a4f9012480d7531ca1",
+      "artifactBytes": 1570256,
+      "artifactDigest": "081df123a32ee484187b70d4a2574b4a694a44a72d7ae691a06a49e04e35de74"
+    },
+    "bun-executable": {
+      "command": [
+        "/workspace/projects/chess-anthology/report/lsp-cached/bun-executable",
+        "--stdio"
+      ],
+      "cwd": "/workspace/projects/chess-anthology/prototypes/chess-compiler",
+      "revision": "4c28b54ad67c9f74762bd1a4f9012480d7531ca1",
+      "artifactBytes": 110692528,
+      "artifactDigest": "a9a3e6d96099747ba4b0cbfcf9a2ea4f686bead88ee14e0f9cffe9cb961f6e56"
+    },
+    "bun-bytecode": {
+      "command": [
+        "/workspace/projects/chess-anthology/report/lsp-cached/bun-bytecode",
+        "--stdio"
+      ],
+      "cwd": "/workspace/projects/chess-anthology/prototypes/chess-compiler",
+      "revision": "4c28b54ad67c9f74762bd1a4f9012480d7531ca1",
+      "artifactBytes": 114763952,
+      "artifactDigest": "3180ab4d4b5dc2fcaf8d6f6eac1f4737b3e0810a58443507ee668e016e84fb94"
+    },
+    "go-native": {
+      "command": [
+        "/workspace/projects/chess-anthology/report/lsp-cached/go-native"
+      ],
+      "cwd": "/workspace/projects/chess-anthology/prototypes/chess-compiler-go",
+      "revision": "4c28b54ad67c9f74762bd1a4f9012480d7531ca1",
+      "artifactBytes": 6905509,
+      "artifactDigest": "88b4fec3de7d7a04e086ddb6ada44159f73c65b5b12b86f2e1e223d3dbaf5441"
+    },
+    "node-tsx": {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "--import",
+        "tsx",
+        "/workspace/scratch/12352969c972/compiler-node-baseline/prototypes/chess-compiler/src/adapters/lsp.ts",
+        "--stdio"
+      ],
+      "cwd": "/workspace/scratch/12352969c972/compiler-node-baseline/prototypes/chess-compiler",
+      "revision": "f2068c0d8ab86c80706fa59867e127101fa51fae"
+    },
+    "node-bundle": {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "/workspace/projects/chess-anthology/report/lsp-cached/node-lsp.cjs",
+        "--stdio"
+      ],
+      "cwd": "/workspace/scratch/12352969c972/compiler-node-baseline/prototypes/chess-compiler",
+      "revision": "f2068c0d8ab86c80706fa59867e127101fa51fae",
+      "artifactBytes": 1591993,
+      "artifactDigest": "909fc94640b2bda18f971a223664e51ce0959084a04fd5cf400193490dd8c34e"
+    },
+    "node-sea": {
+      "command": [
+        "/workspace/projects/chess-anthology/report/lsp-cached/node-sea",
+        "--stdio"
+      ],
+      "cwd": "/workspace/scratch/12352969c972/compiler-node-baseline/prototypes/chess-compiler",
+      "revision": "f2068c0d8ab86c80706fa59867e127101fa51fae",
+      "artifactBytes": 128584896,
+      "artifactDigest": "3e98a1e92c2939f6779d7cf1dc050774323065c5fb6a5af9e9a596ce35eaa1d1"
+    },
+    "node-sea-cache": {
+      "command": [
+        "/workspace/projects/chess-anthology/report/lsp-cached/node-sea-cache",
+        "--stdio"
+      ],
+      "cwd": "/workspace/scratch/12352969c972/compiler-node-baseline/prototypes/chess-compiler",
+      "revision": "f2068c0d8ab86c80706fa59867e127101fa51fae",
+      "artifactBytes": 128978112,
+      "artifactDigest": "72faae567d0a306db264e98c2fe333698138e65f88d5263f75b12225b6a18e39"
+    },
+    "legacy-bun-source": {
+      "command": [
+        "/workspace/scratch/12352969c972/bin/bun",
+        "/workspace/scratch/12352969c972/compiler-node-baseline/prototypes/chess-compiler/src/adapters/lsp.ts",
+        "--stdio"
+      ],
+      "cwd": "/workspace/scratch/12352969c972/compiler-node-baseline/prototypes/chess-compiler",
+      "revision": "f2068c0d8ab86c80706fa59867e127101fa51fae"
+    }
+  },
+  "unavailable": {},
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "runtimeVersions": {
+    "bun": "1.4.4",
+    "node": "v24.22.1",
+    "go": "go version go1.27.3 linux/amd64"
+  },
+  "dirty": true,
+  "harnessDigest": "19f41104f3f95a3d948012e9ca288abb90a101f260ecbfd929bfea5f5c0943ee",
+  "lockDigests": {
+    "current": "8dd060ef89a80c6fc00093eea541cbd6a03da3706bbd0d7d138067fccd82aa12",
+    "go": "9fe4df7b8533910af4edcd7b5afa1fa491d62accf81976659721c8051f17fd25",
+    "historical": "e96de9898ad32cb858706e59dc277537e8b4984b0679c53597c7605d10b1c819"
+  },
+  "sourceDigest": "a9f8a4d6051015d902432a30027a8c2de400b5ce543340f40789dbac1e0af8db",
+  "method": {
+    "blocks": 16,
+    "sizes": [1, 10, 100],
+    "iterations": 5,
+    "seed": 20261103,
+    "unit": "median within one fresh server process; paired across blocks",
+    "historicalNode": "frozen separate revision; missing versioned diagnostics accepted only for historical comparisons",
+    "startup": "firstDiagnostics includes process launch, initialize, workspace discovery, open and diagnostics; initialize alone differs in indexing timing",
+    "nativeAOT": "Bun executable/bytecode are packaging/JSC bytecode, not native AOT"
+  },
+  "mediansMs": {
+    "bun-source": {
+      "1": {
+        "initialize": 149.2894255,
+        "open": 42.3261615,
+        "firstDiagnostics": 191.48663499999998,
+        "proseEdit": 2.41624,
+        "syntaxError": 2.080716,
+        "recovery": 2.0944719999999997,
+        "completion": 1.182149,
+        "definition": 0.45949399999999996,
+        "watchedPgnRoundtrip": 5.167406
+      },
+      "10": {
+        "initialize": 148.1766735,
+        "open": 55.7197065,
+        "firstDiagnostics": 205.3142065,
+        "proseEdit": 2.2240115,
+        "syntaxError": 2.0089825,
+        "recovery": 2.1635210000000002,
+        "completion": 1.2794824999999999,
+        "definition": 0.44350900000000004,
+        "watchedPgnRoundtrip": 23.021273
+      },
+      "100": {
+        "initialize": 152.5492715,
+        "open": 119.3473035,
+        "firstDiagnostics": 275.7128025,
+        "proseEdit": 2.116043,
+        "syntaxError": 2.1670095,
+        "recovery": 2.0566839999999997,
+        "completion": 1.2652215,
+        "definition": 0.4285375,
+        "watchedPgnRoundtrip": 142.211165
+      }
+    },
+    "bun-bundle": {
+      "1": {
+        "initialize": 119.64586650000001,
+        "open": 39.670959499999995,
+        "firstDiagnostics": 159.6763055,
+        "proseEdit": 2.0564545,
+        "syntaxError": 1.745629,
+        "recovery": 1.8884750000000001,
+        "completion": 1.1109425000000002,
+        "definition": 0.4673055,
+        "watchedPgnRoundtrip": 5.2233825
+      },
+      "10": {
+        "initialize": 116.0817375,
+        "open": 55.566846999999996,
+        "firstDiagnostics": 172.642647,
+        "proseEdit": 2.3246215,
+        "syntaxError": 1.6614325,
+        "recovery": 1.967875,
+        "completion": 1.4826155,
+        "definition": 0.5101085000000001,
+        "watchedPgnRoundtrip": 22.243769999999998
+      },
+      "100": {
+        "initialize": 112.0981305,
+        "open": 115.929317,
+        "firstDiagnostics": 233.00232549999998,
+        "proseEdit": 2.2207415,
+        "syntaxError": 2.0742085,
+        "recovery": 1.9503955,
+        "completion": 1.084413,
+        "definition": 0.429174,
+        "watchedPgnRoundtrip": 124.189697
+      }
+    },
+    "bun-executable": {
+      "1": {
+        "initialize": 112.21302850000001,
+        "open": 34.26582,
+        "firstDiagnostics": 149.68658399999998,
+        "proseEdit": 2.5028635,
+        "syntaxError": 1.953799,
+        "recovery": 2.2641090000000004,
+        "completion": 1.7185545000000002,
+        "definition": 0.47460100000000005,
+        "watchedPgnRoundtrip": 4.899751
+      },
+      "10": {
+        "initialize": 119.4066195,
+        "open": 52.216658499999994,
+        "firstDiagnostics": 174.57588900000002,
+        "proseEdit": 2.5167705,
+        "syntaxError": 1.8525295,
+        "recovery": 1.8677415000000002,
+        "completion": 1.273675,
+        "definition": 0.471591,
+        "watchedPgnRoundtrip": 20.678928499999998
+      },
+      "100": {
+        "initialize": 109.028024,
+        "open": 111.00537,
+        "firstDiagnostics": 226.41666500000002,
+        "proseEdit": 2.301553,
+        "syntaxError": 2.10129,
+        "recovery": 2.017923,
+        "completion": 1.1097765,
+        "definition": 0.44062599999999996,
+        "watchedPgnRoundtrip": 132.269156
+      }
+    },
+    "bun-bytecode": {
+      "1": {
+        "initialize": 57.2962845,
+        "open": 23.523465,
+        "firstDiagnostics": 80.7510745,
+        "proseEdit": 2.1296340000000002,
+        "syntaxError": 1.8412709999999999,
+        "recovery": 2.1841844999999998,
+        "completion": 1.7192824999999998,
+        "definition": 0.503254,
+        "watchedPgnRoundtrip": 5.078498
+      },
+      "10": {
+        "initialize": 53.499388499999995,
+        "open": 37.1920365,
+        "firstDiagnostics": 91.2021335,
+        "proseEdit": 2.930749,
+        "syntaxError": 1.8057165,
+        "recovery": 1.905954,
+        "completion": 1.185559,
+        "definition": 0.494073,
+        "watchedPgnRoundtrip": 20.750473
+      },
+      "100": {
+        "initialize": 53.569409,
+        "open": 100.449057,
+        "firstDiagnostics": 156.4105995,
+        "proseEdit": 2.2912695000000003,
+        "syntaxError": 1.918765,
+        "recovery": 1.8610544999999998,
+        "completion": 1.162695,
+        "definition": 0.4874735,
+        "watchedPgnRoundtrip": 128.279971
+      }
+    },
+    "go-native": {
+      "1": {
+        "initialize": 13.265534,
+        "open": 1.0634074999999998,
+        "firstDiagnostics": 14.5183945,
+        "proseEdit": 0.3961945,
+        "syntaxError": 0.2964005,
+        "recovery": 0.38098600000000005,
+        "completion": 0.32843350000000004,
+        "definition": 0.196102,
+        "watchedPgnRoundtrip": 1.4807730000000001
+      },
+      "10": {
+        "initialize": 12.930805,
+        "open": 2.9631565,
+        "firstDiagnostics": 15.873451,
+        "proseEdit": 1.0594459999999999,
+        "syntaxError": 0.9676305000000001,
+        "recovery": 1.02012,
+        "completion": 0.356004,
+        "definition": 0.222125,
+        "watchedPgnRoundtrip": 3.3600899999999996
+      },
+      "100": {
+        "initialize": 14.6865345,
+        "open": 15.6599185,
+        "firstDiagnostics": 30.389592999999998,
+        "proseEdit": 6.871518,
+        "syntaxError": 6.9034265,
+        "recovery": 6.697018,
+        "completion": 0.8827975,
+        "definition": 0.328619,
+        "watchedPgnRoundtrip": 23.576676499999998
+      }
+    },
+    "node-tsx": {
+      "1": {
+        "initialize": 671.8749495,
+        "open": 23.2055795,
+        "firstDiagnostics": 698.8799725,
+        "proseEdit": 1.495379,
+        "syntaxError": 1.0715085,
+        "recovery": 1.168087,
+        "completion": 1.020061,
+        "definition": 0.4522945
+      },
+      "10": {
+        "initialize": 691.7127545,
+        "open": 32.330804,
+        "firstDiagnostics": 725.8474575,
+        "proseEdit": 1.177562,
+        "syntaxError": 0.9796469999999999,
+        "recovery": 1.1762695,
+        "completion": 1.1048084999999999,
+        "definition": 0.485933
+      },
+      "100": {
+        "initialize": 668.1945915,
+        "open": 81.342264,
+        "firstDiagnostics": 755.1212875,
+        "proseEdit": 1.5915875,
+        "syntaxError": 1.500406,
+        "recovery": 1.5781795,
+        "completion": 1.132282,
+        "definition": 0.471932
+      }
+    },
+    "node-bundle": {
+      "1": {
+        "initialize": 165.5187125,
+        "open": 21.6863215,
+        "firstDiagnostics": 187.8735475,
+        "proseEdit": 1.516159,
+        "syntaxError": 1.267288,
+        "recovery": 1.2749895,
+        "completion": 1.993156,
+        "definition": 0.6312195
+      },
+      "10": {
+        "initialize": 168.5019065,
+        "open": 33.498264500000005,
+        "firstDiagnostics": 203.85550899999998,
+        "proseEdit": 1.2903805,
+        "syntaxError": 1.1036095000000001,
+        "recovery": 1.2354129999999999,
+        "completion": 1.1647345,
+        "definition": 0.49598749999999997
+      },
+      "100": {
+        "initialize": 169.2747245,
+        "open": 87.08420699999999,
+        "firstDiagnostics": 254.458956,
+        "proseEdit": 1.5605324999999999,
+        "syntaxError": 1.5590950000000001,
+        "recovery": 1.369787,
+        "completion": 0.9589855,
+        "definition": 0.45511250000000003
+      }
+    },
+    "node-sea": {
+      "1": {
+        "initialize": 152.331136,
+        "open": 20.355257,
+        "firstDiagnostics": 174.919713,
+        "proseEdit": 1.5499055,
+        "syntaxError": 1.218197,
+        "recovery": 1.2777910000000001,
+        "completion": 1.3186755,
+        "definition": 0.5442595
+      },
+      "10": {
+        "initialize": 151.785438,
+        "open": 32.998522,
+        "firstDiagnostics": 189.78181999999998,
+        "proseEdit": 1.4271495,
+        "syntaxError": 1.0631315,
+        "recovery": 1.2168904999999999,
+        "completion": 1.1128719999999999,
+        "definition": 0.48467899999999997
+      },
+      "100": {
+        "initialize": 152.13555300000002,
+        "open": 90.9213515,
+        "firstDiagnostics": 237.2140495,
+        "proseEdit": 1.40561,
+        "syntaxError": 1.3584365,
+        "recovery": 1.3622365,
+        "completion": 0.9208004999999999,
+        "definition": 0.49232699999999996
+      }
+    },
+    "node-sea-cache": {
+      "1": {
+        "initialize": 129.6988925,
+        "open": 21.302449,
+        "firstDiagnostics": 155.22200099999998,
+        "proseEdit": 1.7866274999999998,
+        "syntaxError": 1.2133605,
+        "recovery": 1.3685935,
+        "completion": 1.3989935,
+        "definition": 0.563668
+      },
+      "10": {
+        "initialize": 132.3692935,
+        "open": 33.158069,
+        "firstDiagnostics": 167.6085,
+        "proseEdit": 1.534506,
+        "syntaxError": 1.0563470000000001,
+        "recovery": 1.2417125,
+        "completion": 1.1491225,
+        "definition": 0.5838935000000001
+      },
+      "100": {
+        "initialize": 134.7553225,
+        "open": 90.882688,
+        "firstDiagnostics": 224.04010749999998,
+        "proseEdit": 1.645488,
+        "syntaxError": 1.3410445,
+        "recovery": 1.308778,
+        "completion": 0.9494285,
+        "definition": 0.4556935
+      }
+    },
+    "legacy-bun-source": {
+      "1": {
+        "initialize": 148.4919505,
+        "open": 23.7472925,
+        "firstDiagnostics": 172.3256455,
+        "proseEdit": 1.955229,
+        "syntaxError": 1.25044,
+        "recovery": 1.616498,
+        "completion": 1.1453389999999999,
+        "definition": 0.471747
+      },
+      "10": {
+        "initialize": 144.5381705,
+        "open": 38.0531215,
+        "firstDiagnostics": 183.756522,
+        "proseEdit": 1.5560955,
+        "syntaxError": 1.1419085,
+        "recovery": 1.4045545000000002,
+        "completion": 1.207564,
+        "definition": 0.4111555
+      },
+      "100": {
+        "initialize": 150.5264815,
+        "open": 80.375742,
+        "firstDiagnostics": 230.549031,
+        "proseEdit": 1.5336185,
+        "syntaxError": 1.3237644999999998,
+        "recovery": 1.335312,
+        "completion": 1.1672345,
+        "definition": 0.4553475
+      }
+    }
+  },
+  "comparisons": [
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bundle",
+      "size": 1,
+      "metric": "initialize",
+      "ratio": 0.7639835393859323,
+      "ci95": [0.7059027526582433, 0.8201728371007264],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bundle",
+      "size": 1,
+      "metric": "open",
+      "ratio": 0.9667344327732799,
+      "ci95": [0.8921527050418356, 1.0447309875326003],
+      "p": 0.4278564453125,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bundle",
+      "size": 1,
+      "metric": "firstDiagnostics",
+      "ratio": 0.8070069927243463,
+      "ci95": [0.7495704371666988, 0.8629021650220677],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bundle",
+      "size": 1,
+      "metric": "proseEdit",
+      "ratio": 0.862774132170744,
+      "ci95": [0.7268093507026637, 1.0050569429110505],
+      "p": 0.100311279296875,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bundle",
+      "size": 1,
+      "metric": "syntaxError",
+      "ratio": 0.8834120859006424,
+      "ci95": [0.7974417608683487, 0.9816359170090432],
+      "p": 0.03973388671875,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bundle",
+      "size": 1,
+      "metric": "recovery",
+      "ratio": 0.9563293916409586,
+      "ci95": [0.8690756171378351, 1.0536338553667504],
+      "p": 0.390350341796875,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bundle",
+      "size": 1,
+      "metric": "completion",
+      "ratio": 0.8907589231582665,
+      "ci95": [0.7731062538216094, 1.003588956625013],
+      "p": 0.108673095703125,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bundle",
+      "size": 1,
+      "metric": "definition",
+      "ratio": 1.0056948593636668,
+      "ci95": [0.8893788046876473, 1.1168282738449717],
+      "p": 0.932281494140625,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bundle",
+      "size": 1,
+      "metric": "watchedPgnRoundtrip",
+      "ratio": 0.9887849483614312,
+      "ci95": [0.8277532578979506, 1.1675550985690772],
+      "p": 0.9002685546875,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bundle",
+      "size": 10,
+      "metric": "initialize",
+      "ratio": 0.7586974962653533,
+      "ci95": [0.7115086706098852, 0.8086093396058596],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bundle",
+      "size": 10,
+      "metric": "open",
+      "ratio": 0.9779166583642829,
+      "ci95": [0.8676274945095551, 1.1012537167305014],
+      "p": 0.74261474609375,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bundle",
+      "size": 10,
+      "metric": "firstDiagnostics",
+      "ratio": 0.8191490246575001,
+      "ci95": [0.7601961789381818, 0.8852507592227105],
+      "p": 0.00030517578125,
+      "adjustedP": 0.03814697265625,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bundle",
+      "size": 10,
+      "metric": "proseEdit",
+      "ratio": 1.0555358067377005,
+      "ci95": [0.8674253179593434, 1.2924075009373328],
+      "p": 0.619598388671875,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bundle",
+      "size": 10,
+      "metric": "syntaxError",
+      "ratio": 0.8406609172628425,
+      "ci95": [0.6968869460857477, 1.0708969770659829],
+      "p": 0.153411865234375,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bundle",
+      "size": 10,
+      "metric": "recovery",
+      "ratio": 0.9385513172592329,
+      "ci95": [0.8151341626434622, 1.1145616519645458],
+      "p": 0.48040771484375,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bundle",
+      "size": 10,
+      "metric": "completion",
+      "ratio": 1.11324972271567,
+      "ci95": [0.9523766123285049, 1.3249006343408398],
+      "p": 0.23809814453125,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bundle",
+      "size": 10,
+      "metric": "definition",
+      "ratio": 1.101911192963626,
+      "ci95": [0.9790283688723835, 1.2359470988659267],
+      "p": 0.133148193359375,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bundle",
+      "size": 10,
+      "metric": "watchedPgnRoundtrip",
+      "ratio": 1.0140896057879152,
+      "ci95": [0.8594890213667559, 1.2192508815697862],
+      "p": 0.879638671875,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bundle",
+      "size": 100,
+      "metric": "initialize",
+      "ratio": 0.7446086118139041,
+      "ci95": [0.6759640418173715, 0.8190627971148987],
+      "p": 9.1552734375e-5,
+      "adjustedP": 0.012542724609375,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bundle",
+      "size": 100,
+      "metric": "open",
+      "ratio": 0.9423697050320735,
+      "ci95": [0.8308257433885666, 1.0707590013235662],
+      "p": 0.402130126953125,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bundle",
+      "size": 100,
+      "metric": "firstDiagnostics",
+      "ratio": 0.8337719929315095,
+      "ci95": [0.7576279108523163, 0.9195372228549883],
+      "p": 0.002685546875,
+      "adjustedP": 0.27392578125,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bundle",
+      "size": 100,
+      "metric": "proseEdit",
+      "ratio": 0.9858362917656719,
+      "ci95": [0.7593055609364073, 1.3160573653409335],
+      "p": 0.9256591796875,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bundle",
+      "size": 100,
+      "metric": "syntaxError",
+      "ratio": 0.973573493961866,
+      "ci95": [0.7881728708961252, 1.2132742811848158],
+      "p": 0.813018798828125,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bundle",
+      "size": 100,
+      "metric": "recovery",
+      "ratio": 0.9811858058905664,
+      "ci95": [0.8278391113241194, 1.1647818406322736],
+      "p": 0.838897705078125,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bundle",
+      "size": 100,
+      "metric": "completion",
+      "ratio": 0.936957630946651,
+      "ci95": [0.8112190468890211, 1.083871254337942],
+      "p": 0.40875244140625,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bundle",
+      "size": 100,
+      "metric": "definition",
+      "ratio": 0.9906143608721483,
+      "ci95": [0.8349261775888345, 1.165594315599386],
+      "p": 0.9178466796875,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bundle",
+      "size": 100,
+      "metric": "watchedPgnRoundtrip",
+      "ratio": 0.919057538586282,
+      "ci95": [0.8072365458772219, 1.0475654306616853],
+      "p": 0.24566650390625,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-executable",
+      "size": 1,
+      "metric": "initialize",
+      "ratio": 0.7397593827547702,
+      "ci95": [0.6685380266775918, 0.8105235723727244],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-executable",
+      "size": 1,
+      "metric": "open",
+      "ratio": 0.8420459172251128,
+      "ci95": [0.7839301388613275, 0.9032792206049178],
+      "p": 0.0006103515625,
+      "adjustedP": 0.07080078125,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-executable",
+      "size": 1,
+      "metric": "firstDiagnostics",
+      "ratio": 0.760947743772167,
+      "ci95": [0.6975427411632149, 0.8230308708117879],
+      "p": 6.103515625e-5,
+      "adjustedP": 0.00909423828125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-executable",
+      "size": 1,
+      "metric": "proseEdit",
+      "ratio": 0.9782543018878034,
+      "ci95": [0.843369738392094, 1.1246530712576048],
+      "p": 0.78302001953125,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-executable",
+      "size": 1,
+      "metric": "syntaxError",
+      "ratio": 0.9684887427613365,
+      "ci95": [0.8706218360173901, 1.0758342212672],
+      "p": 0.564605712890625,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-executable",
+      "size": 1,
+      "metric": "recovery",
+      "ratio": 1.0660004023662717,
+      "ci95": [0.9748952122696006, 1.167266359037092],
+      "p": 0.18975830078125,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-executable",
+      "size": 1,
+      "metric": "completion",
+      "ratio": 1.2768349650461512,
+      "ci95": [1.1443976676095569, 1.4229840482677132],
+      "p": 0.001190185546875,
+      "adjustedP": 0.13092041015625,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-executable",
+      "size": 1,
+      "metric": "definition",
+      "ratio": 1.0465817492124285,
+      "ci95": [0.9453689070801456, 1.1521069819183392],
+      "p": 0.390289306640625,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-executable",
+      "size": 1,
+      "metric": "watchedPgnRoundtrip",
+      "ratio": 1.1065046217559265,
+      "ci95": [0.8526180946573332, 1.5566857483703629],
+      "p": 0.58880615234375,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-executable",
+      "size": 10,
+      "metric": "initialize",
+      "ratio": 0.8058061412478128,
+      "ci95": [0.7244342470481157, 0.908974739198305],
+      "p": 0.00341796875,
+      "adjustedP": 0.341796875,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-executable",
+      "size": 10,
+      "metric": "open",
+      "ratio": 0.9084770339666219,
+      "ci95": [0.8063988166412386, 1.0082462607258773],
+      "p": 0.1163330078125,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-executable",
+      "size": 10,
+      "metric": "firstDiagnostics",
+      "ratio": 0.8342824284522755,
+      "ci95": [0.7513014654198981, 0.930864328409007],
+      "p": 0.005828857421875,
+      "adjustedP": 0.565399169921875,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-executable",
+      "size": 10,
+      "metric": "proseEdit",
+      "ratio": 1.0194427807152782,
+      "ci95": [0.8055774779412963, 1.286098330751071],
+      "p": 0.877105712890625,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-executable",
+      "size": 10,
+      "metric": "syntaxError",
+      "ratio": 0.8434958699172165,
+      "ci95": [0.708855916014907, 0.9896021288798914],
+      "p": 0.070770263671875,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-executable",
+      "size": 10,
+      "metric": "recovery",
+      "ratio": 0.870007335462164,
+      "ci95": [0.7769746037131576, 0.9711283973345551],
+      "p": 0.033905029296875,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-executable",
+      "size": 10,
+      "metric": "completion",
+      "ratio": 1.0110282729193953,
+      "ci95": [0.8788957205803396, 1.1436627202089065],
+      "p": 0.87603759765625,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-executable",
+      "size": 10,
+      "metric": "definition",
+      "ratio": 1.0754809071036187,
+      "ci95": [0.961961817196577, 1.2112000414821034],
+      "p": 0.258544921875,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-executable",
+      "size": 10,
+      "metric": "watchedPgnRoundtrip",
+      "ratio": 0.8808017860305262,
+      "ci95": [0.7932833137915095, 0.9663254439059937],
+      "p": 0.020660400390625,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-executable",
+      "size": 100,
+      "metric": "initialize",
+      "ratio": 0.7018682637688841,
+      "ci95": [0.6448636925639322, 0.7633239350938046],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-executable",
+      "size": 100,
+      "metric": "open",
+      "ratio": 0.9027833563855092,
+      "ci95": [0.8220965155759332, 0.9874508389430634],
+      "p": 0.0484619140625,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-executable",
+      "size": 100,
+      "metric": "firstDiagnostics",
+      "ratio": 0.790201064789567,
+      "ci95": [0.7264496067541366, 0.8545213097481377],
+      "p": 9.1552734375e-5,
+      "adjustedP": 0.012542724609375,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-executable",
+      "size": 100,
+      "metric": "proseEdit",
+      "ratio": 1.1687355084559543,
+      "ci95": [0.9030263233128821, 1.53856881005949],
+      "p": 0.281036376953125,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-executable",
+      "size": 100,
+      "metric": "syntaxError",
+      "ratio": 0.9183829009632979,
+      "ci95": [0.7746928363007527, 1.071930897906885],
+      "p": 0.336181640625,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-executable",
+      "size": 100,
+      "metric": "recovery",
+      "ratio": 0.9768126230208442,
+      "ci95": [0.8680299017988924, 1.0881068814318922],
+      "p": 0.7249755859375,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-executable",
+      "size": 100,
+      "metric": "completion",
+      "ratio": 0.9241631225596753,
+      "ci95": [0.8282795892195498, 1.032639985141021],
+      "p": 0.1922607421875,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-executable",
+      "size": 100,
+      "metric": "definition",
+      "ratio": 1.0178845638700664,
+      "ci95": [0.9063556728505112, 1.1450897132097229],
+      "p": 0.773223876953125,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-executable",
+      "size": 100,
+      "metric": "watchedPgnRoundtrip",
+      "ratio": 0.9103810032327349,
+      "ci95": [0.8285689041782669, 0.9908087620003525],
+      "p": 0.067169189453125,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bytecode",
+      "size": 1,
+      "metric": "initialize",
+      "ratio": 0.3753021716077909,
+      "ci95": [0.33510288344421285, 0.42078115106677005],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bytecode",
+      "size": 1,
+      "metric": "open",
+      "ratio": 0.5448719553863306,
+      "ci95": [0.49490525199927426, 0.596572020744658],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bytecode",
+      "size": 1,
+      "metric": "firstDiagnostics",
+      "ratio": 0.41196441515161236,
+      "ci95": [0.37100577784880967, 0.45628017408515337],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bytecode",
+      "size": 1,
+      "metric": "proseEdit",
+      "ratio": 0.8751270230481364,
+      "ci95": [0.7509778094345084, 1.0223076227566148],
+      "p": 0.119415283203125,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bytecode",
+      "size": 1,
+      "metric": "syntaxError",
+      "ratio": 0.9263464310028497,
+      "ci95": [0.8518963975499386, 1.0052686536343014],
+      "p": 0.100433349609375,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bytecode",
+      "size": 1,
+      "metric": "recovery",
+      "ratio": 1.0127394058101116,
+      "ci95": [0.9226321487109307, 1.1095646804780748],
+      "p": 0.79388427734375,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bytecode",
+      "size": 1,
+      "metric": "completion",
+      "ratio": 1.3198180105075468,
+      "ci95": [1.1081734460625141, 1.5535006977394599],
+      "p": 0.009674072265625,
+      "adjustedP": 0.919036865234375,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bytecode",
+      "size": 1,
+      "metric": "definition",
+      "ratio": 1.0916743239509035,
+      "ci95": [1.0110958697714172, 1.182574353210435],
+      "p": 0.054779052734375,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bytecode",
+      "size": 1,
+      "metric": "watchedPgnRoundtrip",
+      "ratio": 0.963255213203777,
+      "ci95": [0.7676947790473981, 1.1907420360794567],
+      "p": 0.749420166015625,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bytecode",
+      "size": 10,
+      "metric": "initialize",
+      "ratio": 0.34892410077291836,
+      "ci95": [0.32330777205849903, 0.3763106029337234],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bytecode",
+      "size": 10,
+      "metric": "open",
+      "ratio": 0.636706249009784,
+      "ci95": [0.582590548629265, 0.698876323407227],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bytecode",
+      "size": 10,
+      "metric": "firstDiagnostics",
+      "ratio": 0.43041866362968023,
+      "ci95": [0.39861734831029094, 0.46512084678012766],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bytecode",
+      "size": 10,
+      "metric": "proseEdit",
+      "ratio": 1.1717962152792727,
+      "ci95": [1.0087379837140575, 1.3692927979942853],
+      "p": 0.06707763671875,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bytecode",
+      "size": 10,
+      "metric": "syntaxError",
+      "ratio": 0.8083413314327655,
+      "ci95": [0.7092329201309293, 0.9258527008750292],
+      "p": 0.01007080078125,
+      "adjustedP": 0.9466552734375,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bytecode",
+      "size": 10,
+      "metric": "recovery",
+      "ratio": 0.9224574996887207,
+      "ci95": [0.7962973617053759, 1.1001578034471782],
+      "p": 0.372100830078125,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bytecode",
+      "size": 10,
+      "metric": "completion",
+      "ratio": 0.9153397202300224,
+      "ci95": [0.7926764507705459, 1.068615139713041],
+      "p": 0.27545166015625,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bytecode",
+      "size": 10,
+      "metric": "definition",
+      "ratio": 1.0973260720744196,
+      "ci95": [0.9293211635029912, 1.2717583264156032],
+      "p": 0.2725830078125,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bytecode",
+      "size": 10,
+      "metric": "watchedPgnRoundtrip",
+      "ratio": 0.878664961980763,
+      "ci95": [0.7777426075380749, 0.9802629889345181],
+      "p": 0.0484619140625,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bytecode",
+      "size": 100,
+      "metric": "initialize",
+      "ratio": 0.35620617102883534,
+      "ci95": [0.31640385534620424, 0.40228499362975484],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bytecode",
+      "size": 100,
+      "metric": "open",
+      "ratio": 0.8188451446086403,
+      "ci95": [0.7492135083010011, 0.8869442836312276],
+      "p": 0.0001220703125,
+      "adjustedP": 0.0159912109375,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bytecode",
+      "size": 100,
+      "metric": "firstDiagnostics",
+      "ratio": 0.5616616095031479,
+      "ci95": [0.5135121786271647, 0.6112925629306616],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bytecode",
+      "size": 100,
+      "metric": "proseEdit",
+      "ratio": 0.9730662442869688,
+      "ci95": [0.7834295472188119, 1.1888800873914718],
+      "p": 0.8026123046875,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bytecode",
+      "size": 100,
+      "metric": "syntaxError",
+      "ratio": 0.9323164490938665,
+      "ci95": [0.8000134032206255, 1.0928947209575894],
+      "p": 0.405242919921875,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bytecode",
+      "size": 100,
+      "metric": "recovery",
+      "ratio": 0.9202019888531587,
+      "ci95": [0.8117961234850987, 1.0386537215103362],
+      "p": 0.233428955078125,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bytecode",
+      "size": 100,
+      "metric": "completion",
+      "ratio": 0.9112859942716278,
+      "ci95": [0.7875179682349783, 1.0526569709388685],
+      "p": 0.2467041015625,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bytecode",
+      "size": 100,
+      "metric": "definition",
+      "ratio": 1.114640988932225,
+      "ci95": [1.0064963897479822, 1.2411570711643352],
+      "p": 0.064483642578125,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "bun-bytecode",
+      "size": 100,
+      "metric": "watchedPgnRoundtrip",
+      "ratio": 0.9577901744430711,
+      "ci95": [0.8782601788005028, 1.045028669932294],
+      "p": 0.357696533203125,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "go-native",
+      "size": 1,
+      "metric": "initialize",
+      "ratio": 0.0890778453774622,
+      "ci95": [0.08103799662134697, 0.09691931774275256],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "go-native",
+      "size": 1,
+      "metric": "open",
+      "ratio": 0.03198183694355314,
+      "ci95": [0.025985617508940333, 0.04038579766578973],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "go-native",
+      "size": 1,
+      "metric": "firstDiagnostics",
+      "ratio": 0.07765613941710127,
+      "ci95": [0.07104387555979823, 0.08407247110826147],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "go-native",
+      "size": 1,
+      "metric": "proseEdit",
+      "ratio": 0.1651833846204933,
+      "ci95": [0.1408378622194424, 0.1936529158394651],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "go-native",
+      "size": 1,
+      "metric": "syntaxError",
+      "ratio": 0.15637323609826112,
+      "ci95": [0.13636939629717412, 0.18029236202712481],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "go-native",
+      "size": 1,
+      "metric": "recovery",
+      "ratio": 0.18374630992031676,
+      "ci95": [0.1648978212170398, 0.20336257445303155],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "go-native",
+      "size": 1,
+      "metric": "completion",
+      "ratio": 0.24836673672038415,
+      "ci95": [0.2192842811744396, 0.2807733818329967],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "go-native",
+      "size": 1,
+      "metric": "definition",
+      "ratio": 0.4096958152523217,
+      "ci95": [0.37502415338797285, 0.4481819507312126],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "go-native",
+      "size": 1,
+      "metric": "watchedPgnRoundtrip",
+      "ratio": 0.31131197037214214,
+      "ci95": [0.24260495664934947, 0.4014191625505076],
+      "p": 6.103515625e-5,
+      "adjustedP": 0.00909423828125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "go-native",
+      "size": 10,
+      "metric": "initialize",
+      "ratio": 0.08810518355038653,
+      "ci95": [0.07973814017724085, 0.0980715783263394],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "go-native",
+      "size": 10,
+      "metric": "open",
+      "ratio": 0.05604711961677849,
+      "ci95": [0.047776144947537603, 0.0651853529904652],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "go-native",
+      "size": 10,
+      "metric": "firstDiagnostics",
+      "ratio": 0.07960422156225397,
+      "ci95": [0.0715117513935424, 0.08871133441329673],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "go-native",
+      "size": 10,
+      "metric": "proseEdit",
+      "ratio": 0.43638414965967554,
+      "ci95": [0.37083930400483217, 0.5076567779874072],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "go-native",
+      "size": 10,
+      "metric": "syntaxError",
+      "ratio": 0.4621733563855788,
+      "ci95": [0.3841338906158661, 0.5535123717067252],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "go-native",
+      "size": 10,
+      "metric": "recovery",
+      "ratio": 0.4803884754651812,
+      "ci95": [0.4184774967259207, 0.5455323892792603],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "go-native",
+      "size": 10,
+      "metric": "completion",
+      "ratio": 0.28851564946279823,
+      "ci95": [0.23974379753220057, 0.34523955697903685],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "go-native",
+      "size": 10,
+      "metric": "definition",
+      "ratio": 0.49135724396961633,
+      "ci95": [0.44582793213773153, 0.5350606467285205],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "go-native",
+      "size": 10,
+      "metric": "watchedPgnRoundtrip",
+      "ratio": 0.17342057045978218,
+      "ci95": [0.13159629299965178, 0.2564165315224305],
+      "p": 6.103515625e-5,
+      "adjustedP": 0.00909423828125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "go-native",
+      "size": 100,
+      "metric": "initialize",
+      "ratio": 0.09339667303874039,
+      "ci95": [0.08380952810678463, 0.10260350877034496],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "go-native",
+      "size": 100,
+      "metric": "open",
+      "ratio": 0.13275684218699002,
+      "ci95": [0.11536432693870578, 0.15324096633192427],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "go-native",
+      "size": 100,
+      "metric": "firstDiagnostics",
+      "ratio": 0.1110588646757453,
+      "ci95": [0.09893735789729692, 0.12345243799312439],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "go-native",
+      "size": 100,
+      "metric": "proseEdit",
+      "ratio": 2.878842632764467,
+      "ci95": [2.3659441022515986, 3.4129526712138065],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "go-native",
+      "size": 100,
+      "metric": "syntaxError",
+      "ratio": 3.0425627037895357,
+      "ci95": [2.5795480397019013, 3.5564625653208535],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "go-native",
+      "size": 100,
+      "metric": "recovery",
+      "ratio": 3.2250368837753784,
+      "ci95": [2.7627871116683176, 3.818769777863508],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "go-native",
+      "size": 100,
+      "metric": "completion",
+      "ratio": 0.7131213973602973,
+      "ci95": [0.6446461807879478, 0.7782647587936322],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "go-native",
+      "size": 100,
+      "metric": "definition",
+      "ratio": 0.7733448821974386,
+      "ci95": [0.6714226316355036, 0.872726231525666],
+      "p": 0.000701904296875,
+      "adjustedP": 0.079315185546875,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "go-native",
+      "size": 100,
+      "metric": "watchedPgnRoundtrip",
+      "ratio": 0.15993095342021127,
+      "ci95": [0.14532811625067518, 0.17618060307435335],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-tsx",
+      "size": 1,
+      "metric": "initialize",
+      "ratio": 4.443934793895916,
+      "ci95": [4.109930897068366, 4.739955634174177],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-tsx",
+      "size": 1,
+      "metric": "open",
+      "ratio": 0.5467987112598968,
+      "ci95": [0.49670159323644114, 0.6097423015705732],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-tsx",
+      "size": 1,
+      "metric": "firstDiagnostics",
+      "ratio": 3.6041867459492956,
+      "ci95": [3.3649362177558, 3.827915122240149],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-tsx",
+      "size": 1,
+      "metric": "proseEdit",
+      "ratio": 0.5759667284068343,
+      "ci95": [0.5179057290915239, 0.6376827236132738],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-tsx",
+      "size": 1,
+      "metric": "syntaxError",
+      "ratio": 0.5330877718860303,
+      "ci95": [0.48290969736700956, 0.593424150114088],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-tsx",
+      "size": 1,
+      "metric": "recovery",
+      "ratio": 0.5639924100875509,
+      "ci95": [0.5227344726107057, 0.6050967249884031],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-tsx",
+      "size": 1,
+      "metric": "completion",
+      "ratio": 0.8599994583746625,
+      "ci95": [0.7393423294907348, 0.9834818658887571],
+      "p": 0.057647705078125,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-tsx",
+      "size": 1,
+      "metric": "definition",
+      "ratio": 0.9927302771066547,
+      "ci95": [0.8811392389912126, 1.0989759562343857],
+      "p": 0.906494140625,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-tsx",
+      "size": 10,
+      "metric": "initialize",
+      "ratio": 4.549451325349469,
+      "ci95": [4.302122913792214, 4.8077708941772395],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-tsx",
+      "size": 10,
+      "metric": "open",
+      "ratio": 0.5946813536196638,
+      "ci95": [0.5045889893743593, 0.7109629976232074],
+      "p": 0.000274658203125,
+      "adjustedP": 0.034881591796875,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-tsx",
+      "size": 10,
+      "metric": "firstDiagnostics",
+      "ratio": 3.45400359297342,
+      "ci95": [3.226575742234029, 3.693718509757296],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-tsx",
+      "size": 10,
+      "metric": "proseEdit",
+      "ratio": 0.5377631144043752,
+      "ci95": [0.4502849846944877, 0.6406715031243732],
+      "p": 6.103515625e-5,
+      "adjustedP": 0.00909423828125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-tsx",
+      "size": 10,
+      "metric": "syntaxError",
+      "ratio": 0.4697015376898482,
+      "ci95": [0.4195265290025641, 0.5242826623592552],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-tsx",
+      "size": 10,
+      "metric": "recovery",
+      "ratio": 0.5367591631961909,
+      "ci95": [0.47287497583593846, 0.6073647054793311],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-tsx",
+      "size": 10,
+      "metric": "completion",
+      "ratio": 0.8889846561207415,
+      "ci95": [0.7303403461039815, 1.0849315891865496],
+      "p": 0.274139404296875,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-tsx",
+      "size": 10,
+      "metric": "definition",
+      "ratio": 1.0602623181508035,
+      "ci95": [0.9393762937308776, 1.1781053710132205],
+      "p": 0.34136962890625,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-tsx",
+      "size": 100,
+      "metric": "initialize",
+      "ratio": 4.322186856798208,
+      "ci95": [3.988101462344791, 4.658882841640779],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-tsx",
+      "size": 100,
+      "metric": "open",
+      "ratio": 0.660278120242149,
+      "ci95": [0.6043519041158147, 0.7238375056359114],
+      "p": 6.103515625e-5,
+      "adjustedP": 0.00909423828125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-tsx",
+      "size": 100,
+      "metric": "firstDiagnostics",
+      "ratio": 2.6990843438720096,
+      "ci95": [2.5040433412367835, 2.890780016665614],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-tsx",
+      "size": 100,
+      "metric": "proseEdit",
+      "ratio": 0.6956991046268184,
+      "ci95": [0.5605477348575054, 0.8345860986867442],
+      "p": 0.0006103515625,
+      "adjustedP": 0.07080078125,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-tsx",
+      "size": 100,
+      "metric": "syntaxError",
+      "ratio": 0.6492825586852471,
+      "ci95": [0.5508301958221797, 0.7563315689518633],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-tsx",
+      "size": 100,
+      "metric": "recovery",
+      "ratio": 0.7388266216082559,
+      "ci95": [0.6457545009137232, 0.8331341417292266],
+      "p": 0.000274658203125,
+      "adjustedP": 0.034881591796875,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-tsx",
+      "size": 100,
+      "metric": "completion",
+      "ratio": 0.9674581904103784,
+      "ci95": [0.8012160319556858, 1.1741113410735713],
+      "p": 0.74871826171875,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-tsx",
+      "size": 100,
+      "metric": "definition",
+      "ratio": 1.1005948143896223,
+      "ci95": [0.9634871623276033, 1.2657793944105542],
+      "p": 0.203277587890625,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-bundle",
+      "size": 1,
+      "metric": "initialize",
+      "ratio": 1.097292161154459,
+      "ci95": [1.0102433363482421, 1.1782966715710907],
+      "p": 0.034393310546875,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-bundle",
+      "size": 1,
+      "metric": "open",
+      "ratio": 0.5667035679657919,
+      "ci95": [0.5100113545661306, 0.6352932900180481],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-bundle",
+      "size": 1,
+      "metric": "firstDiagnostics",
+      "ratio": 0.9842945398949445,
+      "ci95": [0.923341989478361, 1.0492228015278933],
+      "p": 0.642547607421875,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-bundle",
+      "size": 1,
+      "metric": "proseEdit",
+      "ratio": 0.6664240610493513,
+      "ci95": [0.57255416329576, 0.7871140804940223],
+      "p": 0.000579833984375,
+      "adjustedP": 0.067840576171875,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-bundle",
+      "size": 1,
+      "metric": "syntaxError",
+      "ratio": 0.6129658272152543,
+      "ci95": [0.552946789848479, 0.6885494241462699],
+      "p": 6.103515625e-5,
+      "adjustedP": 0.00909423828125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-bundle",
+      "size": 1,
+      "metric": "recovery",
+      "ratio": 0.6151802583925736,
+      "ci95": [0.5776277164360996, 0.6532016857542773],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-bundle",
+      "size": 1,
+      "metric": "completion",
+      "ratio": 1.5169582733658107,
+      "ci95": [1.2247332451475201, 1.863850368257097],
+      "p": 0.00274658203125,
+      "adjustedP": 0.27740478515625,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-bundle",
+      "size": 1,
+      "metric": "definition",
+      "ratio": 1.3970525948052188,
+      "ci95": [1.205574414329876, 1.6379636693452417],
+      "p": 0.00048828125,
+      "adjustedP": 0.05859375,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-bundle",
+      "size": 10,
+      "metric": "initialize",
+      "ratio": 1.1163102479636788,
+      "ci95": [1.0564818559409745, 1.1822751777194525],
+      "p": 0.002105712890625,
+      "adjustedP": 0.218994140625,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-bundle",
+      "size": 10,
+      "metric": "open",
+      "ratio": 0.6060449822571995,
+      "ci95": [0.5285188364233913, 0.6936918936414396],
+      "p": 6.103515625e-5,
+      "adjustedP": 0.00909423828125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-bundle",
+      "size": 10,
+      "metric": "firstDiagnostics",
+      "ratio": 0.9753456042263396,
+      "ci95": [0.9131464795634384, 1.0447615520350264],
+      "p": 0.495208740234375,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-bundle",
+      "size": 10,
+      "metric": "proseEdit",
+      "ratio": 0.5475457642968142,
+      "ci95": [0.4602052298936392, 0.643612641894628],
+      "p": 6.103515625e-5,
+      "adjustedP": 0.00909423828125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-bundle",
+      "size": 10,
+      "metric": "syntaxError",
+      "ratio": 0.5196040938864174,
+      "ci95": [0.44785407546897754, 0.5942502934209529],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-bundle",
+      "size": 10,
+      "metric": "recovery",
+      "ratio": 0.5439077709258997,
+      "ci95": [0.48349039115702097, 0.6052686137940555],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-bundle",
+      "size": 10,
+      "metric": "completion",
+      "ratio": 0.9098673317811515,
+      "ci95": [0.765716904968355, 1.094207450062017],
+      "p": 0.33795166015625,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-bundle",
+      "size": 10,
+      "metric": "definition",
+      "ratio": 1.1540544587047115,
+      "ci95": [0.9888919633370947, 1.359379477906817],
+      "p": 0.10784912109375,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-bundle",
+      "size": 100,
+      "metric": "initialize",
+      "ratio": 1.063183746594639,
+      "ci95": [0.9835761101177252, 1.1502108452818915],
+      "p": 0.1639404296875,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-bundle",
+      "size": 100,
+      "metric": "open",
+      "ratio": 0.6993533533663266,
+      "ci95": [0.6370546391381726, 0.7591069046925115],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-bundle",
+      "size": 100,
+      "metric": "firstDiagnostics",
+      "ratio": 0.9016440207686626,
+      "ci95": [0.8348984725988797, 0.9647900631721767],
+      "p": 0.012420654296875,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-bundle",
+      "size": 100,
+      "metric": "proseEdit",
+      "ratio": 0.6339458389151589,
+      "ci95": [0.5109940792126687, 0.7745939624744813],
+      "p": 0.00030517578125,
+      "adjustedP": 0.03814697265625,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-bundle",
+      "size": 100,
+      "metric": "syntaxError",
+      "ratio": 0.6601089058205936,
+      "ci95": [0.5353687549778557, 0.8200095338382837],
+      "p": 0.002532958984375,
+      "adjustedP": 0.260894775390625,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-bundle",
+      "size": 100,
+      "metric": "recovery",
+      "ratio": 0.6280374364675906,
+      "ci95": [0.5438153482309488, 0.7180110745578887],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-bundle",
+      "size": 100,
+      "metric": "completion",
+      "ratio": 0.7843220271435608,
+      "ci95": [0.6846812359255503, 0.9025277319774334],
+      "p": 0.005401611328125,
+      "adjustedP": 0.52935791015625,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-bundle",
+      "size": 100,
+      "metric": "definition",
+      "ratio": 1.0856585600040336,
+      "ci95": [0.9295112422517885, 1.26403283624527],
+      "p": 0.32672119140625,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea",
+      "size": 1,
+      "metric": "initialize",
+      "ratio": 1.0081398602925333,
+      "ci95": [0.9274704424121453, 1.0899157376400608],
+      "p": 0.849151611328125,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea",
+      "size": 1,
+      "metric": "open",
+      "ratio": 0.5704289791910371,
+      "ci95": [0.48837749882208703, 0.6971083526878482],
+      "p": 0.000335693359375,
+      "adjustedP": 0.041290283203125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea",
+      "size": 1,
+      "metric": "firstDiagnostics",
+      "ratio": 0.9226276048639658,
+      "ci95": [0.8493201609719604, 0.9991892806721827],
+      "p": 0.07763671875,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea",
+      "size": 1,
+      "metric": "proseEdit",
+      "ratio": 0.6679174232579751,
+      "ci95": [0.5822566005796777, 0.782572761055051],
+      "p": 0.00048828125,
+      "adjustedP": 0.05859375,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea",
+      "size": 1,
+      "metric": "syntaxError",
+      "ratio": 0.605879993037475,
+      "ci95": [0.5585099469371537, 0.6589661543314451],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea",
+      "size": 1,
+      "metric": "recovery",
+      "ratio": 0.6252860416492417,
+      "ci95": [0.5721840676554244, 0.680691162814706],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea",
+      "size": 1,
+      "metric": "completion",
+      "ratio": 1.1277996913976205,
+      "ci95": [0.9387159702228616, 1.357634621867911],
+      "p": 0.234588623046875,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea",
+      "size": 1,
+      "metric": "definition",
+      "ratio": 1.1885188863618805,
+      "ci95": [1.0608389556633773, 1.3570421680355222],
+      "p": 0.011016845703125,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea",
+      "size": 10,
+      "metric": "initialize",
+      "ratio": 1.034973303894252,
+      "ci95": [0.9760960708592444, 1.1083438063647932],
+      "p": 0.351409912109375,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea",
+      "size": 10,
+      "metric": "open",
+      "ratio": 0.5699598898256384,
+      "ci95": [0.5196455067195944, 0.6238742717455642],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea",
+      "size": 10,
+      "metric": "firstDiagnostics",
+      "ratio": 0.9067384909843349,
+      "ci95": [0.8525541751487289, 0.9702680228167789],
+      "p": 0.014312744140625,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea",
+      "size": 10,
+      "metric": "proseEdit",
+      "ratio": 0.6469574011227278,
+      "ci95": [0.5602762874186225, 0.7495416788058269],
+      "p": 0.000213623046875,
+      "adjustedP": 0.02734375,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea",
+      "size": 10,
+      "metric": "syntaxError",
+      "ratio": 0.48768074680561047,
+      "ci95": [0.41055113728566256, 0.5821011996642538],
+      "p": 6.103515625e-5,
+      "adjustedP": 0.00909423828125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea",
+      "size": 10,
+      "metric": "recovery",
+      "ratio": 0.5651600570267049,
+      "ci95": [0.497460658178984, 0.6304820154466015],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea",
+      "size": 10,
+      "metric": "completion",
+      "ratio": 0.8511887213713332,
+      "ci95": [0.7288197831616625, 0.9760130971005312],
+      "p": 0.05084228515625,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea",
+      "size": 10,
+      "metric": "definition",
+      "ratio": 1.0824063002038233,
+      "ci95": [0.9644512335086398, 1.2205762668673663],
+      "p": 0.218505859375,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea",
+      "size": 100,
+      "metric": "initialize",
+      "ratio": 0.9859942707218349,
+      "ci95": [0.9169139891086893, 1.0513953263692286],
+      "p": 0.709228515625,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea",
+      "size": 100,
+      "metric": "open",
+      "ratio": 0.733202942392054,
+      "ci95": [0.6857056139883628, 0.780381183450778],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea",
+      "size": 100,
+      "metric": "firstDiagnostics",
+      "ratio": 0.8733357666741771,
+      "ci95": [0.8258826509441897, 0.9195151073624124],
+      "p": 0.000152587890625,
+      "adjustedP": 0.019683837890625,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea",
+      "size": 100,
+      "metric": "proseEdit",
+      "ratio": 0.6051111919547357,
+      "ci95": [0.4928403009114901, 0.7277987059233554],
+      "p": 9.1552734375e-5,
+      "adjustedP": 0.012542724609375,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea",
+      "size": 100,
+      "metric": "syntaxError",
+      "ratio": 0.6421183130382324,
+      "ci95": [0.551620309232749, 0.7383375493051859],
+      "p": 6.103515625e-5,
+      "adjustedP": 0.00909423828125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea",
+      "size": 100,
+      "metric": "recovery",
+      "ratio": 0.6452546926212154,
+      "ci95": [0.5663916954209753, 0.71553648683856],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea",
+      "size": 100,
+      "metric": "completion",
+      "ratio": 0.7969586480366598,
+      "ci95": [0.7294672950276198, 0.8690277725064671],
+      "p": 0.0003662109375,
+      "adjustedP": 0.044677734375,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea",
+      "size": 100,
+      "metric": "definition",
+      "ratio": 1.144644515738601,
+      "ci95": [1.063686133413133, 1.2297762225158526],
+      "p": 0.003997802734375,
+      "adjustedP": 0.395782470703125,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea-cache",
+      "size": 1,
+      "metric": "initialize",
+      "ratio": 0.8645261581331569,
+      "ci95": [0.7831510825646252, 0.9358527890935525],
+      "p": 0.000823974609375,
+      "adjustedP": 0.091461181640625,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea-cache",
+      "size": 1,
+      "metric": "open",
+      "ratio": 0.5545238836455706,
+      "ci95": [0.4986327081920828, 0.6216006133287612],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea-cache",
+      "size": 1,
+      "metric": "firstDiagnostics",
+      "ratio": 0.799414616993833,
+      "ci95": [0.7369347216731191, 0.8564795053389608],
+      "p": 6.103515625e-5,
+      "adjustedP": 0.00909423828125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea-cache",
+      "size": 1,
+      "metric": "proseEdit",
+      "ratio": 0.7049760415818386,
+      "ci95": [0.6192158008014199, 0.7963247675084121],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea-cache",
+      "size": 1,
+      "metric": "syntaxError",
+      "ratio": 0.6113067885008323,
+      "ci95": [0.5611090057584275, 0.6649808398030985],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea-cache",
+      "size": 1,
+      "metric": "recovery",
+      "ratio": 0.6413787172734207,
+      "ci95": [0.5899439876202712, 0.6959863195356789],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea-cache",
+      "size": 1,
+      "metric": "completion",
+      "ratio": 1.194834133112229,
+      "ci95": [1.0137771625155085, 1.4115219433105926],
+      "p": 0.060882568359375,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea-cache",
+      "size": 1,
+      "metric": "definition",
+      "ratio": 1.3685837327726629,
+      "ci95": [1.1705464244531194, 1.6181775062825834],
+      "p": 0.00201416015625,
+      "adjustedP": 0.21148681640625,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea-cache",
+      "size": 10,
+      "metric": "initialize",
+      "ratio": 0.880645306367174,
+      "ci95": [0.8296489311834742, 0.9341082663423579],
+      "p": 0.001434326171875,
+      "adjustedP": 0.153472900390625,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea-cache",
+      "size": 10,
+      "metric": "open",
+      "ratio": 0.5707836489874872,
+      "ci95": [0.49980886464900387, 0.6396662336211306],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea-cache",
+      "size": 10,
+      "metric": "firstDiagnostics",
+      "ratio": 0.7945674027953966,
+      "ci95": [0.7359775996403853, 0.8521576230490671],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea-cache",
+      "size": 10,
+      "metric": "proseEdit",
+      "ratio": 0.7097164927518359,
+      "ci95": [0.5762381811596781, 0.8706241756867524],
+      "p": 0.00640869140625,
+      "adjustedP": 0.615234375,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea-cache",
+      "size": 10,
+      "metric": "syntaxError",
+      "ratio": 0.4840361514487134,
+      "ci95": [0.4241431554159444, 0.5486109829503435],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea-cache",
+      "size": 10,
+      "metric": "recovery",
+      "ratio": 0.553099645453761,
+      "ci95": [0.4783991419961889, 0.6323150627665015],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea-cache",
+      "size": 10,
+      "metric": "completion",
+      "ratio": 0.8956268354062444,
+      "ci95": [0.7664764530905125, 1.046486755610748],
+      "p": 0.198486328125,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea-cache",
+      "size": 10,
+      "metric": "definition",
+      "ratio": 1.243615906825016,
+      "ci95": [1.068156077594904, 1.4475143828152945],
+      "p": 0.017242431640625,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea-cache",
+      "size": 100,
+      "metric": "initialize",
+      "ratio": 0.8525196362472109,
+      "ci95": [0.7871336704915971, 0.9204435189941107],
+      "p": 0.001190185546875,
+      "adjustedP": 0.13092041015625,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea-cache",
+      "size": 100,
+      "metric": "open",
+      "ratio": 0.7362569461508157,
+      "ci95": [0.6642580702639, 0.8133329575648037],
+      "p": 6.103515625e-5,
+      "adjustedP": 0.00909423828125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea-cache",
+      "size": 100,
+      "metric": "firstDiagnostics",
+      "ratio": 0.8007417126598452,
+      "ci95": [0.7371144321348386, 0.8654984220838375],
+      "p": 0.0001220703125,
+      "adjustedP": 0.0159912109375,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea-cache",
+      "size": 100,
+      "metric": "proseEdit",
+      "ratio": 0.674499858980492,
+      "ci95": [0.556409295032419, 0.8016521827310769],
+      "p": 9.1552734375e-5,
+      "adjustedP": 0.012542724609375,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea-cache",
+      "size": 100,
+      "metric": "syntaxError",
+      "ratio": 0.6098815548050925,
+      "ci95": [0.48806027200123653, 0.7752416246961852],
+      "p": 0.00146484375,
+      "adjustedP": 0.1552734375,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea-cache",
+      "size": 100,
+      "metric": "recovery",
+      "ratio": 0.5930280711408176,
+      "ci95": [0.5116532417332595, 0.6837268238191674],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea-cache",
+      "size": 100,
+      "metric": "completion",
+      "ratio": 0.7598405810118092,
+      "ci95": [0.7008978867086042, 0.8242797399241865],
+      "p": 9.1552734375e-5,
+      "adjustedP": 0.012542724609375,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "node-sea-cache",
+      "size": 100,
+      "metric": "definition",
+      "ratio": 1.1001021299430496,
+      "ci95": [0.9355513718368682, 1.2836463212239475],
+      "p": 0.270111083984375,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "legacy-bun-source",
+      "size": 1,
+      "metric": "initialize",
+      "ratio": 0.9875054282984058,
+      "ci95": [0.8918569511092583, 1.0753726307305478],
+      "p": 0.812408447265625,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "legacy-bun-source",
+      "size": 1,
+      "metric": "open",
+      "ratio": 0.5822419233768091,
+      "ci95": [0.5459788998139553, 0.6219634029360939],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "legacy-bun-source",
+      "size": 1,
+      "metric": "firstDiagnostics",
+      "ratio": 0.8999399888584267,
+      "ci95": [0.827527392407262, 0.9670623958576948],
+      "p": 0.01190185546875,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "legacy-bun-source",
+      "size": 1,
+      "metric": "proseEdit",
+      "ratio": 0.7304926511681478,
+      "ci95": [0.6185315428145317, 0.8420705463223211],
+      "p": 0.000732421875,
+      "adjustedP": 0.08203125,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "legacy-bun-source",
+      "size": 1,
+      "metric": "syntaxError",
+      "ratio": 0.5864027794463123,
+      "ci95": [0.5245707261915149, 0.6557792253768482],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "legacy-bun-source",
+      "size": 1,
+      "metric": "recovery",
+      "ratio": 0.7451570534257216,
+      "ci95": [0.6533344342568674, 0.8412041914379262],
+      "p": 0.00048828125,
+      "adjustedP": 0.05859375,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "legacy-bun-source",
+      "size": 1,
+      "metric": "completion",
+      "ratio": 0.9153685831639868,
+      "ci95": [0.7889634159851208, 1.057500378068721],
+      "p": 0.27996826171875,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "legacy-bun-source",
+      "size": 1,
+      "metric": "definition",
+      "ratio": 1.0091910756534197,
+      "ci95": [0.8894514777724626, 1.1390364516031823],
+      "p": 0.89117431640625,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "legacy-bun-source",
+      "size": 10,
+      "metric": "initialize",
+      "ratio": 0.9461883771105725,
+      "ci95": [0.8906730014586837, 1.0014566776792675],
+      "p": 0.096160888671875,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "legacy-bun-source",
+      "size": 10,
+      "metric": "open",
+      "ratio": 0.6852619616827376,
+      "ci95": [0.6005626002776795, 0.7709004382897193],
+      "p": 9.1552734375e-5,
+      "adjustedP": 0.012542724609375,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "legacy-bun-source",
+      "size": 10,
+      "metric": "firstDiagnostics",
+      "ratio": 0.8745209224565469,
+      "ci95": [0.8117476891858865, 0.9343046356083109],
+      "p": 0.001373291015625,
+      "adjustedP": 0.1483154296875,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "legacy-bun-source",
+      "size": 10,
+      "metric": "proseEdit",
+      "ratio": 0.6506855021612866,
+      "ci95": [0.5404924248382164, 0.7837742372819899],
+      "p": 0.000640869140625,
+      "adjustedP": 0.07305908203125,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "legacy-bun-source",
+      "size": 10,
+      "metric": "syntaxError",
+      "ratio": 0.5347965146081094,
+      "ci95": [0.46258884861067323, 0.6193647958784165],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "legacy-bun-source",
+      "size": 10,
+      "metric": "recovery",
+      "ratio": 0.6204622937432196,
+      "ci95": [0.5430572126763131, 0.7071861929942816],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "legacy-bun-source",
+      "size": 10,
+      "metric": "completion",
+      "ratio": 0.8950688106428751,
+      "ci95": [0.7515857319122962, 1.056434582701524],
+      "p": 0.230072021484375,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "legacy-bun-source",
+      "size": 10,
+      "metric": "definition",
+      "ratio": 0.9022616182755456,
+      "ci95": [0.8085620275399101, 1.0265192606194709],
+      "p": 0.121368408203125,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "legacy-bun-source",
+      "size": 100,
+      "metric": "initialize",
+      "ratio": 0.9478174925878146,
+      "ci95": [0.8872669904916843, 1.005836986209329],
+      "p": 0.130218505859375,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "legacy-bun-source",
+      "size": 100,
+      "metric": "open",
+      "ratio": 0.6335496686136917,
+      "ci95": [0.5847814372283149, 0.6838031249466743],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "legacy-bun-source",
+      "size": 100,
+      "metric": "firstDiagnostics",
+      "ratio": 0.8081257145742531,
+      "ci95": [0.7581388469406177, 0.8579735008422879],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "legacy-bun-source",
+      "size": 100,
+      "metric": "proseEdit",
+      "ratio": 0.67734160266925,
+      "ci95": [0.5646950401125211, 0.8020065290287325],
+      "p": 0.00042724609375,
+      "adjustedP": 0.05169677734375,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "legacy-bun-source",
+      "size": 100,
+      "metric": "syntaxError",
+      "ratio": 0.6018340915407715,
+      "ci95": [0.5234345539374575, 0.6895056821735115],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "legacy-bun-source",
+      "size": 100,
+      "metric": "recovery",
+      "ratio": 0.6185945099228634,
+      "ci95": [0.5409133604854136, 0.6999860602656458],
+      "p": 3.0517578125e-5,
+      "adjustedP": 0.0069580078125,
+      "detectable": true
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "legacy-bun-source",
+      "size": 100,
+      "metric": "completion",
+      "ratio": 0.9434162568009874,
+      "ci95": [0.8364693686935782, 1.0597538013523906],
+      "p": 0.3729248046875,
+      "adjustedP": 1.0,
+      "detectable": false
+    },
+    {
+      "reference": "bun-source",
+      "candidate": "legacy-bun-source",
+      "size": 100,
+      "metric": "definition",
+      "ratio": 0.9959708896630988,
+      "ci95": [0.8688884695299055, 1.115515291652438],
+      "p": 0.956573486328125,
+      "adjustedP": 1.0,
+      "detectable": false
+    }
+  ],
+  "builds": {
+    "bun-bundle": {
+      "seconds": 0.13334045900046476
+    },
+    "bun-executable": {
+      "seconds": 0.3476680980002129
+    },
+    "bun-bytecode": {
+      "seconds": 0.6893941759990412
+    },
+    "go-native": {
+      "seconds": 0.5175248020004801
+    },
+    "node-bundle": {
+      "seconds": 0.11891564199868299
+    },
+    "node-sea": {
+      "seconds": 4.566973508000956
+    },
+    "node-sea-cache": {
+      "seconds": 4.046507880000718
+    }
+  },
+  "acceptance": {
+    "bun-source": {
+      "common": {
+        "checks": [
+          "initialize-fragmented-frame",
+          "imported-game-open",
+          "prose-edit",
+          "syntax-error-recovery",
+          "legal-san-completion",
+          "imported-definition",
+          "no-definition-null",
+          "cancellation-health",
+          "illegal-answer-recovery",
+          "utf16-crlf-edit",
+          "rapid-edit-latest-version",
+          "shutdown-exit"
+        ],
+        "gaps": {},
+        "fatal": null
+      },
+      "extended": {
+        "checks": [
+          "initialize-fragmented-frame",
+          "imported-game-open",
+          "prose-edit",
+          "syntax-error-recovery",
+          "legal-san-completion",
+          "imported-definition",
+          "no-definition-null",
+          "cancellation-health",
+          "illegal-answer-recovery",
+          "utf16-crlf-edit",
+          "rapid-edit-latest-version",
+          "watched-pgn-recovery",
+          "pgn-overlay-close",
+          "module-create-delete-recreate",
+          "shutdown-exit"
+        ],
+        "gaps": {},
+        "fatal": null
+      }
+    },
+    "bun-bundle": {
+      "common": {
+        "checks": [
+          "initialize-fragmented-frame",
+          "imported-game-open",
+          "prose-edit",
+          "syntax-error-recovery",
+          "legal-san-completion",
+          "imported-definition",
+          "no-definition-null",
+          "cancellation-health",
+          "illegal-answer-recovery",
+          "utf16-crlf-edit",
+          "rapid-edit-latest-version",
+          "shutdown-exit"
+        ],
+        "gaps": {},
+        "fatal": null
+      },
+      "extended": {
+        "checks": [
+          "initialize-fragmented-frame",
+          "imported-game-open",
+          "prose-edit",
+          "syntax-error-recovery",
+          "legal-san-completion",
+          "imported-definition",
+          "no-definition-null",
+          "cancellation-health",
+          "illegal-answer-recovery",
+          "utf16-crlf-edit",
+          "rapid-edit-latest-version",
+          "watched-pgn-recovery",
+          "pgn-overlay-close",
+          "module-create-delete-recreate",
+          "shutdown-exit"
+        ],
+        "gaps": {},
+        "fatal": null
+      }
+    },
+    "bun-executable": {
+      "common": {
+        "checks": [
+          "initialize-fragmented-frame",
+          "imported-game-open",
+          "prose-edit",
+          "syntax-error-recovery",
+          "legal-san-completion",
+          "imported-definition",
+          "no-definition-null",
+          "cancellation-health",
+          "illegal-answer-recovery",
+          "utf16-crlf-edit",
+          "rapid-edit-latest-version",
+          "shutdown-exit"
+        ],
+        "gaps": {},
+        "fatal": null
+      },
+      "extended": {
+        "checks": [
+          "initialize-fragmented-frame",
+          "imported-game-open",
+          "prose-edit",
+          "syntax-error-recovery",
+          "legal-san-completion",
+          "imported-definition",
+          "no-definition-null",
+          "cancellation-health",
+          "illegal-answer-recovery",
+          "utf16-crlf-edit",
+          "rapid-edit-latest-version",
+          "watched-pgn-recovery",
+          "pgn-overlay-close",
+          "module-create-delete-recreate",
+          "shutdown-exit"
+        ],
+        "gaps": {},
+        "fatal": null
+      }
+    },
+    "bun-bytecode": {
+      "common": {
+        "checks": [
+          "initialize-fragmented-frame",
+          "imported-game-open",
+          "prose-edit",
+          "syntax-error-recovery",
+          "legal-san-completion",
+          "imported-definition",
+          "no-definition-null",
+          "cancellation-health",
+          "illegal-answer-recovery",
+          "utf16-crlf-edit",
+          "rapid-edit-latest-version",
+          "shutdown-exit"
+        ],
+        "gaps": {},
+        "fatal": null
+      },
+      "extended": {
+        "checks": [
+          "initialize-fragmented-frame",
+          "imported-game-open",
+          "prose-edit",
+          "syntax-error-recovery",
+          "legal-san-completion",
+          "imported-definition",
+          "no-definition-null",
+          "cancellation-health",
+          "illegal-answer-recovery",
+          "utf16-crlf-edit",
+          "rapid-edit-latest-version",
+          "watched-pgn-recovery",
+          "pgn-overlay-close",
+          "module-create-delete-recreate",
+          "shutdown-exit"
+        ],
+        "gaps": {},
+        "fatal": null
+      }
+    },
+    "go-native": {
+      "common": {
+        "checks": [
+          "initialize-fragmented-frame",
+          "imported-game-open",
+          "prose-edit",
+          "syntax-error-recovery",
+          "legal-san-completion",
+          "imported-definition",
+          "no-definition-null",
+          "cancellation-health",
+          "illegal-answer-recovery",
+          "utf16-crlf-edit",
+          "rapid-edit-latest-version",
+          "shutdown-exit"
+        ],
+        "gaps": {},
+        "fatal": null
+      },
+      "extended": {
+        "checks": [
+          "initialize-fragmented-frame",
+          "imported-game-open",
+          "prose-edit",
+          "syntax-error-recovery",
+          "legal-san-completion",
+          "imported-definition",
+          "no-definition-null",
+          "cancellation-health",
+          "illegal-answer-recovery",
+          "utf16-crlf-edit",
+          "rapid-edit-latest-version",
+          "watched-pgn-recovery",
+          "pgn-overlay-close",
+          "module-create-delete-recreate",
+          "shutdown-exit"
+        ],
+        "gaps": {},
+        "fatal": null
+      }
+    },
+    "node-tsx": {
+      "common": {
+        "checks": [
+          "initialize-fragmented-frame",
+          "imported-game-open",
+          "prose-edit",
+          "syntax-error-recovery",
+          "legal-san-completion",
+          "imported-definition",
+          "no-definition-null",
+          "cancellation-health",
+          "illegal-answer-recovery",
+          "utf16-crlf-edit",
+          "shutdown-exit"
+        ],
+        "gaps": {
+          "versioned-diagnostics": "Historical Langium server omits version; sequential single-edit comparisons only"
+        },
+        "fatal": null
+      },
+      "extended": {
+        "checks": [
+          "initialize-fragmented-frame",
+          "imported-game-open",
+          "prose-edit",
+          "syntax-error-recovery",
+          "legal-san-completion",
+          "imported-definition",
+          "no-definition-null",
+          "cancellation-health",
+          "illegal-answer-recovery",
+          "utf16-crlf-edit"
+        ],
+        "gaps": {
+          "versioned-diagnostics": "Historical Langium server omits version; sequential single-edit comparisons only",
+          "watched-pgn-recovery": "LSP timeout; stderr=",
+          "pgn-overlay-close": "LSP EOF (1): /workspace/scratch/12352969c972/compiler-node-baseline/prototypes/chess-compiler/node_modules/.pnpm/langium@4.4.0/node_modules/langium/src/service-registry.ts:97",
+          "module-create-delete-recreate": "[Errno 32] Broken pipe",
+          "shutdown-exit": "[Errno 32] Broken pipe"
+        },
+        "fatal": null
+      }
+    },
+    "node-bundle": {
+      "common": {
+        "checks": [
+          "initialize-fragmented-frame",
+          "imported-game-open",
+          "prose-edit",
+          "syntax-error-recovery",
+          "legal-san-completion",
+          "imported-definition",
+          "no-definition-null",
+          "cancellation-health",
+          "illegal-answer-recovery",
+          "utf16-crlf-edit",
+          "shutdown-exit"
+        ],
+        "gaps": {
+          "versioned-diagnostics": "Historical Langium server omits version; sequential single-edit comparisons only"
+        },
+        "fatal": null
+      },
+      "extended": {
+        "checks": [
+          "initialize-fragmented-frame",
+          "imported-game-open",
+          "prose-edit",
+          "syntax-error-recovery",
+          "legal-san-completion",
+          "imported-definition",
+          "no-definition-null",
+          "cancellation-health",
+          "illegal-answer-recovery",
+          "utf16-crlf-edit"
+        ],
+        "gaps": {
+          "versioned-diagnostics": "Historical Langium server omits version; sequential single-edit comparisons only",
+          "watched-pgn-recovery": "LSP timeout; stderr=",
+          "pgn-overlay-close": "LSP EOF (1): /workspace/projects/chess-anthology/report/lsp-cached/node-lsp.cjs:33044",
+          "module-create-delete-recreate": "[Errno 32] Broken pipe",
+          "shutdown-exit": "[Errno 32] Broken pipe"
+        },
+        "fatal": null
+      }
+    },
+    "node-sea": {
+      "common": {
+        "checks": [
+          "initialize-fragmented-frame",
+          "imported-game-open",
+          "prose-edit",
+          "syntax-error-recovery",
+          "legal-san-completion",
+          "imported-definition",
+          "no-definition-null",
+          "cancellation-health",
+          "illegal-answer-recovery",
+          "utf16-crlf-edit",
+          "shutdown-exit"
+        ],
+        "gaps": {
+          "versioned-diagnostics": "Historical Langium server omits version; sequential single-edit comparisons only"
+        },
+        "fatal": null
+      },
+      "extended": {
+        "checks": [
+          "initialize-fragmented-frame",
+          "imported-game-open",
+          "prose-edit",
+          "syntax-error-recovery",
+          "legal-san-completion",
+          "imported-definition",
+          "no-definition-null",
+          "cancellation-health",
+          "illegal-answer-recovery",
+          "utf16-crlf-edit"
+        ],
+        "gaps": {
+          "versioned-diagnostics": "Historical Langium server omits version; sequential single-edit comparisons only",
+          "watched-pgn-recovery": "LSP timeout; stderr=",
+          "pgn-overlay-close": "LSP EOF (1): /workspace/projects/chess-anthology/report/lsp-cached/node-lsp.cjs:33044",
+          "module-create-delete-recreate": "[Errno 32] Broken pipe",
+          "shutdown-exit": "[Errno 32] Broken pipe"
+        },
+        "fatal": null
+      }
+    },
+    "node-sea-cache": {
+      "common": {
+        "checks": [
+          "initialize-fragmented-frame",
+          "imported-game-open",
+          "prose-edit",
+          "syntax-error-recovery",
+          "legal-san-completion",
+          "imported-definition",
+          "no-definition-null",
+          "cancellation-health",
+          "illegal-answer-recovery",
+          "utf16-crlf-edit",
+          "shutdown-exit"
+        ],
+        "gaps": {
+          "versioned-diagnostics": "Historical Langium server omits version; sequential single-edit comparisons only"
+        },
+        "fatal": null
+      },
+      "extended": {
+        "checks": [
+          "initialize-fragmented-frame",
+          "imported-game-open",
+          "prose-edit",
+          "syntax-error-recovery",
+          "legal-san-completion",
+          "imported-definition",
+          "no-definition-null",
+          "cancellation-health",
+          "illegal-answer-recovery",
+          "utf16-crlf-edit"
+        ],
+        "gaps": {
+          "versioned-diagnostics": "Historical Langium server omits version; sequential single-edit comparisons only",
+          "watched-pgn-recovery": "LSP timeout; stderr=",
+          "pgn-overlay-close": "LSP EOF (1): /workspace/projects/chess-anthology/report/lsp-cached/node-lsp.cjs:33044",
+          "module-create-delete-recreate": "[Errno 32] Broken pipe",
+          "shutdown-exit": "[Errno 32] Broken pipe"
+        },
+        "fatal": null
+      }
+    },
+    "legacy-bun-source": {
+      "common": {
+        "checks": [
+          "initialize-fragmented-frame",
+          "imported-game-open",
+          "prose-edit",
+          "syntax-error-recovery",
+          "legal-san-completion",
+          "imported-definition",
+          "no-definition-null",
+          "cancellation-health",
+          "illegal-answer-recovery",
+          "utf16-crlf-edit",
+          "shutdown-exit"
+        ],
+        "gaps": {
+          "versioned-diagnostics": "Historical Langium server omits version; sequential single-edit comparisons only"
+        },
+        "fatal": null
+      },
+      "extended": {
+        "checks": [
+          "initialize-fragmented-frame",
+          "imported-game-open",
+          "prose-edit",
+          "syntax-error-recovery",
+          "legal-san-completion",
+          "imported-definition",
+          "no-definition-null",
+          "cancellation-health",
+          "illegal-answer-recovery",
+          "utf16-crlf-edit"
+        ],
+        "gaps": {
+          "versioned-diagnostics": "Historical Langium server omits version; sequential single-edit comparisons only",
+          "watched-pgn-recovery": "LSP timeout; stderr=",
+          "pgn-overlay-close": "LSP EOF (1): 52 |         const ext = UriUtils.extname(uri);",
+          "module-create-delete-recreate": "[Errno 32] Broken pipe",
+          "shutdown-exit": "[Errno 32] Broken pipe"
+        },
+        "fatal": null
+      }
+    }
+  }
+}
