@@ -2,7 +2,7 @@ import { URI, EmptyFileSystemProvider, DocumentState } from "langium";
 import type { LangiumDocument } from "langium";
 
 import { isNarrative } from "../../runtime/narrative.js";
-import { isModule, isGame } from "../100-parsing/index.js";
+import { syntaxDependencies } from "../100-parsing/index.js";
 import { createChessAnalysis } from "../400-chess-analysis/index.js";
 import { createServices, relative } from "./langium.js";
 import type { Sources } from "./langium.js";
@@ -12,12 +12,9 @@ export type { Sources } from "./langium.js";
 // Own the mutable Langium workspace here; never place its objects in build snapshots.
 const dependencies = (document: LangiumDocument): string[] => {
   const root = document.parseResult.value;
-  return isModule(root)
-    ? [
-        ...root.imports.map((i) => i.path),
-        ...root.declarations.filter(isGame).map((g) => g.path),
-      ].map((path) => relative(document.uri.toString(), path))
-    : [];
+  return syntaxDependencies(root).map((path) =>
+    relative(document.uri.toString(), path)
+  );
 };
 
 /**
@@ -146,3 +143,9 @@ export const createWorkspace = (analysis = createChessAnalysis()) => {
   };
   return { analysis, documents, sources, update };
 };
+
+export { createCompositionLinker } from "./composition.js";
+export type {
+  CompositionDefinition,
+  CompositionModule,
+} from "./composition.js";

@@ -33,6 +33,7 @@ import {
   createChessAnalysis,
 } from "../400-chess-analysis/index.js";
 import { ChessCompletion } from "./completion.js";
+import { createCompositionLinker } from "./composition.js";
 import { ImportScope } from "./scope.js";
 import { relative } from "./source-uri.js";
 import { ChessValidator } from "./validator.js";
@@ -136,6 +137,24 @@ export const createServices = (
         });
       }
       if (lowered.ok) {
+        if (lowered.value.formatVersion === 2) {
+          const modules = [...shared.workspace.LangiumDocuments.all].flatMap(
+            (document) => {
+              const root = document.parseResult.value;
+              const data = isModule(root) ? lower(root) : undefined;
+              return data?.ok === true
+                ? [{ data: data.value, uri: document.uri.toString() }]
+                : [];
+            }
+          );
+          for (const issue of createCompositionLinker(modules).validate(uri)) {
+            accept("error", issue.message, {
+              code: issue.code,
+              node: module,
+              property: "name",
+            });
+          }
+        }
         for (const issue of analyzeLocal(lowered.value)) {
           const declaration =
             issue.path[0] === "games"

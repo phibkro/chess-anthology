@@ -26,6 +26,8 @@ pnpm --dir compiler compile /path/to/project --write-manifest
 pnpm --dir compiler compile /path/to/project --frozen --offline
 ```
 
+See [composable stories and collections](../docs/story-composition.md) for standalone story files, named member selections, nested collections and `@include`.
+
 ## Public interfaces
 
 | Import | Purpose |
@@ -33,6 +35,7 @@ pnpm --dir compiler compile /path/to/project --frozen --offline
 | `@chess-anthology/compiler` | Compile/update source maps; codecs, immutable snapshots, position selection and playback emission |
 | `@chess-anthology/compiler/sources` | Project source acquisition, incremental project builds and persistent resolution |
 | `@chess-anthology/compiler/playback` | Browser-safe playback schema and types |
+| `@chess-anthology/compiler/collection` | Browser-safe collection schema and types |
 
 Implementation directories and numbered phases are private. See [module boundaries](../MODULES.md) and [evaluations](../docs/compiler-evaluations.md).
 

@@ -6,6 +6,7 @@ import type {
   ReadonlyDeep,
   DocumentData,
   Result,
+  SceneData,
 } from "../../contracts/index.js";
 import { parseText } from "../100-parsing/index.js";
 import { lower } from "../200-semantic-analysis/index.js";
@@ -93,13 +94,11 @@ export const printStructured = (input: unknown): Result<string> => {
     return checked;
   }
   const data = checked.value;
-  if (data.formatVersion === 1) {
+  if (data.formatVersion !== 0) {
     return printMarkdown(data);
   }
   const q = JSON.stringify;
-  const noteText = (
-    note: DocumentData["stories"][number]["scenes"][number]["notes"][number]
-  ): string => {
+  const noteText = (note: SceneData["notes"][number]): string => {
     if (note.type === "text") {
       return `    text ${q(note.text)};`;
     }

@@ -2,7 +2,7 @@
 import * as v from "valibot";
 
 import { ok } from "./core.js";
-import type { Result } from "./core.js";
+import type { Result, ReadonlyDeep } from "./core.js";
 import { markdownSchema } from "./markdown.js";
 
 export const reservedIdentifiers = [
@@ -76,13 +76,19 @@ export const metadataSchema = v.strictObject({
   authors: v.optional(v.array(v.string())),
   title: v.optional(v.string()),
 });
-/** Frontmatter supports explicit source bindings and module exports. */
+const memberReference = v.union([
+  v.string(),
+  v.strictObject({ as: Identifier, use: v.string() }),
+]);
+/** Frontmatter names reusable stories/collections separately from game bindings. */
 export const frontmatterSchema = v.strictObject({
   ...metadataSchema.entries,
+  collections: v.optional(v.record(Identifier, v.array(memberReference))),
   exports: v.optional(v.array(Identifier)),
   games: v.optional(v.record(Identifier, v.string())),
   id: Identifier,
   imports: v.optional(v.array(v.string())),
+  uses: v.optional(v.record(Identifier, v.string())),
 });
 const richNote = v.variant("type", [
   ...Note.options,
@@ -113,9 +119,49 @@ export const authoringSchema = v.strictObject({
     })
   ),
 });
+const includeSchema = v.strictObject({
+  name: Identifier,
+  reference: v.string(),
+  type: v.literal("include"),
+});
+/** Composition is authored references; linking never rewrites these definitions. */
+export const compositionSchema = v.strictObject({
+  ...authoringSchema.entries,
+  collections: v.array(
+    v.strictObject({
+      members: v.array(
+        v.strictObject({ name: Identifier, reference: v.string() })
+      ),
+      name: Identifier,
+    })
+  ),
+  exports: v.array(Identifier),
+  formatVersion: v.literal(2),
+  stories: v.array(
+    v.strictObject({
+      ...authoringSchema.entries.stories.item.entries,
+      scenes: v.array(
+        v.union([
+          authoringSchema.entries.stories.item.entries.scenes.item,
+          includeSchema,
+        ])
+      ),
+    })
+  ),
+  uses: v.array(v.strictObject({ name: Identifier, source: v.string() })),
+});
+/** An authoring module with reusable story/collection references. */
+export type CompositionData = v.InferOutput<typeof compositionSchema>;
+/** Both supported Markdown AST versions. */
+export type MarkdownData =
+  | v.InferOutput<typeof authoringSchema>
+  | CompositionData;
+/** A reference occurrence inside a composed story. */
+type StoryInclude = v.InferOutput<typeof includeSchema>;
 const ModuleSchema = v.variant("formatVersion", [
   LegacySchema,
   authoringSchema,
+  compositionSchema,
 ]);
 /** Markdown's typed, JSON-serializable authoring AST. */
 export type AuthoringData = v.InferOutput<typeof authoringSchema>;
@@ -126,7 +172,10 @@ export type DocumentData = v.InferOutput<typeof ModuleSchema>;
 /**
  * An authored board occurrence referencing a game and a mainline anchor.
  */
-export type SceneData = DocumentData["stories"][number]["scenes"][number];
+export type SceneData = Exclude<
+  DocumentData["stories"][number]["scenes"][number],
+  StoryInclude
+>;
 /**
  * Validate external structured document data without throwing for invalid input.
  * @param input - Untrusted content to validate at this boundary.
@@ -149,3 +198,26 @@ export const parseStructured = (input: unknown): Result<DocumentData> => {
         ok: false,
       };
 };
+
+/** Narrative modules referenced by authored imports and named composition bindings.
+ * @param data - Validated authored module.
+ * @returns Dependency paths without story selectors.
+ */
+export const narrativeDependencies = (
+  data: ReadonlyDeep<DocumentData>
+): string[] => [
+  ...data.imports,
+  ...(data.formatVersion === 2
+    ? data.uses.map((binding) => binding.source.split("#")[0])
+    : []),
+];
+/** All acquired dependencies, retaining PGN record selectors.
+ * @param data - Validated authored module.
+ * @returns Narrative and game source dependencies.
+ */
+export const sourceDependencies = (
+  data: ReadonlyDeep<DocumentData>
+): string[] => [
+  ...narrativeDependencies(data),
+  ...data.games.map((game) => game.source),
+];

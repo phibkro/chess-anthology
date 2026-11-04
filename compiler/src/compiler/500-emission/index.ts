@@ -113,4 +113,4 @@ export const emitDocument = (
   });
 };
 export type { EmittedDocument } from "../../contracts/index.js";
-export { createPlaybackPlan } from "./playback.js";
+export { createPlaybackPlan, createPlaybackCollection } from "./playback.js";

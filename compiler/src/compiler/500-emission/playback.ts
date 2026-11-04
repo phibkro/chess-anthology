@@ -1,4 +1,6 @@
-import { ok, err } from "../../contracts/index.js";
+import { parsePlaybackCollection } from "../../contracts/collection.js";
+import type { PlaybackCollection } from "../../contracts/collection.js";
+import { ok, err, narrativeDependencies } from "../../contracts/index.js";
 import type {
   Result,
   BuildSnapshot,
@@ -6,7 +8,19 @@ import type {
 } from "../../contracts/index.js";
 import { parsePlaybackPlan } from "../../contracts/playback.js";
 import type { PlaybackPlan } from "../../contracts/playback.js";
+import { createCompositionLinker } from "../300-linking/index.js";
+import type {
+  CompositionDefinition,
+  CompositionModule,
+} from "../300-linking/index.js";
 import { freeze } from "../identity.js";
+
+const linkerFor = (snapshot: BuildSnapshot) =>
+  createCompositionLinker(
+    snapshot.output.flatMap((document): CompositionModule[] =>
+      document.data ? [{ data: document.data, uri: document.uri }] : []
+    )
+  );
 
 const validateImports = (
   snapshot: BuildSnapshot,
@@ -23,16 +37,16 @@ const validateImports = (
       continue;
     }
     visited.add(module.uri);
-    if (module.diagnostics.some((d) => d.severity === 1)) {
+    if (module.diagnostics.some((diagnostic) => diagnostic.severity === 1)) {
       return err(
         "schema",
         "plan/invalid-content",
         "Resolve source diagnostics before producing a playable story."
       );
     }
-    for (const path of module.data?.imports ?? []) {
+    for (const path of module.data ? narrativeDependencies(module.data) : []) {
       const dependency = snapshot.output.find(
-        (d) => d.uri === new URL(path, module.uri).href
+        (document) => document.uri === new URL(path, module.uri).href
       );
       if (!dependency) {
         return err(
@@ -47,44 +61,14 @@ const validateImports = (
   return ok(true);
 };
 
-const playbackVersion = (
-  entry: EmittedDocument,
-  storyName: string,
-  common: { format: string; histories: object; id: string; scenes: unknown[] }
-) => {
-  if (entry.data?.formatVersion === 1) {
-    return {
-      ...common,
-      metadata: entry.data.metadata,
-      title: entry.data.stories.find((story) => story.name === storyName)
-        ?.title,
-      version: 3,
-    };
-  }
-  return { ...common, version: 2 };
-};
-
-// This target supports a recorded mainline, with optional prompts and supplementary arrows.
-/**
- * Emit a supported story plan while rejecting invalid or unsupported interactions.
- * @param snapshot - The immutable build revision to read.
- * @param entryUri - The narrative module containing the story.
- * @param storyName - The selected exported story name.
- * @returns A supported plan or an explicit capability failure.
- */
-export const createPlaybackPlan = (
+const emitStory = (
   snapshot: BuildSnapshot,
-  entryUri: string,
-  storyName: string
+  definition: Extract<CompositionDefinition, { kind: "story" }>,
+  id: string
 ): Result<PlaybackPlan> => {
-  const entry = snapshot.output.find((d) => d.uri === entryUri);
-  const story = entry?.data?.stories.find((s) => s.name === storyName);
-  if (!entry || !story) {
-    return err("selection", "plan/missing-story", "Story is unavailable.");
-  }
-  const dependencies = validateImports(snapshot, entry);
-  if (!dependencies.ok) {
-    return dependencies;
+  const linked = linkerFor(snapshot).expandScenes(definition);
+  if (!linked.ok) {
+    return linked;
   }
   const scenes: unknown[] = [];
   const histories = new Map<
@@ -97,11 +81,17 @@ export const createPlaybackPlan = (
       }[];
     }
   >();
-  for (const scene of story.scenes) {
-    const occurrence = entry.occurrences.find(
-      (o) => o.id === `${entryUri}#${storyName}/${scene.name}`
+  for (const item of linked.value) {
+    const { scene } = item;
+    const entry = snapshot.output.find(
+      (document) => document.uri === item.module.uri
     );
-    const game = snapshot.games.find((g) => g.uri === occurrence?.sourceUri);
+    const occurrence = entry?.occurrences.find(
+      (value) => value.id === `${item.module.uri}#${item.story}/${scene.name}`
+    );
+    const game = snapshot.games.find(
+      (value) => value.uri === occurrence?.sourceUri
+    );
     if (!occurrence || game?.result.ok !== true) {
       return err(
         "selection",
@@ -140,7 +130,7 @@ export const createPlaybackPlan = (
       after: scene.ply,
       game: scene.game,
       historyId: occurrence.sourceDigest,
-      id: scene.name,
+      id: item.id,
       notes,
       sourceDigest: occurrence.sourceDigest,
     };
@@ -151,11 +141,121 @@ export const createPlaybackPlan = (
   const common = {
     format: "chess-playback-plan",
     histories: Object.fromEntries(histories),
-    id: `${entry.data?.name}/${storyName}`,
+    id,
     scenes,
   };
-  const validated = parsePlaybackPlan(
-    playbackVersion(entry, storyName, common)
+  const { data } = definition.module;
+  const plan =
+    data.formatVersion === 0
+      ? { ...common, version: 2 }
+      : {
+          ...common,
+          metadata: data.metadata,
+          title:
+            "title" in definition.story
+              ? definition.story.title
+              : definition.story.name,
+          version: 3,
+        };
+  const validated = parsePlaybackPlan(plan);
+  return validated.ok ? ok(freeze(validated.value)) : validated;
+};
+
+/** Emit one local/imported story, including a story selected out of a collection.
+ * @param snapshot - Immutable build revision.
+ * @param entryUri - Selecting module's URI.
+ * @param reference - Local name or collection/member selector.
+ * @returns A portable story plan retaining original game scopes.
+ */
+export const createPlaybackPlan = (
+  snapshot: BuildSnapshot,
+  entryUri: string,
+  reference: string
+): Result<PlaybackPlan> => {
+  const entry = snapshot.output.find((document) => document.uri === entryUri);
+  if (
+    !entry?.data ||
+    (entry.data.formatVersion !== 2 &&
+      !entry.data.stories.some((story) => story.name === reference))
+  ) {
+    return err("selection", "plan/missing-story", "Story is unavailable.");
+  }
+  const selected = linkerFor(snapshot).resolve(entryUri, reference);
+  if (!selected.ok) {
+    return selected;
+  }
+  if (selected.value.kind !== "story") {
+    return err(
+      "selection",
+      "plan/expected-story",
+      "Select a story or use createPlaybackCollection for a collection."
+    );
+  }
+  const dependencies = validateImports(snapshot, entry);
+  if (!dependencies.ok) {
+    return dependencies;
+  }
+  return emitStory(
+    snapshot,
+    selected.value,
+    `${entry.data?.name}/${reference}`
   );
+};
+
+/** Emit nested collection members as an ordered list of independently playable stories.
+ * @param snapshot - Immutable build revision.
+ * @param entryUri - Selecting module's URI.
+ * @param reference - Local collection name or nested collection selector.
+ * @returns A portable collection projection with stable occurrence paths.
+ */
+export const createPlaybackCollection = (
+  snapshot: BuildSnapshot,
+  entryUri: string,
+  reference: string
+): Result<PlaybackCollection> => {
+  const entry = snapshot.output.find((document) => document.uri === entryUri);
+  if (!entry) {
+    return err(
+      "selection",
+      "plan/missing-module",
+      "Collection module is unavailable."
+    );
+  }
+  const linker = linkerFor(snapshot);
+  const selected = linker.resolve(entryUri, reference);
+  if (!selected.ok) {
+    return selected;
+  }
+  if (selected.value.kind !== "collection") {
+    return err(
+      "selection",
+      "plan/expected-collection",
+      "Select a collection or use createPlaybackPlan for a story."
+    );
+  }
+  const dependencies = validateImports(snapshot, entry);
+  if (!dependencies.ok) {
+    return dependencies;
+  }
+  const expanded = linker.expandStories(selected.value);
+  if (!expanded.ok) {
+    return expanded;
+  }
+  const id = `${entry.data?.name}/${reference}`;
+  const stories: PlaybackCollection["stories"] = [];
+  for (const story of expanded.value) {
+    const plan = emitStory(snapshot, story.definition, `${id}/${story.id}`);
+    if (!plan.ok) {
+      return plan;
+    }
+    stories.push({ id: story.id, plan: plan.value });
+  }
+  const validated = parsePlaybackCollection({
+    format: "chess-playback-collection",
+    id,
+    stories,
+    title: selected.value.collection.name,
+    version: 1,
+  });
   return validated.ok ? ok(freeze(validated.value)) : validated;
 };

@@ -33,3 +33,37 @@ def run():
         finally:
             client.close()
     print("Bun LSP Markdown: acquisition, completion ranges, chess diagnostics and edit recovery passed")
+
+
+def composition():
+    compiler = Path(__file__).resolve().parent.parent
+    with tempfile.TemporaryDirectory(prefix="chess-lsp-composition-") as folder:
+        parent = Path(folder)
+        root = parent / "project"
+        external = parent / "external"
+        root.mkdir()
+        external.mkdir()
+        (external / "opera.pgn").write_bytes((compiler / "examples/opera.pgn").read_bytes())
+        definition = "---\nid: opera-module\ngames:\n  score: ./opera.pgn\nexports: [opera]\n---\n\n# Opera\n@id opera\n## Finish\n@board score after 30\n"
+        story_source = external / "opera.chess.md"
+        story_source.write_text(definition)
+        text = "---\nid: collection-module\nuses:\n  opera: ../external/opera.chess.md#opera\ncollections:\n  nets: [opera]\nexports: [nets]\n---\n"
+        document = root / "collection.chess.md"
+        document.write_text(text)
+        client = Client(["bun", "src/adapters/lsp.ts", "--stdio"], compiler)
+        try:
+            client.request("initialize", {"processId": None, "rootUri": root.as_uri(), "capabilities": {},
+                "workspaceFolders": [{"uri": root.as_uri(), "name": "fixture"}]})
+            client.notify("initialized", {})
+            client.notify("textDocument/didOpen", {"textDocument": {"uri": document.as_uri(), "languageId": "markdown", "version": 1, "text": text}})
+            assert client.diagnostics(document.as_uri(), 1) == [], "Composition outside workspace was not acquired and indexed"
+            story_source.write_text(definition.replace("exports: [opera]", "exports: []"))
+            client.notify("workspace/didChangeWatchedFiles", {"changes": [{"uri": story_source.as_uri(), "type": 2}]})
+            invalid = client.diagnostics(document.as_uri(), 1, lambda items: any(item.get("code") == "link/not-exported" for item in items))
+            assert invalid, "Dependent collection did not invalidate"
+            story_source.write_text(definition)
+            client.notify("workspace/didChangeWatchedFiles", {"changes": [{"uri": story_source.as_uri(), "type": 2}]})
+            assert client.diagnostics(document.as_uri(), 1, lambda items: not items) == [], "Collection did not recover"
+        finally:
+            client.close()
+    print("Bun LSP composition: external-module acquisition, export invalidation and recovery passed")

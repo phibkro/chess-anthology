@@ -10,6 +10,72 @@
     "title": {
       "type": "string"
     },
+    "collections": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[_a-zA-Z][_a-zA-Z0-9-]*$",
+        "not": {
+          "enum": [
+            "module",
+            "import",
+            "export",
+            "game",
+            "from",
+            "story",
+            "board",
+            "after",
+            "text",
+            "arrow",
+            "prompt",
+            "answer"
+          ]
+        }
+      },
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "as": {
+                  "type": "string",
+                  "pattern": "^[_a-zA-Z][_a-zA-Z0-9-]*$",
+                  "not": {
+                    "enum": [
+                      "module",
+                      "import",
+                      "export",
+                      "game",
+                      "from",
+                      "story",
+                      "board",
+                      "after",
+                      "text",
+                      "arrow",
+                      "prompt",
+                      "answer"
+                    ]
+                  }
+                },
+                "use": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "as",
+                "use"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      }
+    },
     "exports": {
       "type": "array",
       "items": {
@@ -82,6 +148,32 @@
     "imports": {
       "type": "array",
       "items": {
+        "type": "string"
+      }
+    },
+    "uses": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[_a-zA-Z][_a-zA-Z0-9-]*$",
+        "not": {
+          "enum": [
+            "module",
+            "import",
+            "export",
+            "game",
+            "from",
+            "story",
+            "board",
+            "after",
+            "text",
+            "arrow",
+            "prompt",
+            "answer"
+          ]
+        }
+      },
+      "additionalProperties": {
         "type": "string"
       }
     }

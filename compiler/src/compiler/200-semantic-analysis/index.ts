@@ -70,10 +70,19 @@ export const lower = (module: Module): Result<DocumentData> => {
 export const analyzeLocal = (data: DocumentData): Issue[] => {
   const issues: Issue[] = [];
   const names = new Set<string>();
-  for (const [kind, declarations] of [
-    ["games", data.games],
-    ["stories", data.stories],
-  ] as const) {
+  const groups =
+    data.formatVersion === 2
+      ? ([
+          ["games", data.games],
+          ["stories", data.stories],
+          ["uses", data.uses],
+          ["collections", data.collections],
+        ] as const)
+      : ([
+          ["games", data.games],
+          ["stories", data.stories],
+        ] as const);
+  for (const [kind, declarations] of groups) {
     for (const [i, declaration] of declarations.entries()) {
       if (names.has(declaration.name)) {
         issues.push({

@@ -12,10 +12,17 @@ export {
   restore,
   printStructured,
 } from "./500-emission/index.js";
-export { createPlaybackPlan } from "./500-emission/index.js";
+export {
+  createPlaybackPlan,
+  createPlaybackCollection,
+} from "./500-emission/index.js";
 
 export { parseStructured } from "../contracts/authored.js";
-export type { AuthoringData, DocumentData } from "../contracts/authored.js";
+export type {
+  AuthoringData,
+  DocumentData,
+  CompositionData,
+} from "../contracts/authored.js";
 export {
   parseMarkdown,
   printMarkdown,
