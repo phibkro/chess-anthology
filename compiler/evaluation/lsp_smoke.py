@@ -16,5 +16,7 @@ configuration_health()
 
 alias_health()
 
-from lsp_markdown import run as run_markdown_checks
+from lsp_markdown import run as run_markdown_checks, composition as run_composition_checks
 run_markdown_checks()
+
+run_composition_checks()

@@ -107,7 +107,7 @@ export const markdownCompletion = (
     for (const story of parsed.value.data.stories) {
       for (const scene of story.scenes) {
         const span = parsed.value.boards.get(`${story.name}/${scene.name}`);
-        if (span && span.start <= offset) {
+        if (span && span.start <= offset && "game" in scene) {
           selected = scene;
         }
       }

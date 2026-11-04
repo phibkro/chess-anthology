@@ -48,7 +48,7 @@ Notice the coordination between the **rook and bishop**.
 
 The executable two-game example is `compiler/examples/queen-offers.chess.md`. `pnpm compile:stories` builds the reader's generated plan from it.
 
-Frontmatter accepts `id`, `title`, `authors`, `games`, `imports`, and `exports`. Unknown fields and duplicate YAML keys fail. YAML uses the core schema; aliases are disabled. `games` maps local bindings to source references; `exports` explicitly names reusable game bindings. Module imports can cross between `.chess-story` and `.chess.md`. Paths remain relative to the importing document. Remote references, selectors and digest references use the existing resolver unchanged.
+Frontmatter accepts `id`, `title`, `authors`, `games`, `imports`, `exports`, `uses`, and `collections`. [Story composition](story-composition.md) describes named story/collection imports and `@include`. Unknown fields and duplicate YAML keys fail. YAML uses the core schema; aliases are disabled. `games` maps local bindings to source references; `exports` explicitly names reusable game, story or collection bindings. Module imports can cross between `.chess-story` and `.chess.md`. Paths remain relative to the importing document. Remote references, selectors and digest references use the existing resolver unchanged.
 
 A level-one heading starts a story; a level-two heading starts a scene. Their display titles are plain text. `@id` immediately following a heading assigns a stable identity. Without it, an ASCII slug is derived from the title. Changing that title can change the derived identity. Identifiers permit ASCII letters, digits, underscores and hyphens, beginning with a letter or underscore; language keywords are reserved. Duplicate identities are diagnostics.
 

@@ -3,7 +3,7 @@ import { toMarkdown } from "mdast-util-to-markdown";
 import * as v from "valibot";
 import { isScalar, stringify } from "yaml";
 
-import { authoringSchema } from "../contracts/authored.js";
+import { authoringSchema, compositionSchema } from "../contracts/authored.js";
 import { err, ok } from "../contracts/core.js";
 import type { Result } from "../contracts/core.js";
 import { readFrontmatter } from "./frontmatter.js";
@@ -26,7 +26,10 @@ const heading = (title: string) =>
  */
 // oxlint-disable-next-line anti-slop/no-unknown-parameters -- Public codec validates external AST data with the authoring schema.
 export const printMarkdown = (input: unknown): Result<string> => {
-  const checked = v.safeParse(authoringSchema, input);
+  const checked = v.safeParse(
+    v.variant("formatVersion", [authoringSchema, compositionSchema]),
+    input
+  );
   if (!checked.success) {
     return err(
       "schema",
@@ -36,25 +39,44 @@ export const printMarkdown = (input: unknown): Result<string> => {
   }
   const data = checked.output;
   try {
-    const lines = [
-      "---",
-      stringify({
-        ...data.metadata,
-        exports: data.games
-          .filter((game) => game.exported)
-          .map((game) => game.name),
-        games: Object.fromEntries(
-          data.games.map((game) => [game.name, game.source])
-        ),
-        id: data.name,
-        imports: data.imports,
-      }).trimEnd(),
-      "---",
-      "",
-    ];
+    const header = {
+      ...data.metadata,
+      exports:
+        data.formatVersion === 2
+          ? data.exports
+          : data.games.filter((game) => game.exported).map((game) => game.name),
+      games: Object.fromEntries(
+        data.games.map((game) => [game.name, game.source])
+      ),
+      id: data.name,
+      imports: data.imports,
+    };
+    const frontmatter =
+      data.formatVersion === 2
+        ? {
+            ...header,
+            collections: Object.fromEntries(
+              data.collections.map((collection) => [
+                collection.name,
+                collection.members.map((member) => ({
+                  as: member.name,
+                  use: member.reference,
+                })),
+              ])
+            ),
+            uses: Object.fromEntries(
+              data.uses.map((binding) => [binding.name, binding.source])
+            ),
+          }
+        : header;
+    const lines = ["---", stringify(frontmatter).trimEnd(), "---", ""];
     for (const story of data.stories) {
       lines.push(`# ${heading(story.title)}`, `@id ${story.name}`, "");
       for (const scene of story.scenes) {
+        if ("type" in scene) {
+          lines.push(`@include ${scene.reference} as ${scene.name}`, "");
+          continue;
+        }
         lines.push(
           `## ${heading(scene.title)}`,
           `@id ${scene.name}`,

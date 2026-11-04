@@ -4,10 +4,15 @@ import * as v from "valibot";
 
 import {
   authoringSchema,
+  compositionSchema,
   Identifier,
   reservedIdentifiers,
 } from "../contracts/authored.js";
-import type { AuthoringData } from "../contracts/authored.js";
+import type {
+  MarkdownData,
+  CompositionData,
+  SceneData,
+} from "../contracts/authored.js";
 import { err, ok } from "../contracts/core.js";
 import type { Result } from "../contracts/core.js";
 import { markdownData } from "../contracts/markdown.js";
@@ -20,13 +25,13 @@ export interface Span {
 }
 /** Source associations accompany, rather than modify, the authoring AST. */
 export interface MarkdownSyntax {
-  data: AuthoringData;
+  data: MarkdownData;
   spans: Map<object, Span>;
   frontmatter: Span;
   boards: Map<string, Span>;
 }
-type Story = AuthoringData["stories"][number];
-type Scene = Story["scenes"][number];
+type Story = CompositionData["stories"][number];
+type Scene = Extract<SceneData, { title: string }>;
 
 const slug = (title: string) => {
   const normalized = title
@@ -74,7 +79,7 @@ const inlineCodeSpans = (node: Nodes, base: number): Span[] => {
 class MarkdownReader {
   private readonly source: string;
   private readonly header: ReturnType<typeof readFrontmatter>;
-  private readonly data: AuthoringData;
+  private readonly data: CompositionData;
   private readonly spans = new Map<object, Span>();
   private readonly boards = new Map<string, Span>();
   private story: Story | undefined;
@@ -93,15 +98,21 @@ class MarkdownReader {
       games = {},
       imports = [],
       exports = [],
+      uses = {},
+      collections = {},
       ...metadata
     } = this.header.data;
-    if (exports.some((name) => !Object.hasOwn(games, name))) {
-      throw new Error(
-        "Every exported game must be declared in frontmatter.games."
-      );
-    }
     this.data = {
-      formatVersion: 1,
+      collections: Object.entries(collections).map(([name, members]) => ({
+        members: members.map((member) =>
+          v.is(v.string(), member)
+            ? { name: member.split("/").at(-1) ?? member, reference: member }
+            : { name: member.as, reference: member.use }
+        ),
+        name,
+      })),
+      exports,
+      formatVersion: 2,
       games: Object.entries(games).map(([name, reference]) => ({
         exported: exports.includes(name),
         name,
@@ -111,6 +122,10 @@ class MarkdownReader {
       metadata,
       name: id,
       stories: [],
+      uses: Object.entries(uses).map(([name, reference]) => ({
+        name,
+        source: reference,
+      })),
     };
     this.spans.set(this.data, { end: this.header.body, start: 0 });
     for (const game of this.data.games) {
@@ -218,6 +233,26 @@ class MarkdownReader {
     );
     this.pendingPrompt = undefined;
   }
+  private include(argument: string, span: Span) {
+    this.finishScene();
+    if (!this.story) {
+      throw new Error("@include requires a story heading.");
+    }
+    const match =
+      /^(?<reference>[_a-zA-Z][_a-zA-Z0-9/-]*)(?:[ \t]+as[ \t]+(?<alias>[_a-zA-Z][_a-zA-Z0-9-]*))?$/u.exec(
+        argument
+      );
+    if (!match?.groups) {
+      throw new Error("Use @include REFERENCE [as OCCURRENCE].");
+    }
+    const { reference } = match.groups;
+    const name = match.groups.alias ?? reference.split("/").at(-1) ?? reference;
+    const include = { name, reference, type: "include" as const };
+    this.story.scenes.push(include);
+    this.spans.set(include, span);
+    this.scene = undefined;
+    this.hasBoard = false;
+  }
   private directive(line: string, span: Span) {
     const match = /^@(?<name>[a-zA-Z][\w-]*)(?:[ \t]+(?<argument>.*))?$/u.exec(
       line
@@ -241,6 +276,10 @@ class MarkdownReader {
       return;
     }
     this.canId = false;
+    if (name === "include") {
+      this.include(argument, span);
+      return;
+    }
     if (!this.scene) {
       throw new Error(`@${name} requires a scene.`);
     }
@@ -343,10 +382,45 @@ class MarkdownReader {
       }
     }
     this.finishScene();
-    v.parse(authoringSchema, this.data);
+    v.parse(compositionSchema, this.data);
+    const modern =
+      this.data.uses.length > 0 ||
+      this.data.collections.length > 0 ||
+      this.data.exports.some(
+        (name) => !this.data.games.some((game) => game.name === name)
+      ) ||
+      this.data.stories.some((story) =>
+        story.scenes.some((scene) => "type" in scene)
+      );
+    let data: MarkdownData = this.data;
+    if (!modern) {
+      const stories = this.data.stories.map((story) => {
+        const projected = {
+          ...story,
+          scenes: story.scenes.flatMap((scene) =>
+            "type" in scene ? [] : [scene]
+          ),
+        };
+        const span = this.spans.get(story);
+        if (span) {
+          this.spans.set(projected, span);
+        }
+        return projected;
+      });
+      data = {
+        formatVersion: 1,
+        games: this.data.games,
+        imports: this.data.imports,
+        metadata: this.data.metadata,
+        name: this.data.name,
+        stories,
+      };
+      v.parse(authoringSchema, data);
+    }
+    this.spans.set(data, { end: this.header.body, start: 0 });
     return {
       boards: this.boards,
-      data: this.data,
+      data,
       frontmatter: { end: this.header.end, start: this.header.start },
       spans: this.spans,
     };

@@ -6,7 +6,8 @@
   "exports": {
     ".": "./src/compiler/index.ts",
     "./playback": "./src/contracts/playback.ts",
-    "./sources": "./src/sources/index.ts"
+    "./sources": "./src/sources/index.ts",
+    "./collection": "./src/contracts/collection.ts"
   },
   "scripts": {
     "generate": "bun --bun node_modules/langium-cli/bin/langium.js generate",
@@ -14,7 +15,7 @@
     "lsp": "bun src/adapters/lsp.ts --stdio",
     "check": "bun --bun node_modules/typescript/bin/tsc --noEmit",
     "compile": "bun src/adapters/cli.ts",
-    "test": "bun test src/seams.test.ts src/chess960.test.ts src/runtime/source-cache.test.ts src/sources/sources.test.ts src/memory.test.ts src/authoring/markdown.test.ts src/sources/config.test.ts src/authoring/completion.test.ts",
+    "test": "bun test src/seams.test.ts src/chess960.test.ts src/runtime/source-cache.test.ts src/sources/sources.test.ts src/memory.test.ts src/authoring/markdown.test.ts src/sources/config.test.ts src/authoring/completion.test.ts src/authoring/composition.test.ts",
     "eval": "bun evaluation/evaluate.mts",
     "bench": "bun evaluation/benchmark.mts",
     "bench:memory": "bun evaluation/memory.mts",

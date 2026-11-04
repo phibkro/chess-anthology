@@ -9,13 +9,14 @@ import type {
 } from "vscode-languageserver";
 import { createConnection, ProposedFeatures } from "vscode-languageserver/node";
 
+import { sourceDependencies } from "../contracts/index.js";
 import { createBunFileSystem } from "../runtime/filesystem.js";
 import { isNarrative } from "../runtime/narrative.js";
 import { createSourceCache } from "../runtime/source-cache.js";
 import { retainGameSources } from "../runtime/source-retention.js";
 import { readSourceText, decodeSourceText } from "../runtime/source-text.js";
 import { openResolver, isBareReference } from "../sources/index.js";
-import { isModule, isGame } from "./100-parsing/index.js";
+import { isModule, syntaxDependencies } from "./100-parsing/index.js";
 import { createServices, relative } from "./300-linking/index.js";
 import { decode } from "./index.js";
 
@@ -85,10 +86,7 @@ const acquire = async (
     const parsed = decode(text);
     if (parsed.ok) {
       await Promise.all(
-        [
-          ...parsed.value.imports,
-          ...parsed.value.games.map((game) => game.source),
-        ].map(async (path) => {
+        sourceDependencies(parsed.value).map(async (path) => {
           await acquire(relative(uri, path), visited, path);
         })
       );
@@ -118,10 +116,7 @@ class ArtifactUpdates extends DefaultDocumentUpdateHandler {
         if (
           !affected.has(uri) &&
           isModule(root) &&
-          [
-            ...root.imports.map((item) => item.path),
-            ...root.declarations.filter(isGame).map((game) => game.path),
-          ].some(
+          syntaxDependencies(root).some(
             (path) =>
               affected.has(relative(uri, path)) ||
               affected.has(relative(uri, path).split("#")[0])
@@ -145,7 +140,23 @@ class ArtifactUpdates extends DefaultDocumentUpdateHandler {
   ): void {
     overlays.set(event.document.uri, event.document.getText());
     sources.set(event.document.uri, event.document.getText());
-    this.fireDocumentUpdate(this.affected([event.document.uri]), []);
+    void this.refreshDocument(event.document.uri);
+  }
+  private unindexedNarratives(): URI[] {
+    return [...sources.keys()]
+      .filter(
+        (uri) =>
+          isNarrative(uri) &&
+          !this.shared.workspace.LangiumDocuments.hasDocument(URI.parse(uri))
+      )
+      .map((uri) => URI.parse(uri));
+  }
+  private async refreshDocument(uri: string): Promise<void> {
+    await acquire(uri);
+    this.fireDocumentUpdate(
+      [...this.affected([uri]), ...this.unindexedNarratives()],
+      []
+    );
   }
   /**
    * Restore disk content after an unsaved buffer closes.
@@ -155,8 +166,7 @@ class ArtifactUpdates extends DefaultDocumentUpdateHandler {
     event: TextDocumentChangeEvent<TextDocument>
   ): Promise<void> {
     overlays.delete(event.document.uri);
-    await acquire(event.document.uri);
-    this.fireDocumentUpdate(this.affected([event.document.uri]), []);
+    await this.refreshDocument(event.document.uri);
   }
   /**
    * Invalidate lessons that refer to changed chess artifacts.
@@ -193,9 +203,10 @@ class ArtifactUpdates extends DefaultDocumentUpdateHandler {
       .map((change) => URI.parse(change.uri));
     const removed = new Set(deleted.map((uri) => uri.toString()));
     this.fireDocumentUpdate(
-      this.affected(params.changes.map((change) => change.uri)).filter(
-        (uri) => !removed.has(uri.toString())
-      ),
+      [
+        ...this.affected(params.changes.map((change) => change.uri)),
+        ...this.unindexedNarratives(),
+      ].filter((uri) => !removed.has(uri.toString())),
       deleted
     );
   }
@@ -230,10 +241,7 @@ const refreshReferencePolicies = () => {
     if (!isModule(module)) {
       continue;
     }
-    for (const path of [
-      ...module.imports.map((item) => item.path),
-      ...module.declarations.filter(isGame).map((game) => game.path),
-    ]) {
+    for (const path of syntaxDependencies(module)) {
       const target = relative(current.uri.toString(), path);
       const prior = sourceReferences.get(target);
       if (prior === undefined || isBareReference(prior)) {
@@ -264,10 +272,7 @@ shared.workspace.DocumentBuilder.onDocumentPhase(
     refreshReferencePolicies();
     if (isModule(root)) {
       await Promise.all(
-        [
-          ...root.imports.map((item) => item.path),
-          ...root.declarations.filter(isGame).map((game) => game.path),
-        ].map(async (path) => {
+        syntaxDependencies(root).map(async (path) => {
           await acquire(relative(uri, path), new Set(), path);
         })
       );

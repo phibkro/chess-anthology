@@ -77,3 +77,5 @@ export {
   markdownScene,
   markdownDiagnostics,
 } from "./markdown.js";
+
+export { syntaxDependencies } from "./markdown.js";

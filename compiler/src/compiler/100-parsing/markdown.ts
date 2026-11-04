@@ -3,9 +3,10 @@ import type { Diagnostic } from "vscode-languageserver";
 
 import type { MarkdownSyntax, Span } from "../../authoring/markdown.js";
 import { parseMarkdown } from "../../authoring/markdown.js";
-import type { AuthoringData } from "../../contracts/authored.js";
+import { sourceDependencies } from "../../contracts/authored.js";
+import type { MarkdownData, SceneData } from "../../contracts/authored.js";
 import type { Result } from "../../contracts/core.js";
-import { isModule, isStory } from "./generated/ast.js";
+import { isModule, isStory, isGame } from "./generated/ast.js";
 
 interface Projection {
   source: string;
@@ -13,10 +14,7 @@ interface Projection {
   lines: Span[];
 }
 const projections = new WeakMap<AstNode, Projection>();
-const sceneData = new WeakMap<
-  AstNode,
-  AuthoringData["stories"][number]["scenes"][number]
->();
+const sceneData = new WeakMap<AstNode, SceneData>();
 
 /** Original authored data accompanies the private linking projection.
  * @param node - Private linking AST root.
@@ -48,11 +46,11 @@ export const installMarkdownParser = (parser: LangiumParser) => {
     const append = (
       text: string,
       item:
-        | AuthoringData
-        | AuthoringData["games"][number]
-        | AuthoringData["stories"][number]
-        | AuthoringData["stories"][number]["scenes"][number]
-        | AuthoringData["stories"][number]["scenes"][number]["notes"][number]
+        | MarkdownData
+        | MarkdownData["games"][number]
+        | MarkdownData["stories"][number]
+        | MarkdownData["stories"][number]["scenes"][number]
+        | SceneData["notes"][number]
     ) => {
       lines.push(text);
       projection.lines.push(
@@ -76,6 +74,9 @@ export const installMarkdownParser = (parser: LangiumParser) => {
       for (const story of data.stories) {
         append(`story ${story.name} {`, story);
         for (const scene of story.scenes) {
+          if ("type" in scene) {
+            continue;
+          }
           append(
             `board ${scene.name} game ${scene.game} after ${scene.ply} {`,
             scene
@@ -114,7 +115,10 @@ export const installMarkdownParser = (parser: LangiumParser) => {
         .entries()) {
         const story = syntax.value.data.stories[storyIndex];
         for (const [index, scene] of declaration.scenes.entries()) {
-          sceneData.set(scene, story.scenes[index]);
+          const authored = story.scenes.flatMap((item) =>
+            "type" in item ? [] : [item]
+          )[index];
+          sceneData.set(scene, authored);
         }
       }
     }
@@ -169,4 +173,21 @@ export const markdownDiagnostics = (
       },
     };
   });
+};
+
+/** Dependency discovery works on original authored references, including compositions.
+ * @param node - Private syntax root.
+ * @returns Narrative and game dependency paths.
+ */
+export const syntaxDependencies = (node: AstNode): string[] => {
+  const markdown = markdownAuthoring(node);
+  if (markdown?.ok === true) {
+    return sourceDependencies(markdown.value.data);
+  }
+  return isModule(node)
+    ? [
+        ...node.imports.map((item) => item.path),
+        ...node.declarations.filter(isGame).map((game) => game.path),
+      ]
+    : [];
 };

@@ -3,7 +3,7 @@ import * as v from "valibot";
 
 import type { CompilerOptions } from "../compiler/index.js";
 import { createCompiler, decode } from "../compiler/index.js";
-import { ok, err } from "../contracts/index.js";
+import { ok, err, sourceDependencies } from "../contracts/index.js";
 import { isNarrative } from "../runtime/narrative.js";
 import { decodeSourceText } from "../runtime/source-text.js";
 import { openResolver } from "./resolver.js";
@@ -57,12 +57,7 @@ const createProjectLoader = () => {
             const parsed = decode(text);
             parsedNarratives += 1;
             cached = {
-              paths: parsed.ok
-                ? [
-                    ...parsed.value.imports,
-                    ...parsed.value.games.map((game) => game.source),
-                  ]
-                : [],
+              paths: parsed.ok ? sourceDependencies(parsed.value) : [],
               source: text,
             };
             dependencies.set(uri, cached);

@@ -86,6 +86,8 @@ const richSchema = v.strictObject({
   title: v.string(),
   version: v.literal(3),
 });
+/** Canonical playback versions embedded by collection consumers. */
+export const playbackSchema = v.variant("version", [schema, richSchema]);
 /**
  * A versioned browser-safe story plan with recorded frames and annotations.
  */

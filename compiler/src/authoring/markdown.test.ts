@@ -168,7 +168,11 @@ test("unrepresentable or unknown structured Markdown is rejected explicitly", ()
   const parsed = value(parseMarkdown(source)).data;
   expect(parseStructured({ ...parsed, unknown: true }).ok).toBe(false);
   const altered = structuredClone(parsed);
-  altered.stories[0].scenes[0].notes.push({
+  const [scene] = altered.stories[0].scenes;
+  if ("type" in scene) {
+    throw new Error("Expected a board scene.");
+  }
+  scene.notes.push({
     content: { children: [], type: "root" },
     type: "markdown",
   });
