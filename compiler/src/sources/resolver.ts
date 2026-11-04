@@ -3,8 +3,9 @@ import { makePgn, PgnParser } from "chessops/pgn";
 import * as v from "valibot";
 
 import { decodeSourceText } from "../runtime/source-text.js";
-import { configSchema, lockSchema, resolutionSchema } from "./schema.js";
-import type { Resolution, SourceConfig, SourceLock } from "./schema.js";
+import { loadSourceConfig } from "./config.js";
+import { lockSchema, resolutionSchema } from "./schema.js";
+import type { Resolution, SourceLock } from "./schema.js";
 import { blobId, createBlobStore, writeAtomic } from "./storage.js";
 
 const encode = (text: string) => new TextEncoder().encode(text);
@@ -69,10 +70,7 @@ export interface ResolverOptions {
 export const openResolver = async (options: ResolverOptions) => {
   const { root } = options;
   const mode = options.mode ?? "locked";
-  const configFile = Bun.file(new URL("chess.sources.json", root));
-  const config: SourceConfig = (await configFile.exists())
-    ? v.parse(configSchema, await configFile.json())
-    : { providers: [], version: 1 };
+  const config = await loadSourceConfig(root);
   if (
     new Set(config.providers.map((p) => p.id)).size !== config.providers.length
   ) {

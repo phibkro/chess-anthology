@@ -9,7 +9,7 @@ import { ChessNarrativeGrammar } from './grammar.js';
 
 export const ChessNarrativeLanguageMetaData = {
     languageId: 'chess-narrative',
-    fileExtensions: ['.chess-story'],
+    fileExtensions: ['.chess-story', '.chess.md'],
     caseInsensitive: false,
     mode: 'development'
 } as const satisfies LanguageMetaData;

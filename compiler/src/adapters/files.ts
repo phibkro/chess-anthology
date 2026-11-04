@@ -14,7 +14,7 @@ export const loadDirectory = async (
       directory.endsWith("/") ? directory : `${directory}/`
     );
     const files = [
-      ...new Bun.Glob("*.{chess-story,pgn}").scanSync({
+      ...new Bun.Glob("*.{chess-story,chess.md,pgn}").scanSync({
         cwd: Bun.fileURLToPath(root),
         dot: true,
         onlyFiles: true,

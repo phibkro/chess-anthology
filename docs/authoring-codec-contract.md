@@ -1,6 +1,6 @@
 # Authoring and codec contract
 
-Status: design contract for the next authoring experiment. The current runtime implements [single-artifact lesson JSON version 1](lesson-format.md), not the flat language or multi-game document described here. Syntax examples from discussions are exploratory, not a supported file format.
+Status: architectural design contract with both implemented and future capabilities. The current compiler supports brace-language authored JSON version 0 and Markdown authored JSON AST version 1. See [the implemented Markdown format and codec laws](markdown-authoring.md) for the supported subset; broader capabilities below remain design goals unless explicitly supported there.
 
 ## One document, two authoring representations
 

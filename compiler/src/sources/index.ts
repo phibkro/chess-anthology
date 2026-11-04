@@ -4,6 +4,7 @@ import * as v from "valibot";
 import type { CompilerOptions } from "../compiler/index.js";
 import { createCompiler, decode } from "../compiler/index.js";
 import { ok, err } from "../contracts/index.js";
+import { isNarrative } from "../runtime/narrative.js";
 import { decodeSourceText } from "../runtime/source-text.js";
 import { openResolver } from "./resolver.js";
 import type { ResolverOptions } from "./resolver.js";
@@ -50,7 +51,7 @@ const createProjectLoader = () => {
         const text = decodeSourceText(bytes);
         sources.set(uri, text);
         inputs[resolver.portable(uri)] = await resolver.blobs.put(bytes);
-        if (new URL(uri).pathname.endsWith(".chess-story")) {
+        if (isNarrative(uri)) {
           let cached = dependencies.get(uri);
           if (cached?.source !== text) {
             const parsed = decode(text);
@@ -74,7 +75,7 @@ const createProjectLoader = () => {
       const entries =
         options.entries ??
         [
-          ...new Bun.Glob("*.{chess-story,pgn}").scanSync({
+          ...new Bun.Glob("*.{chess-story,chess.md,pgn}").scanSync({
             cwd: Bun.fileURLToPath(options.root),
             dot: true,
             onlyFiles: true,
@@ -206,3 +207,5 @@ export const createProjectCompiler = (
     },
   };
 };
+
+export { parseSourceConfig, editSourceConfig } from "./config.js";

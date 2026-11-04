@@ -513,7 +513,7 @@ export const ChessNarrativeGrammar = (): Grammar => loadedChessNarrativeGrammar 
       "name": "ID",
       "definition": {
         "$type": "RegexToken",
-        "regex": "/[_a-zA-Z][_a-zA-Z0-9]*/",
+        "regex": "/[_a-zA-Z][_a-zA-Z0-9-]*/",
         "parenthesized": false
       },
       "fragment": false,

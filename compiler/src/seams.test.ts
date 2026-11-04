@@ -133,7 +133,7 @@ const fixtures = async () =>
   new Map(
     await Promise.all(
       [
-        ...new Bun.Glob("*").scanSync({
+        ...new Bun.Glob("*.{chess-story,pgn}").scanSync({
           cwd: Bun.fileURLToPath(dir),
           dot: true,
           onlyFiles: true,

@@ -20,7 +20,7 @@
     "setup:secrets": "bun scripts/install-gitleaks.mts",
     "commitlint": "bun --bun node_modules/@commitlint/cli/cli.js",
     "index:albums": "bun scripts/index-albums.mts",
-    "check:compiler": "pnpm --dir compiler check && pnpm --dir compiler test && pnpm --dir compiler run eval",
+    "check:compiler": "pnpm --dir compiler check:schemas && pnpm --dir compiler check && pnpm --dir compiler test && pnpm --dir compiler run eval",
     "compile:stories": "bun scripts/compile-stories.mts",
     "predev": "pnpm compile:stories",
     "check:runtime-inference": "python3 compiler/evaluation/runtime_compare.py --self-test && python3 compiler/evaluation/execution_modes.py --self-test",
@@ -30,8 +30,10 @@
     "@lichess-org/chessground": "10.5.0",
     "@xstate/store": "^4.3.0",
     "chessops": "0.15.1",
+    "mdast-util-to-markdown": "2.2.1",
     "react": "19.3.1",
     "react-dom": "19.3.1",
+    "react-markdown": "10.1.0",
     "valibot": "1.5.0"
   },
   "devDependencies": {

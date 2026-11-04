@@ -56,9 +56,9 @@ describe("compiler package → playback plan → reader session", () => {
     }
     const built = createPlaybackPlan(
       result.value,
-      new URL("../../compiler/examples/story.chess-story", import.meta.url)
+      new URL("../../compiler/examples/queen-offers.chess.md", import.meta.url)
         .href,
-      "matingNets"
+      "mating-nets"
     );
     expect(built.ok).toBe(true);
     if (!built.ok) {

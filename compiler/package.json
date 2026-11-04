@@ -1,6 +1,6 @@
 {
   "name": "@chess-anthology/compiler",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "exports": {
@@ -14,19 +14,27 @@
     "lsp": "bun src/adapters/lsp.ts --stdio",
     "check": "bun --bun node_modules/typescript/bin/tsc --noEmit",
     "compile": "bun src/adapters/cli.ts",
-    "test": "bun test src/seams.test.ts src/chess960.test.ts src/runtime/source-cache.test.ts src/sources/sources.test.ts src/memory.test.ts",
+    "test": "bun test src/seams.test.ts src/chess960.test.ts src/runtime/source-cache.test.ts src/sources/sources.test.ts src/memory.test.ts src/authoring/markdown.test.ts src/sources/config.test.ts src/authoring/completion.test.ts",
     "eval": "bun evaluation/evaluate.mts",
     "bench": "bun evaluation/benchmark.mts",
-    "bench:memory": "bun evaluation/memory.mts"
+    "bench:memory": "bun evaluation/memory.mts",
+    "schemas": "bun scripts/schemas.mts",
+    "check:schemas": "bun scripts/schemas.mts --check"
   },
   "dependencies": {
     "chessops": "0.15.1",
+    "jsonc-parser": "3.3.1",
     "langium": "4.4.0",
+    "mdast-util-from-markdown": "2.1.0",
+    "mdast-util-to-markdown": "2.2.1",
     "valibot": "1.5.0",
-    "vscode-languageserver": "10.1.2"
+    "vscode-languageserver": "10.1.2",
+    "yaml": "2.9.1"
   },
   "devDependencies": {
     "@types/bun": "1.4.4",
+    "@types/mdast": "4.0.4",
+    "@valibot/to-json-schema": "1.8.0",
     "fast-check": "4.10.2",
     "langium-cli": "4.4.0",
     "typescript": "~7.0.2"

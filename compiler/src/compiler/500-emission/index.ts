@@ -33,7 +33,10 @@ export const emitDocument = (
       let phase: CompilationDiagnostic["phase"] = "200-semantic-analysis";
       let stage: CompilationDiagnostic["stage"] = "semantic";
       const text = String(code);
-      if (text.startsWith("chess/") || text.startsWith("annotation/")) {
+      if (text.startsWith("markdown/")) {
+        phase = "100-parsing";
+        stage = "syntax";
+      } else if (text.startsWith("chess/") || text.startsWith("annotation/")) {
         phase = "400-chess-analysis";
         stage = "chess";
       } else if (text.startsWith("link/")) {

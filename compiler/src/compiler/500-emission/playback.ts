@@ -47,6 +47,23 @@ const validateImports = (
   return ok(true);
 };
 
+const playbackVersion = (
+  entry: EmittedDocument,
+  storyName: string,
+  common: { format: string; histories: object; id: string; scenes: unknown[] }
+) => {
+  if (entry.data?.formatVersion === 1) {
+    return {
+      ...common,
+      metadata: entry.data.metadata,
+      title: entry.data.stories.find((story) => story.name === storyName)
+        ?.title,
+      version: 3,
+    };
+  }
+  return { ...common, version: 2 };
+};
+
 // This target supports a recorded mainline, with optional prompts and supplementary arrows.
 /**
  * Emit a supported story plan while rejecting invalid or unsupported interactions.
@@ -119,21 +136,26 @@ export const createPlaybackPlan = (
     histories.set(occurrence.sourceDigest, {
       frames: game.result.value.frames,
     });
-    scenes.push({
+    const emitted = {
       after: scene.ply,
       game: scene.game,
       historyId: occurrence.sourceDigest,
       id: scene.name,
       notes,
       sourceDigest: occurrence.sourceDigest,
-    });
+    };
+    scenes.push(
+      "title" in scene ? { ...emitted, title: scene.title } : emitted
+    );
   }
-  const validated = parsePlaybackPlan({
+  const common = {
     format: "chess-playback-plan",
     histories: Object.fromEntries(histories),
     id: `${entry.data?.name}/${storyName}`,
     scenes,
-    version: 2,
-  });
+  };
+  const validated = parsePlaybackPlan(
+    playbackVersion(entry, storyName, common)
+  );
   return validated.ok ? ok(freeze(validated.value)) : validated;
 };

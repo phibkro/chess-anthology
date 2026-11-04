@@ -9,5 +9,5 @@
     "types": ["bun"],
     "resolveJsonModule": true
   },
-  "include": ["src", "evaluation/**/*.mts"]
+  "include": ["src", "evaluation/**/*.mts", "scripts/**/*.mts"]
 }

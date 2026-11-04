@@ -1,5 +1,6 @@
 import * as v from "valibot";
 
+import { printMarkdown } from "../../authoring/markdown.js";
 import { parseStructured, ok, err } from "../../contracts/index.js";
 import type {
   ReadonlyDeep,
@@ -92,6 +93,9 @@ export const printStructured = (input: unknown): Result<string> => {
     return checked;
   }
   const data = checked.value;
+  if (data.formatVersion === 1) {
+    return printMarkdown(data);
+  }
   const q = JSON.stringify;
   const noteText = (
     note: DocumentData["stories"][number]["scenes"][number]["notes"][number]
@@ -101,6 +105,9 @@ export const printStructured = (input: unknown): Result<string> => {
     }
     if (note.type === "arrow") {
       return `    arrow ${q(note.from)} -> ${q(note.to)} ${note.color};`;
+    }
+    if (note.type === "markdown") {
+      throw new Error("Markdown notes require authoring version one.");
     }
     return `    prompt ${q(note.text)} answer ${q(note.answer)};`;
   };

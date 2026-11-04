@@ -1,0 +1,6 @@
+{
+  "$schema": "../schemas/chess.sources.schema.json",
+  "version": 1,
+  // Add local archives before remote HTTP providers.
+  "providers": [],
+}
