@@ -14,6 +14,7 @@ import type {
 
 import type { Sources } from "../../contracts/index.js";
 import {
+  installMarkdownParser,
   ChessNarrativeGeneratedModule,
   ChessNarrativeGeneratedSharedModule,
   jsonParserModule,
@@ -78,7 +79,13 @@ export const createServices = (
       },
     }
   );
+  installMarkdownParser(language.parser.LangiumParser);
   shared.ServiceRegistry.register(language);
+  const getServices = shared.ServiceRegistry.getServices.bind(
+    shared.ServiceRegistry
+  );
+  shared.ServiceRegistry.getServices = (uri) =>
+    uri.path.endsWith(".chess.md") ? language : getServices(uri);
   // Export only explicitly exported games into Langium's global index.
   const descriptions = language.workspace.AstNodeDescriptionProvider;
   // oxlint-disable-next-line require-await -- Langium requires a Promise lifecycle callback; symbol descriptions are already in memory.

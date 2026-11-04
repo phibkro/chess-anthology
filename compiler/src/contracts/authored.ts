@@ -1,10 +1,11 @@
-// PROTOTYPE: plain authored data, independent of Langium's object graph.
+// JSON authoring contracts, independent of Langium's mutable object graph.
 import * as v from "valibot";
 
 import { ok } from "./core.js";
 import type { Result } from "./core.js";
+import { markdownSchema } from "./markdown.js";
 
-const reserved = new Set([
+export const reservedIdentifiers = [
   "module",
   "import",
   "export",
@@ -17,10 +18,12 @@ const reserved = new Set([
   "arrow",
   "prompt",
   "answer",
-]);
-const Identifier = v.pipe(
+] as const;
+const reserved = new Set<string>(reservedIdentifiers);
+export const Identifier = v.pipe(
   v.string(),
-  v.regex(/^[_a-zA-Z][_a-zA-Z0-9]*$/u),
+  // oxlint-disable-next-line require-unicode-regexp -- JSON Schema patterns cannot carry flags; this pattern is ASCII-only.
+  v.regex(/^[_a-zA-Z][_a-zA-Z0-9-]*$/),
   v.check((s) => !reserved.has(s), "Reserved keyword")
 );
 const Note = v.variant("type", [
@@ -37,7 +40,7 @@ const Note = v.variant("type", [
     type: v.literal("prompt"),
   }),
 ]);
-const ModuleSchema = v.strictObject({
+const LegacySchema = v.strictObject({
   formatVersion: v.literal(0),
   games: v.array(
     v.strictObject({
@@ -68,6 +71,54 @@ const ModuleSchema = v.strictObject({
     })
   ),
 });
+/** Metadata shared by Markdown frontmatter and structured authoring. */
+export const metadataSchema = v.strictObject({
+  authors: v.optional(v.array(v.string())),
+  title: v.optional(v.string()),
+});
+/** Frontmatter supports explicit source bindings and module exports. */
+export const frontmatterSchema = v.strictObject({
+  ...metadataSchema.entries,
+  exports: v.optional(v.array(Identifier)),
+  games: v.optional(v.record(Identifier, v.string())),
+  id: Identifier,
+  imports: v.optional(v.array(v.string())),
+});
+const richNote = v.variant("type", [
+  ...Note.options,
+  v.strictObject({ content: markdownSchema, type: v.literal("markdown") }),
+]);
+const markdownIdentifier = Identifier;
+/** Version one adds metadata, display titles and CommonMark trees. */
+export const authoringSchema = v.strictObject({
+  formatVersion: v.literal(1),
+  games: LegacySchema.entries.games,
+  imports: LegacySchema.entries.imports,
+  metadata: metadataSchema,
+  name: Identifier,
+  stories: v.array(
+    v.strictObject({
+      name: markdownIdentifier,
+      scenes: v.array(
+        v.strictObject({
+          game: Identifier,
+          name: markdownIdentifier,
+          notes: v.array(richNote),
+          ply: LegacySchema.entries.stories.item.entries.scenes.item.entries
+            .ply,
+          title: v.string(),
+        })
+      ),
+      title: v.string(),
+    })
+  ),
+});
+const ModuleSchema = v.variant("formatVersion", [
+  LegacySchema,
+  authoringSchema,
+]);
+/** Markdown's typed, JSON-serializable authoring AST. */
+export type AuthoringData = v.InferOutput<typeof authoringSchema>;
 /**
  * The structurally validated authored document IR before linking.
  */

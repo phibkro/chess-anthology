@@ -1,0 +1,70 @@
+{
+  "type": "object",
+  "properties": {
+    "providers": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9-]*$",
+                "description": "Unique source provider identifier, such as archive."
+              },
+              "kind": {
+                "const": "directory"
+              },
+              "path": {
+                "type": "string",
+                "description": "Local directory, relative to the project root."
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9-]*$",
+                "description": "Unique source provider identifier, such as archive."
+              },
+              "kind": {
+                "const": "http"
+              },
+              "url": {
+                "type": "string",
+                "description": "HTTP(S) PGN URL template containing {id}."
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "url"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "version": {
+      "const": 1
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "providers",
+    "version"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

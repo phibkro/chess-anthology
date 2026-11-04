@@ -1,0 +1,94 @@
+{
+  "type": "object",
+  "properties": {
+    "authors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "title": {
+      "type": "string"
+    },
+    "exports": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[_a-zA-Z][_a-zA-Z0-9-]*$",
+        "not": {
+          "enum": [
+            "module",
+            "import",
+            "export",
+            "game",
+            "from",
+            "story",
+            "board",
+            "after",
+            "text",
+            "arrow",
+            "prompt",
+            "answer"
+          ]
+        }
+      }
+    },
+    "games": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[_a-zA-Z][_a-zA-Z0-9-]*$",
+        "not": {
+          "enum": [
+            "module",
+            "import",
+            "export",
+            "game",
+            "from",
+            "story",
+            "board",
+            "after",
+            "text",
+            "arrow",
+            "prompt",
+            "answer"
+          ]
+        }
+      },
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[_a-zA-Z][_a-zA-Z0-9-]*$",
+      "not": {
+        "enum": [
+          "module",
+          "import",
+          "export",
+          "game",
+          "from",
+          "story",
+          "board",
+          "after",
+          "text",
+          "arrow",
+          "prompt",
+          "answer"
+        ]
+      }
+    },
+    "imports": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "id"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

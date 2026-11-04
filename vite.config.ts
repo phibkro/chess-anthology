@@ -20,6 +20,8 @@ export default defineConfig({
       "public/revised/**",
       "pnpm-lock.yaml",
       "compiler/pnpm-lock.yaml",
+      "**/*.chess.md",
+      "compiler/schemas/*.json",
       "compiler/src/compiler/100-parsing/generated/**",
       "docs/4EM.md",
       "docs/CHARTER.md",

@@ -2,6 +2,9 @@ import { DefaultDocumentValidator } from "langium";
 import type { LangiumDocument, ValidationOptions } from "langium";
 import * as v from "valibot";
 import type { CancellationToken } from "vscode-languageserver";
+
+import { markdownDiagnostics } from "../100-parsing/index.js";
+
 /** Adapt framework diagnostics into stable compiler failure codes. */
 export class ChessValidator extends DefaultDocumentValidator {
   /**
@@ -21,20 +24,23 @@ export class ChessValidator extends DefaultDocumentValidator {
       { ...options, stopAfterLexingErrors: true, stopAfterParsingErrors: true },
       token
     );
-    return diagnostics.map((diagnostic) => {
-      const data = v.safeParse(
-        v.object({ code: v.optional(v.union([v.string(), v.number()])) }),
-        diagnostic.data
-      );
-      const originalCode = data.success ? data.output.code : undefined;
-      return {
-        ...diagnostic,
-        code:
-          diagnostic.code ??
-          (originalCode === "linking-error"
-            ? "link/unresolved-game"
-            : originalCode),
-      };
-    });
+    return markdownDiagnostics(
+      document.parseResult.value,
+      diagnostics.map((diagnostic) => {
+        const data = v.safeParse(
+          v.object({ code: v.optional(v.union([v.string(), v.number()])) }),
+          diagnostic.data
+        );
+        const originalCode = data.success ? data.output.code : undefined;
+        return {
+          ...diagnostic,
+          code:
+            diagnostic.code ??
+            (originalCode === "linking-error"
+              ? "link/unresolved-game"
+              : originalCode),
+        };
+      })
+    );
   }
 }

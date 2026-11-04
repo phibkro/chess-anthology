@@ -15,3 +15,6 @@ run_source_checks()
 configuration_health()
 
 alias_health()
+
+from lsp_markdown import run as run_markdown_checks
+run_markdown_checks()

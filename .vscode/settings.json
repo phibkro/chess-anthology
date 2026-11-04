@@ -1,0 +1,12 @@
+{
+  "files.associations": {
+    "*.chess.md": "markdown",
+    "chess.sources.jsonc": "jsonc"
+  },
+  "json.schemas": [
+    {
+      "fileMatch": ["chess.sources.json", "chess.sources.jsonc"],
+      "url": "./compiler/schemas/chess.sources.schema.json"
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 import { URI, EmptyFileSystemProvider, DocumentState } from "langium";
 import type { LangiumDocument } from "langium";
 
+import { isNarrative } from "../../runtime/narrative.js";
 import { isModule, isGame } from "../100-parsing/index.js";
 import { createChessAnalysis } from "../400-chess-analysis/index.js";
 import { createServices, relative } from "./langium.js";
@@ -132,16 +133,12 @@ export const createWorkspace = (analysis = createChessAnalysis()) => {
     }
     if (changed.length || deleted.length) {
       await builder.update(
-        changed
-          .filter((uri) => uri.endsWith(".chess-story"))
-          .map((uri) => URI.parse(uri)),
-        deleted
-          .filter((uri) => uri.endsWith(".chess-story"))
-          .map((uri) => URI.parse(uri))
+        changed.filter((uri) => isNarrative(uri)).map((uri) => URI.parse(uri)),
+        deleted.filter((uri) => isNarrative(uri)).map((uri) => URI.parse(uri))
       );
     }
     for (const uri of [...changed, ...deleted]) {
-      if (uri.endsWith(".chess-story")) {
+      if (isNarrative(uri)) {
         indexDependencies(uri);
       }
     }

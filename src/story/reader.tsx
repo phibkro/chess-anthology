@@ -5,7 +5,9 @@ import {
 } from "@chess-anthology/compiler/playback";
 import { parseSan } from "chessops/san";
 import { makeUci } from "chessops/util";
+import { toMarkdown } from "mdast-util-to-markdown";
 import { useCallback, useMemo, useState, useSyncExternalStore } from "react";
+import Markdown from "react-markdown";
 
 import planData from "../content/generated/queen-offers.json";
 import { Board, positionFromFen } from "../lesson";
@@ -120,7 +122,7 @@ const PlayableStory = ({ plan }: { plan: PlaybackPlan }) => {
   const arrows = useMemo(
     () =>
       !context.attempt && (context.revealed || context.ply === scene.after + 1)
-        ? scene.notes.filter((n) => n.type === "arrow")
+        ? scene.notes.flatMap((note) => (note.type === "arrow" ? [note] : []))
         : [],
     [scene, context.revealed, context.ply, context.attempt]
   );
@@ -138,7 +140,11 @@ const PlayableStory = ({ plan }: { plan: PlaybackPlan }) => {
     <div className="lesson-reader story-reader">
       <div className="lesson-heading">
         <p className="eyebrow">TWO GAMES · ONE IDEA</p>
-        <h2>A queen offered, a mating net.</h2>
+        <h2>
+          {plan.version === 3
+            ? (plan.metadata.title ?? plan.title)
+            : "A queen offered, a mating net."}
+        </h2>
         <p className="lesson-subtitle">Morphy in Paris. Réti in Vienna.</p>
       </div>
       <nav className="story-scenes" aria-label="Story examples">
@@ -151,7 +157,10 @@ const PlayableStory = ({ plan }: { plan: PlaybackPlan }) => {
               select(index);
             }}
           >
-            {index + 1}. {credits.get(item.game)?.title ?? item.game}
+            {index + 1}.{" "}
+            {"title" in item
+              ? item.title
+              : (credits.get(item.game)?.title ?? item.game)}
           </button>
         ))}
       </nav>
@@ -250,15 +259,24 @@ const PlayableStory = ({ plan }: { plan: PlaybackPlan }) => {
           <p className="eyebrow">
             EXAMPLE {context.scene + 1} / {plan.scenes.length}
           </p>
-          <h3>{credits.get(scene.game)?.title}</h3>
+          <h3>
+            {"title" in scene ? scene.title : credits.get(scene.game)?.title}
+          </h3>
           <p className="lesson-subtitle">{credits.get(scene.game)?.detail}</p>
-          {scene.notes
-            .filter((n) => n.type === "text")
-            .map((note, index) => (
+          {scene.notes.map((note, index) => {
+            if (note.type === "markdown") {
+              return (
+                <div key={index} className="lesson-intro">
+                  <Markdown skipHtml>{toMarkdown(note.content)}</Markdown>
+                </div>
+              );
+            }
+            return note.type === "text" ? (
               <p key={index} className="lesson-intro">
                 {note.text}
               </p>
-            ))}
+            ) : null;
+          })}
           <StoryPrompt
             atPrompt={atPrompt}
             prompt={prompt}

@@ -1,3 +1,4 @@
+import { isNarrative } from "./narrative.js";
 /**
  * Release orphaned game text and protect only current references and open buffers.
  * @param sources - Acquired source text owned by the editor adapter.
@@ -14,7 +15,7 @@ export const retainGameSources = (
 ): void => {
   const active: string[] = [];
   for (const [uri, text] of sources) {
-    if (uri.endsWith(".chess-story")) {
+    if (isNarrative(uri)) {
       continue;
     }
     if (references.has(uri) || overlays.has(uri)) {

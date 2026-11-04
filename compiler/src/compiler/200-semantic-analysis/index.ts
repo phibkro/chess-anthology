@@ -5,34 +5,51 @@ import type {
   DocumentData,
   SceneData,
 } from "../../contracts/index.js";
-import { isGame, isStory, isText, isArrow } from "../100-parsing/index.js";
+import {
+  markdownAuthoring,
+  markdownScene,
+  isGame,
+  isStory,
+  isText,
+  isArrow,
+} from "../100-parsing/index.js";
 import type { Module, Scene } from "../100-parsing/index.js";
 /**
  * Lower a syntax occurrence into plain authored scene data.
  * @param scene - The authored board occurrence.
  * @returns Lower a syntax occurrence into plain authored scene data.
  */
-export const lowerScene = (scene: Scene): SceneData => ({
-  game: scene.game.$refText,
-  name: scene.name,
-  notes: scene.notes.map((note) => {
-    if (isText(note)) {
-      return { text: note.text, type: "text" };
-    }
-    if (isArrow(note)) {
-      return { color: note.color, from: note.from, to: note.to, type: "arrow" };
-    }
-    return { answer: note.answer, text: note.text, type: "prompt" };
-  }),
-  ply: scene.ply,
-});
+export const lowerScene = (scene: Scene): SceneData =>
+  markdownScene(scene) ?? {
+    game: scene.game.$refText,
+    name: scene.name,
+    notes: scene.notes.map((note) => {
+      if (isText(note)) {
+        return { text: note.text, type: "text" };
+      }
+      if (isArrow(note)) {
+        return {
+          color: note.color,
+          from: note.from,
+          to: note.to,
+          type: "arrow",
+        };
+      }
+      return { answer: note.answer, text: note.text, type: "prompt" };
+    }),
+    ply: scene.ply,
+  };
 /**
  * Lower syntax declarations into a structurally validated authored document.
  * @param module - The parsed narrative syntax root.
  * @returns Authored data or structural validation errors.
  */
-export const lower = (module: Module): Result<DocumentData> =>
-  parseStructured({
+export const lower = (module: Module): Result<DocumentData> => {
+  const markdown = markdownAuthoring(module);
+  if (markdown) {
+    return markdown.ok ? { ok: true, value: markdown.value.data } : markdown;
+  }
+  return parseStructured({
     formatVersion: 0,
     games: module.declarations
       .filter(isGame)
@@ -43,6 +60,7 @@ export const lower = (module: Module): Result<DocumentData> =>
       .filter(isStory)
       .map((s) => ({ name: s.name, scenes: s.scenes.map(lowerScene) })),
   });
+};
 
 /**
  * Check local declaration and occurrence identities without linking games.

@@ -8,7 +8,7 @@ import * as langium from 'langium';
 
 export const ChessNarrativeTerminals = {
     WS: /\s+/,
-    ID: /[_a-zA-Z][_a-zA-Z0-9]*/,
+    ID: /[_a-zA-Z][_a-zA-Z0-9-]*/,
     INT: /[0-9]+/,
     STRING: /"([^"\\\x00-\x1F]|\\(["\\\/bfnrt]|u[0-9a-fA-F]{4}))*"/,
     SL_COMMENT: /\/\/[^\n\r]*/,

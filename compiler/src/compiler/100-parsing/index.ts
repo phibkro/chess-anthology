@@ -14,6 +14,7 @@ import {
   ChessNarrativeGeneratedSharedModule,
 } from "./generated/module.js";
 import { jsonParserModule } from "./json-string.js";
+import { installMarkdownParser } from "./markdown.js";
 
 export {
   isModule,
@@ -32,6 +33,7 @@ const language = inject(
   ChessNarrativeGeneratedModule,
   jsonParserModule
 );
+installMarkdownParser(language.parser.LangiumParser);
 shared.ServiceRegistry.register(language);
 /**
  * Parse flat narrative text and return syntax failures as values.
@@ -68,3 +70,10 @@ export {
 export type { Module, Scene, ChessNarrativeAstType } from "./contract.js";
 
 export { jsonParserModule } from "./json-string.js";
+
+export {
+  installMarkdownParser,
+  markdownAuthoring,
+  markdownScene,
+  markdownDiagnostics,
+} from "./markdown.js";

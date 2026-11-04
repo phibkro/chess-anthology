@@ -1,17 +1,37 @@
 import * as v from "valibot";
 
-const providerId = v.pipe(v.string(), v.regex(/^[a-z][a-z0-9-]*$/u));
+const providerId = v.pipe(
+  v.string(),
+  // oxlint-disable-next-line require-unicode-regexp -- JSON Schema patterns cannot carry flags; this pattern is ASCII-only.
+  v.regex(/^[a-z][a-z0-9-]*$/),
+  v.description("Unique source provider identifier, such as archive.")
+);
 const provider = v.variant("kind", [
   v.strictObject({
     id: providerId,
     kind: v.literal("directory"),
-    path: v.string(),
+    path: v.pipe(
+      v.string(),
+      v.description("Local directory, relative to the project root.")
+    ),
   }),
-  v.strictObject({ id: providerId, kind: v.literal("http"), url: v.string() }),
+  v.strictObject({
+    id: providerId,
+    kind: v.literal("http"),
+    url: v.pipe(
+      v.string(),
+      v.description("HTTP(S) PGN URL template containing {id}.")
+    ),
+  }),
 ]);
 export const configSchema = v.strictObject({
   providers: v.array(provider),
   version: v.literal(1),
+});
+/** On-disk configuration accepts an optional editor schema association. */
+export const configFileSchema = v.strictObject({
+  ...configSchema.entries,
+  $schema: v.optional(v.string()),
 });
 /** Configured source providers in discovery order. */
 export type SourceConfig = v.InferOutput<typeof configSchema>;

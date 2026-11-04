@@ -38,11 +38,13 @@ Implementation directories and numbered phases are private. See [module boundari
 
 ## Editor and parser
 
-Launch `bun /absolute/path/to/compiler/src/adapters/lsp.ts --stdio` or `pnpm --dir compiler lsp`. Use language ID `chess-narrative` and extension `.chess-story`. The first workspace folder supplies the source root; `CHESS_SOURCE_ROOT` overrides it. Stdout is reserved for LSP frames.
+Launch `bun /absolute/path/to/compiler/src/adapters/lsp.ts --stdio` or `pnpm --dir compiler lsp`. Use language ID `chess-narrative` and extensions `.chess-story` or `.chess.md`. The first workspace folder supplies the source root; `CHESS_SOURCE_ROOT` overrides it. Stdout is reserved for LSP frames.
 
 The server shares linking and chess validation, reports ranged/versioned diagnostics, offers legal SAN completion and imported-game definitions, and handles PGN watches and unsaved buffers. Configuration changes require a restart. See [LSP verification](../docs/compiler-lsp-evaluations.md).
 
 After grammar changes, run `pnpm --dir compiler generate` and commit the regenerated parser. `FC_SEED=8128 pnpm --dir compiler test` reproduces an alternate property-test seed.
+
+See [Markdown authoring and configuration](../docs/markdown-authoring.md) for `.chess.md`, YAML metadata, rich prose, source-preserving edits, and JSONC schemas. TypeScript configuration is deferred.
 
 ## Authoring example
 
@@ -61,13 +63,13 @@ The library declares `export game opera from "./opera.pgn";`. Explicit imports g
 
 ## Current limits
 
-Canonical printing normalizes authored layout. Exact untouched text is preserved in source envelopes, but semantic edits do not preserve surrounding trivia. PGN parsing is permissive and does not report every ignored token. Legal answers are checked for legality; this does not establish best play or historical correctness. Exports, re-exports and aliases beyond the documented grammar, semantic game deduplication, persistent engine-position caches and browser compiler packaging remain open.
+Canonical printing normalizes authored layout. Exact untouched text is preserved in source envelopes, with bounded Markdown scalar/board edits preserving surrounding text. Arbitrary AST edits still require canonical printing. PGN parsing is permissive and does not report every ignored token. Legal answers are checked for legality; this does not establish best play or historical correctness. Exports, re-exports and aliases beyond the documented grammar, semantic game deduplication, persistent engine-position caches and browser compiler packaging remain open.
 
 The original [prototype results](RESULTS.md) are historical evidence. The alternative Go compiler and its LSP remain on [experimental/go-compiler](https://github.com/phibkro/chess-anthology/tree/experimental/go-compiler/prototypes/chess-compiler-go), outside the supported module and default CI. Optional cross-language experiments accept that branch's module through `CHESS_GO_MODULE` or `lsp_compare.py --go-module`.
 
 ## Retention and playback representation
 
-Module version 0.2 emits playback format version 2: shared `histories` plus scene `historyId` references. `parsePlaybackPlan` accepts version 1 and normalizes it to version 2. Consumers should use `playbackFrames(plan, scene)` rather than reading `scene.frames` directly.
+Legacy stories emit playback format version 2: shared `histories` plus scene `historyId` references. Markdown stories emit version 3, which adds metadata, titles and rich Markdown notes. `parsePlaybackPlan` accepts versions 1, 2 and 3; version 1 normalizes to version 2. Consumers should use `playbackFrames(plan, scene)` rather than reading `scene.frames` directly.
 
 `createCompiler({ cache: { maxInactiveEntries, maxInactivePositions, maxInactiveSourceBytes } })` and `createProjectCompiler` accept inactive replay budgets. Defaults are 32 entries, 1,024 engine positions and 4 MiB source bytes. Active games are protected; retained external snapshots can keep their histories alive. `cacheStats()` exposes retention counters for the kernel.
 

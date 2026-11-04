@@ -93,3 +93,7 @@ Chess replay remains cached by content within a compiler session, with bounded i
 `src/sources/sources.test.ts` covers fresh-process HTTP acquisition and frozen offline reuse; cache/catalog reuse; live files and buffers; provider precedence; changed locked content; multi-game selection; byte integrity; edition mismatch; configuration changes; and overlapping project updates. Existing compiler conformance and LSP acceptance suites remain required.
 
 Project updates report `acquisition.parsedNarratives` separately from kernel work; unchanged narrative dependency discovery is reused across project updates.
+
+## Configuration comments and editor help
+
+The loader accepts either `chess.sources.json` (strict JSON) or `chess.sources.jsonc` (comments and trailing commas), and rejects competing files. Both use the same runtime schema. Optional `$schema` is removed before configuration hashing. See [configuration and authoring contracts](markdown-authoring.md#configuration) for schema associations and syntax-preserving edits.

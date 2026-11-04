@@ -7,6 +7,7 @@ import type {
   BuildUpdate,
   CompilerOptions,
 } from "../../contracts/index.js";
+import { isNarrative } from "../../runtime/narrative.js";
 import { createWorkspace, relative } from "../300-linking/index.js";
 import type { Sources } from "../300-linking/index.js";
 import { createChessAnalysis } from "../400-chess-analysis/index.js";
@@ -64,7 +65,7 @@ export const createCompiler = (options: CompilerOptions = {}) => {
       const revision = new Map(sources);
       analysis.setActiveSources(
         [...revision]
-          .filter(([uri]) => !uri.endsWith(".chess-story"))
+          .filter(([uri]) => !isNarrative(uri))
           .map(([, text]) => text)
       );
       const changes = await workspace.update(revision);

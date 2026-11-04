@@ -6,8 +6,12 @@
       "ignoreDependencies": ["@commitlint/cli", "jscpd"]
     },
     "compiler": {
-      "entry": ["src/adapters/*.ts", "src/compiler/100-parsing/generated/*.ts"],
-      "project": ["src/**/*.ts", "evaluation/**/*.mts"],
+      "entry": [
+        "src/adapters/*.ts",
+        "src/compiler/100-parsing/generated/*.ts",
+        "scripts/*.mts"
+      ],
+      "project": ["src/**/*.ts", "evaluation/**/*.mts", "scripts/*.mts"],
       "ignoreDependencies": ["langium-cli"]
     }
   }

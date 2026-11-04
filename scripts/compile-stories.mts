@@ -9,8 +9,8 @@ if (!compiled.ok) {
 }
 const plan = createPlaybackPlan(
   compiled.value.snapshot,
-  new URL("story.chess-story", directory).href,
-  "matingNets"
+  new URL("queen-offers.chess.md", directory).href,
+  "mating-nets"
 );
 if (!plan.ok) {
   console.error(plan.error);

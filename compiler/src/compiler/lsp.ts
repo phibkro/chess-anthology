@@ -10,6 +10,7 @@ import type {
 import { createConnection, ProposedFeatures } from "vscode-languageserver/node";
 
 import { createBunFileSystem } from "../runtime/filesystem.js";
+import { isNarrative } from "../runtime/narrative.js";
 import { createSourceCache } from "../runtime/source-cache.js";
 import { retainGameSources } from "../runtime/source-retention.js";
 import { readSourceText, decodeSourceText } from "../runtime/source-text.js";
@@ -80,7 +81,7 @@ const acquire = async (
   }
   const text = await acquireSource(uri);
   retainAcquired();
-  if (text !== undefined && uri.endsWith(".chess-story")) {
+  if (text !== undefined && isNarrative(uri)) {
     const parsed = decode(text);
     if (parsed.ok) {
       await Promise.all(
@@ -132,7 +133,7 @@ class ArtifactUpdates extends DefaultDocumentUpdateHandler {
       }
     }
     return [...affected]
-      .filter((uri) => uri.endsWith(".chess-story"))
+      .filter((uri) => isNarrative(uri))
       .map((uri) => URI.parse(uri));
   }
   /**
@@ -187,7 +188,7 @@ class ArtifactUpdates extends DefaultDocumentUpdateHandler {
         (change) =>
           change.type === 3 &&
           !overlays.has(change.uri) &&
-          change.uri.endsWith(".chess-story")
+          isNarrative(change.uri)
       )
       .map((change) => URI.parse(change.uri));
     const removed = new Set(deleted.map((uri) => uri.toString()));

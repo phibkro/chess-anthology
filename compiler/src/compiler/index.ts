@@ -13,3 +13,12 @@ export {
   printStructured,
 } from "./500-emission/index.js";
 export { createPlaybackPlan } from "./500-emission/index.js";
+
+export { parseStructured } from "../contracts/authored.js";
+export type { AuthoringData, DocumentData } from "../contracts/authored.js";
+export {
+  parseMarkdown,
+  printMarkdown,
+  editMarkdownMetadata,
+  editMarkdownBoard,
+} from "../authoring/markdown.js";

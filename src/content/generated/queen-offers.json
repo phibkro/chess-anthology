@@ -280,16 +280,51 @@
       ]
     }
   },
-  "id": "queenOffers/matingNets",
+  "id": "queen-offers/mating-nets",
   "scenes": [
     {
       "after": 30,
       "game": "opera",
-      "id": "operaFinish",
+      "id": "opera-finish",
       "notes": [
         {
-          "text": "The queen opens a path to the back rank.",
-          "type": "text"
+          "content": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "The queen opens a path to the back rank."
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "Notice the coordination between the "
+                  },
+                  {
+                    "children": [
+                      {
+                        "type": "text",
+                        "value": "rook and bishop"
+                      }
+                    ],
+                    "type": "strong"
+                  },
+                  {
+                    "type": "text",
+                    "value": "."
+                  }
+                ],
+                "type": "paragraph"
+              }
+            ],
+            "type": "root"
+          },
+          "type": "markdown"
         },
         {
           "color": "green",
@@ -305,27 +340,89 @@
         }
       ],
       "sourceDigest": "5d2a309aa43c42d20ada80a02be46a70cb45d29bbb28bdccdb52b06504479716",
-      "historyId": "5d2a309aa43c42d20ada80a02be46a70cb45d29bbb28bdccdb52b06504479716"
+      "historyId": "5d2a309aa43c42d20ada80a02be46a70cb45d29bbb28bdccdb52b06504479716",
+      "title": "The Opera Game"
     },
     {
       "after": 16,
       "game": "reti",
-      "id": "retiFinish",
+      "id": "reti-finish",
       "notes": [
         {
-          "text": "Compare the queen offer with a discovered attack.",
-          "type": "text"
+          "content": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "A second queen offer creates another mating net."
+                  }
+                ],
+                "type": "paragraph"
+              },
+              {
+                "children": [
+                  {
+                    "checked": null,
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "type": "text",
+                            "value": "Look for forcing moves."
+                          }
+                        ],
+                        "type": "paragraph"
+                      }
+                    ],
+                    "spread": false,
+                    "type": "listItem"
+                  },
+                  {
+                    "checked": null,
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "type": "text",
+                            "value": "Compare the two positions."
+                          }
+                        ],
+                        "type": "paragraph"
+                      }
+                    ],
+                    "spread": false,
+                    "type": "listItem"
+                  }
+                ],
+                "ordered": false,
+                "spread": false,
+                "start": null,
+                "type": "list"
+              }
+            ],
+            "type": "root"
+          },
+          "type": "markdown"
         },
         {
           "answer": "Qd8+",
           "answerUci": "d3d8",
-          "text": "Offer the queen.",
+          "text": "Find the queen sacrifice.",
           "type": "prompt"
         }
       ],
       "sourceDigest": "3e06d974c7abc3dafb02efe5365248aa02105737b6371a6341b54e92ee1824d8",
-      "historyId": "3e06d974c7abc3dafb02efe5365248aa02105737b6371a6341b54e92ee1824d8"
+      "historyId": "3e06d974c7abc3dafb02efe5365248aa02105737b6371a6341b54e92ee1824d8",
+      "title": "Réti–Tartakower"
     }
   ],
-  "version": 2
+  "version": 3,
+  "metadata": {
+    "authors": [
+      "Philip Krogh"
+    ],
+    "title": "A queen offered, a mating net"
+  },
+  "title": "Mating nets"
 }
